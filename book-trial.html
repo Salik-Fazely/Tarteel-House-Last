@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Free Trial — Tarteel House</title>
+  <link rel="icon" href="assets/logo/favicon.ico" />
+  <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+  <header class="site-header" id="top">
+    <div class="container">
+      <nav class="nav" aria-label="Main navigation">
+        <a href="index.html" class="nav__logo" aria-label="Tarteel House — home">
+          <img src="assets/logo/tarteel-house.svg" alt="Tarteel House" width="160" height="40" />
+        </a>
+        <ul class="nav__links" id="nav-menu" role="list">
+          <li><a href="how-it-works.html" class="nav__link">How It Works</a></li>
+          <li><a href="teachers.html" class="nav__link">Teachers</a></li>
+          <li><a href="pricing.html" class="nav__link">Pricing</a></li>
+          <li><a href="about.html" class="nav__link">About</a></li>
+        </ul>
+        <a href="book-trial.html" class="btn btn--primary nav__cta">Book a Free Trial</a>
+        <button class="nav__toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <section class="trial-hero">
+      <div class="container">
+        <p class="eyebrow">BOOK A FREE TRIAL</p>
+        <h1 class="trial-hero__headline">Book a free trial session</h1>
+        <p class="trial-hero__sub">Tell us a little about your child, and we’ll come back with the best next steps for your family.</p>
+        <span class="trial-hero__pill">No payment required</span>
+      </div>
+    </section>
+
+    <section class="trial-form-section">
+      <div class="trial-form-wrapper">
+
+        <form
+          class="trial-form"
+          id="trial-form"
+          action="https://script.google.com/macros/s/AKfycbxdUb5dS1GDdlbJpjiFmBEW_aagYUlyYUhkEU068pkSYIrT24sw-RlGDmDTZJZ8X87DAA/exec"
+          method="POST"
+        >
+          <input type="hidden" name="source" value="website">
+          <input type="hidden" name="success_redirect" id="success-redirect" value="success.html">
+          <input type="text" name="website_field" style="display:none" tabindex="-1" autocomplete="off">
+
+          <div class="form-group-section">
+            <p class="form-section-label">ABOUT YOUR CHILD</p>
+
+            <div class="form-field">
+              <label class="form-label" for="child-name">Child’s first name</label>
+              <input type="text" id="child-name" name="child_name" class="form-input" required autocomplete="given-name" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="child-age">Age</label>
+              <select id="child-age" name="child_age" class="form-input form-select" required>
+                <option value="" disabled selected>Select age</option>
+                <option value="under-5">Under 5</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="over-16">Over 16</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Current Qur’an level</label>
+              <div class="chip-group" data-select="single" data-required="true" role="radiogroup" aria-label="Current Qur'an level" aria-required="true">
+                <button type="button" class="chip" data-value="complete-beginner" role="radio" aria-checked="false">Complete beginner</button>
+                <button type="button" class="chip" data-value="knows-arabic-letters" role="radio" aria-checked="false">Knows the Arabic letters</button>
+                <button type="button" class="chip" data-value="reading-short-words" role="radio" aria-checked="false">Reading short words</button>
+                <button type="button" class="chip" data-value="reading-independently" role="radio" aria-checked="false">Reading independently</button>
+              </div>
+              <input type="hidden" name="quran_level" id="quran-level-value" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Preferred session language</label>
+              <div class="chip-group" data-select="single" data-required="true" role="radiogroup" aria-label="Preferred session language" aria-required="true">
+                <button type="button" class="chip" data-value="english" role="radio" aria-checked="false">English</button>
+                <button type="button" class="chip" data-value="arabic" role="radio" aria-checked="false">Arabic</button>
+                <button type="button" class="chip" data-value="turkish" role="radio" aria-checked="false">Turkish</button>
+                <button type="button" class="chip" data-value="persian" role="radio" aria-checked="false">Persian</button>
+              </div>
+              <input type="hidden" name="session_language" id="session-language-value" />
+            </div>
+          </div>
+
+          <div class="form-group-section">
+            <p class="form-section-label">ABOUT YOU</p>
+
+            <div class="form-field">
+              <label class="form-label" for="parent-name">Your name</label>
+              <input type="text" id="parent-name" name="parent_name" class="form-input" required autocomplete="name" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="country">Country</label>
+              <select id="country" name="country" class="form-input form-select" required autocomplete="country-name">
+                <option value="" disabled selected>Select country</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Netherlands">Netherlands</option>
+                <option value="Belgium">Belgium</option>
+                <option value="Sweden">Sweden</option>
+                <option value="Norway">Norway</option>
+                <option value="Denmark">Denmark</option>
+                <option value="Switzerland">Switzerland</option>
+                <option value="Austria">Austria</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Ireland">Ireland</option>
+                <option value="Spain">Spain</option>
+                <option value="Italy">Italy</option>
+                <option value="Canada">Canada</option>
+                <option value="United States">United States</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="email">Email address</label>
+              <input type="email" id="email" name="email" class="form-input" required autocomplete="email" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="whatsapp">WhatsApp number</label>
+              <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required autocomplete="tel" />
+            </div>
+          </div>
+
+          <div class="form-group-section">
+            <p class="form-section-label">SCHEDULING</p>
+
+            <div class="form-field">
+              <label class="form-label">Preferred days</label>
+              <div class="chip-group" data-select="multi" data-required="true" role="group" aria-label="Preferred days" aria-required="true">
+                <button type="button" class="chip" data-value="mon" role="checkbox" aria-checked="false">Mon</button>
+                <button type="button" class="chip" data-value="tue" role="checkbox" aria-checked="false">Tue</button>
+                <button type="button" class="chip" data-value="wed" role="checkbox" aria-checked="false">Wed</button>
+                <button type="button" class="chip" data-value="thu" role="checkbox" aria-checked="false">Thu</button>
+                <button type="button" class="chip" data-value="fri" role="checkbox" aria-checked="false">Fri</button>
+                <button type="button" class="chip" data-value="sat" role="checkbox" aria-checked="false">Sat</button>
+                <button type="button" class="chip" data-value="sun" role="checkbox" aria-checked="false">Sun</button>
+              </div>
+              <input type="hidden" name="preferred_days" id="preferred-days-value" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Preferred time of day</label>
+              <div class="chip-group" data-select="single" data-required="true" role="radiogroup" aria-label="Preferred time of day" aria-required="true">
+                <button type="button" class="chip" data-value="morning" role="radio" aria-checked="false">Morning</button>
+                <button type="button" class="chip" data-value="afternoon" role="radio" aria-checked="false">Afternoon</button>
+                <button type="button" class="chip" data-value="evening" role="radio" aria-checked="false">Evening</button>
+              </div>
+              <input type="hidden" name="preferred_time" id="preferred-time-value" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="city-region">City / Region</label>
+              <input type="text" id="city-region" name="city_region" class="form-input" required autocomplete="address-level2" placeholder="e.g. Barcelona, Berlin, Toronto" />
+            </div>
+          </div>
+
+          <div class="form-group-section">
+            <p class="form-section-label">ANYTHING WE SHOULD KNOW</p>
+
+            <div class="form-field">
+              <label class="form-label" for="notes">
+                Anything we should know
+                <span class="form-label-note">(optional)</span>
+              </label>
+              <span class="form-hint">If you have a preferred teacher, mention their name here.</span>
+              <textarea
+                id="notes"
+                name="notes"
+                class="form-input form-textarea"
+                rows="4"
+                placeholder="e.g. my child is shy at first, has tried Qur’an classes before, has a learning difference, etc."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-consent">
+            <label class="consent-label">
+              <input type="checkbox" id="consent" name="consent" value="yes" class="consent-checkbox" required />
+              <span>I agree to be contacted about my trial request and have read the
+                <a href="privacy-policy.html" class="consent-link">privacy policy</a>.</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn--primary trial-form__submit">
+            Request my free trial
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section class="trial-reassurance">
+      <div class="container">
+        <div class="trial-reassurance__lines">
+          <p class="trial-reassurance__line">Your details are handled with care and only used for your trial request.</p>
+          <p class="trial-reassurance__line">Every booking is read personally.</p>
+          <p class="trial-reassurance__line">You’ll hear back on WhatsApp after we review your request.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__col footer__col--brand">
+          <a href="index.html" aria-label="Tarteel House — home">
+            <img
+              src="assets/logo/tarteel-house-reversed.svg"
+              alt="Tarteel House"
+              class="footer__logo"
+              height="40"
+              width="auto"
+            />
+          </a>
+          <p class="footer__tagline">One-to-one Qur’an learning for children</p>
+        </div>
+
+        <nav class="footer__col" aria-label="Learn">
+          <h3 class="footer__heading">LEARN</h3>
+          <ul role="list">
+            <li><a href="how-it-works.html" class="footer__link">How it works</a></li>
+            <li><a href="teachers.html" class="footer__link">Teachers</a></li>
+            <li><a href="pricing.html" class="footer__link">Pricing</a></li>
+            <li><a href="book-trial.html" class="footer__link">Book a trial</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer__col" aria-label="About">
+          <h3 class="footer__heading">ABOUT</h3>
+          <ul role="list">
+            <li><a href="about.html" class="footer__link">Our story</a></li>
+            <li><a href="about.html#approach" class="footer__link">Our approach</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer__col" aria-label="Support">
+          <h3 class="footer__heading">SUPPORT</h3>
+          <ul role="list">
+            <li><a href="privacy-policy.html" class="footer__link">Privacy</a></li>
+            <li><a href="terms.html" class="footer__link">Terms</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <hr class="footer__divider" aria-hidden="true" />
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2026 Tarteel House &middot; Barcelona, Spain</p>
+        <div class="footer__lang" role="group" aria-label="Language selector">
+          <button type="button" class="footer__lang-btn is-active">English</button>
+          <span class="footer__lang-sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="footer__lang-btn">العربية</button>
+          <span class="footer__lang-sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="footer__lang-btn">Deutsch</button>
+          <span class="footer__lang-sep" aria-hidden="true">&middot;</span>
+          <button type="button" class="footer__lang-btn">Français</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.chip-group').forEach(function(group) {
+      var isMulti = group.dataset.select === 'multi';
+
+      group.querySelectorAll('.chip').forEach(function(chip) {
+        chip.addEventListener('click', function() {
+          if (isMulti) {
+            var nowSelected = !chip.classList.contains('chip--selected');
+            chip.classList.toggle('chip--selected');
+            chip.setAttribute('aria-checked', nowSelected ? 'true' : 'false');
+          } else {
+            group.querySelectorAll('.chip').forEach(function(c) {
+              c.classList.remove('chip--selected');
+              c.setAttribute('aria-checked', 'false');
+            });
+            chip.classList.add('chip--selected');
+            chip.setAttribute('aria-checked', 'true');
+          }
+          syncHidden(group);
+        });
+      });
+    });
+
+    var trialForm = document.getElementById('trial-form');
+    if (trialForm) {
+      trialForm.addEventListener('submit', function(event) {
+        var requiredChipFields = [
+          {
+            id: 'quran-level-value',
+            message: "Please choose your child's current Qur'an level."
+          },
+          {
+            id: 'session-language-value',
+            message: 'Please choose a preferred session language.'
+          },
+          {
+            id: 'preferred-days-value',
+            message: 'Please choose at least one preferred day.'
+          },
+          {
+            id: 'preferred-time-value',
+            message: 'Please choose a preferred time of day.'
+          }
+        ];
+
+        for (var i = 0; i < requiredChipFields.length; i++) {
+          var field = requiredChipFields[i];
+          var hidden = document.getElementById(field.id);
+          if (!hidden || !hidden.value.trim()) {
+            event.preventDefault();
+            alert(field.message);
+            var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
+            var firstChip = group && group.querySelector('.chip');
+            if (firstChip) firstChip.focus();
+            return;
+          }
+        }
+      });
+    }
+
+    function syncHidden(group) {
+      var field = group.closest('.form-field');
+      var hidden = field && field.querySelector('input[type="hidden"]');
+      if (!hidden) return;
+      hidden.value = Array.from(group.querySelectorAll('.chip--selected'))
+        .map(function(c) { return c.dataset.value; })
+        .join(',');
+    }
+
+    (function() {
+      var redirect = document.getElementById('success-redirect');
+      if (!redirect) return;
+      try {
+        redirect.value = new URL('success.html', window.location.href).href;
+      } catch (e) {}
+    })();
+  </script>
+
+</body>
+</html>
