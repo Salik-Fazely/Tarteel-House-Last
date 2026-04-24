@@ -102,7 +102,7 @@ Flow:
 
 ## Important warnings
 - Existing Google Sheets may still contain an old `timezone` column. Do not reorder existing sheets casually. The script appends missing columns to avoid disturbing old data.
-- The footer language buttons are visual only unless later implemented.
+- The public site is English-only for now. Do not add or imply other live site language versions unless they actually exist.
 - Legal pages are not a substitute for professional legal review.
 - The `success_redirect` setup must be checked on local, staging, and production before launch.
 - Homepage OG image is currently referenced but missing; founder will provide it later.

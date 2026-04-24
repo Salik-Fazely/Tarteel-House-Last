@@ -553,34 +553,6 @@ em, i {
 }
 
 /* Language switcher — plain text with separator dots */
-.footer__lang {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
-.footer__lang-btn {
-  font-size: 0.8125rem;
-  color: rgba(245, 241, 232, 0.55);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: color var(--duration) var(--ease);
-}
-
-.footer__lang-btn:hover,
-.footer__lang-btn.is-active {
-  color: rgba(245, 241, 232, 0.9);
-}
-
-.footer__lang-sep {
-  font-size: 0.8125rem;
-  color: rgba(245, 241, 232, 0.25);
-  user-select: none;
-}
-
 /* Responsive */
 @media (max-width: 860px) {
   .footer__grid {

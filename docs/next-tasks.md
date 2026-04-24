@@ -16,16 +16,15 @@
 5. Final mobile and desktop QA pass on every page after deployment.
 6. Final legal review of `privacy-policy.html` and `terms.html`.
 7. Confirm WhatsApp link and public phone number work on mobile and desktop.
-8. Verify footer language buttons are acceptable as static/non-functional, or remove/disable them before launch.
-9. Check testimonials and replace any unverified placeholder quotes.
+8. Check testimonials and replace any unverified placeholder quotes.
 
 ## Launch
-10. Upload static files to Hostinger or chosen hosting.
-11. Point `tarteelhouse.com` to hosting.
-12. Enable SSL.
-13. Test all live links, forms, success redirect, and email notification.
+9. Upload static files to Hostinger or chosen hosting.
+10. Point `tarteelhouse.com` to hosting.
+11. Enable SSL.
+12. Test all live links, forms, success redirect, and email notification.
 
 ## Post-launch
-14. Record and add teacher intro videos.
-15. Add payment workflow. Manual payment links are acceptable for launch unless founder decides otherwise.
-16. Consider later backend/admin improvements only after the static launch is stable.
+13. Record and add teacher intro videos.
+14. Add payment workflow. Manual payment links are acceptable for launch unless founder decides otherwise.
+15. Consider later backend/admin improvements only after the static launch is stable.
