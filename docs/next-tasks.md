@@ -20,7 +20,7 @@
 
 ## Launch
 9. Upload static files to Hostinger or chosen hosting.
-10. Point `tarteelhouse.com` to hosting.
+10. Point `www.tarteelhouse.com` to hosting.
 11. Enable SSL.
 12. Test all live links, forms, success redirect, and email notification.
 

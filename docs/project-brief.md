@@ -31,7 +31,7 @@ Tarteel House should feel minimal, premium, warm, and parent-friendly. The site 
 - Booking backend for launch: Google Apps Script.
 - Booking storage: Google Sheets.
 - Notification inbox: `hello@tarteelhouse.com`.
-- Hosting target: Hostinger / `tarteelhouse.com`.
+- Hosting target: Hostinger / `www.tarteelhouse.com`.
 
 ## Decision priorities
 1. Trust
