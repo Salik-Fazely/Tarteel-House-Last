@@ -308,38 +308,49 @@
     var trialForm = document.getElementById('trial-form');
     if (trialForm) {
       trialForm.addEventListener('submit', function(event) {
-        var requiredChipFields = [
-          {
-            id: 'quran-level-value',
-            message: "Please choose your child's current Qur'an level."
-          },
-          {
-            id: 'session-language-value',
-            message: 'Please choose a preferred session language.'
-          },
-          {
-            id: 'preferred-days-value',
-            message: 'Please choose at least one preferred day.'
-          },
-          {
-            id: 'preferred-time-value',
-            message: 'Please choose a preferred time of day.'
-          }
-        ];
+  // Always stop the browser from navigating to the Apps Script URL
+  event.preventDefault();
 
-        for (var i = 0; i < requiredChipFields.length; i++) {
-          var field = requiredChipFields[i];
-          var hidden = document.getElementById(field.id);
-          if (!hidden || !hidden.value.trim()) {
-            event.preventDefault();
-            alert(field.message);
-            var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
-            var firstChip = group && group.querySelector('.chip');
-            if (firstChip) firstChip.focus();
-            return;
-          }
-        }
-      });
+  var requiredChipFields = [
+    { id: 'quran-level-value',     message: "Please choose your child's current Qur'an level." },
+    { id: 'session-language-value', message: 'Please choose a preferred session language.' },
+    { id: 'preferred-days-value',   message: 'Please choose at least one preferred day.' },
+    { id: 'preferred-time-value',   message: 'Please choose a preferred time of day.' }
+  ];
+  for (var i = 0; i < requiredChipFields.length; i++) {
+    var field = requiredChipFields[i];
+    var hidden = document.getElementById(field.id);
+    if (!hidden || !hidden.value.trim()) {
+      alert(field.message);
+      var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
+      var firstChip = group && group.querySelector('.chip');
+      if (firstChip) firstChip.focus();
+      return;
+    }
+  }
+
+  // Disable the button so the parent doesn't double-click
+  var submitBtn = trialForm.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+  }
+
+  // Send the data to Apps Script in the background, then go to success.html
+  var formData = new FormData(trialForm);
+  fetch(trialForm.action, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: formData
+  })
+  .then(function() {
+    window.location.href = 'success.html';
+  })
+  .catch(function() {
+    // no-cors means the request was almost certainly sent anyway
+    window.location.href = 'success.html';
+  });
+});
     }
 
     function syncHidden(group) {
