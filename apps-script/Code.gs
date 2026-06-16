@@ -16,7 +16,7 @@
 const CONFIG = {
   SHEET_NAME: 'Bookings',
   NOTIFICATION_EMAIL: 'hello@tarteelhouse.com',
-  SUCCESS_REDIRECT: 'https://www.tarteelhouse.com/success',
+  SUCCESS_REDIRECT: 'https://www.tarteelhouse.com/success/',
   ALLOWED_REDIRECT_HOSTS: [
     'www.tarteelhouse.com'
   ]
