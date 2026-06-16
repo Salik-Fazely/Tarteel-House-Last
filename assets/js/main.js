@@ -14,6 +14,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ----- Click-to-play teacher videos ----- */
+  document.querySelectorAll('.teacher-card__portrait--youtube[data-youtube-id]').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const videoId = trigger.dataset.youtubeId;
+      if (!videoId) return;
+
+      const title = trigger.dataset.youtubeTitle || 'Teacher lesson sample';
+      const iframe = document.createElement('iframe');
+      const origin = window.location.origin && window.location.origin !== 'null'
+        ? `&origin=${encodeURIComponent(window.location.origin)}`
+        : '';
+
+      iframe.className = 'teacher-card__iframe';
+      iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1${origin}`;
+      iframe.title = title;
+      iframe.loading = 'lazy';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+
+      const player = document.createElement('div');
+      player.className = 'teacher-card__portrait teacher-card__portrait--youtube is-playing';
+      player.setAttribute('aria-label', title);
+      player.append(iframe);
+
+      trigger.replaceWith(player);
+    }, { once: true });
+  });
+
   /* ----- Active nav link ----- */
   const navLinks = document.querySelectorAll('.nav__link');
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
