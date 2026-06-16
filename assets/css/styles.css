@@ -876,6 +876,148 @@ em, i {
 
 
 /* ==========================================================================
+   STUDENT & PARENT VIDEO MESSAGES (homepage)
+   ========================================================================== */
+
+.feedback-videos {
+  background-color: var(--paper);
+  border-bottom: 1px solid rgba(26, 24, 20, 0.08);
+  padding-block: var(--section-y);
+  text-align: center;
+}
+
+.feedback-videos__headline {
+  font-family: var(--font-serif);
+  font-size: clamp(1.625rem, 3vw, 2rem);
+  font-weight: 500;
+  color: var(--ink);
+  margin-top: var(--space-4);
+}
+
+.feedback-videos__desc {
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--subtle);
+  max-width: 640px;
+  margin-inline: auto;
+  margin-top: var(--space-4);
+}
+
+.feedback-videos__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 280px));
+  justify-content: center;
+  gap: var(--space-6);
+  margin-top: var(--space-12);
+}
+
+.feedback-video-card {
+  overflow: hidden;
+  background-color: var(--ivory);
+  border: 0.5px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px rgba(26, 24, 20, 0.06);
+  text-align: left;
+}
+
+.feedback-video-card__media {
+  position: relative;
+  display: flex;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--forest);
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+.feedback-video-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(31, 58, 46, 0.06) 0%,
+    rgba(26, 24, 20, 0.34) 100%
+  );
+  pointer-events: none;
+}
+
+.feedback-video-card__media.is-playing::after {
+  display: none;
+}
+
+.feedback-video-card__media:focus-visible {
+  outline: 3px solid var(--bronze-2);
+  outline-offset: -3px;
+}
+
+.feedback-video-card__thumbnail {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.84;
+  transition: transform var(--duration-slow) var(--ease),
+              opacity var(--duration) var(--ease);
+}
+
+.feedback-video-card__media:hover .feedback-video-card__thumbnail,
+.feedback-video-card__media:focus-visible .feedback-video-card__thumbnail {
+  transform: scale(1.04);
+  opacity: 0.95;
+}
+
+.feedback-video-card__play {
+  position: absolute;
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(31, 58, 46, 0.34);
+  transition: border-color var(--duration) var(--ease),
+              background-color var(--duration) var(--ease);
+}
+
+.feedback-video-card:hover .feedback-video-card__play {
+  border-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(31, 58, 46, 0.5);
+}
+
+.feedback-video-card__body {
+  padding: var(--space-5);
+}
+
+.feedback-video-card__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+
+.feedback-video-card__text {
+  color: var(--subtle);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .feedback-videos__grid {
+    grid-template-columns: minmax(0, 280px);
+  }
+}
+
+
+/* ==========================================================================
    SHARED COMPONENTS
    ========================================================================== */
 
@@ -2789,6 +2931,11 @@ em, i {
     rgba(31, 58, 46, 0.08) 0%,
     rgba(26, 24, 20, 0.32) 100%
   );
+  pointer-events: none;
+}
+
+.teacher-card__portrait--youtube.is-playing::after {
+  display: none;
 }
 
 .teacher-card__portrait--youtube:focus-visible {
@@ -2817,7 +2964,7 @@ em, i {
   z-index: 1;
 }
 
-.teacher-card__iframe {
+.youtube-inline-player {
   display: block;
   width: 100%;
   height: 100%;

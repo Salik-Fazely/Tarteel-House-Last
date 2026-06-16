@@ -14,19 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ----- Click-to-play teacher videos ----- */
-  document.querySelectorAll('.teacher-card__portrait--youtube[data-youtube-id]').forEach(trigger => {
+  /* ----- Click-to-play YouTube videos ----- */
+  document.querySelectorAll('[data-youtube-id]').forEach(trigger => {
     trigger.addEventListener('click', () => {
       const videoId = trigger.dataset.youtubeId;
       if (!videoId) return;
 
-      const title = trigger.dataset.youtubeTitle || 'Teacher lesson sample';
+      const title = trigger.dataset.youtubeTitle || 'Video message';
       const iframe = document.createElement('iframe');
       const origin = window.location.origin && window.location.origin !== 'null'
         ? `&origin=${encodeURIComponent(window.location.origin)}`
         : '';
 
-      iframe.className = 'teacher-card__iframe';
+      iframe.className = 'youtube-inline-player';
       iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1${origin}`;
       iframe.title = title;
       iframe.loading = 'lazy';
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       iframe.allowFullscreen = true;
 
       const player = document.createElement('div');
-      player.className = 'teacher-card__portrait teacher-card__portrait--youtube is-playing';
+      player.className = `${trigger.className} is-playing`;
       player.setAttribute('aria-label', title);
       player.append(iframe);
 
@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* -- Staggered reveal — teacher cards, pricing cards & trust stats -- */
     const STAGGER_SELECTORS = [
       '.teacher-card',
+      '.feedback-video-card',
       '.pricing-card',
       '.trust-stats__item',
     ];
