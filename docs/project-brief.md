@@ -19,7 +19,7 @@ Tarteel House should feel minimal, premium, warm, and parent-friendly. The site 
 ## Trust-first funnel
 1. Homepage builds confidence through the brand verse, clear promise, trust stats, teacher preview, process preview, pricing preview, testimonials, and final CTA.
 2. Parents browse the process, teachers, pricing, and about pages.
-3. Parents book a free trial through `book-trial.html`.
+3. Parents book a free trial through `/book-trial`.
 4. The form posts to Google Apps Script, saves to Google Sheets, and sends a notification to `hello@tarteelhouse.com`.
 5. A colleague follows up with the parent on WhatsApp within one to two working days.
 6. Parent makes sure they can join on Zoom or Google Meet before the trial.
@@ -27,7 +27,7 @@ Tarteel House should feel minimal, premium, warm, and parent-friendly. The site 
 ## Current stack
 - Frontend: static custom HTML, CSS, and JavaScript.
 - Styling: one global stylesheet at `assets/css/styles.css`.
-- JavaScript: `assets/js/main.js` plus small inline booking-form script on `book-trial.html`.
+- JavaScript: `assets/js/main.js` plus small inline booking-form script on `/book-trial`.
 - Booking backend for launch: Google Apps Script.
 - Booking storage: Google Sheets.
 - Notification inbox: `hello@tarteelhouse.com`.

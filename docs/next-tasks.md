@@ -6,7 +6,7 @@
    - Google Sheet row is created.
    - Email notification arrives at `hello@tarteelhouse.com`.
    - Reply-To is the parent's email.
-   - Parent lands on `success.html`.
+   - Parent lands on `/success`.
 3. Verify `hello@tarteelhouse.com` inbox access and deliverability.
 
 ## Founder-provided asset needed
@@ -14,7 +14,7 @@
 
 ## Pre-launch polish
 5. Final mobile and desktop QA pass on every page after deployment.
-6. Final legal review of `privacy-policy.html` and `terms.html`.
+6. Final legal review of `/privacy-policy` and `/terms`.
 7. Confirm WhatsApp link and public phone number work on mobile and desktop.
 8. Check testimonials and replace any unverified placeholder quotes.
 

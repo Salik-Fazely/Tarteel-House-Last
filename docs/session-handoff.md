@@ -1,7 +1,7 @@
 # Session Handoff
 
 ## Latest completed work
-- Homepage teacher preview was aligned with real teacher data from `teachers.html`.
+- Homepage teacher preview was aligned with real teacher data from `/teachers`.
 - Business location was standardized as Barcelona, Spain.
 - Public email was standardized as `hello@tarteelhouse.com`.
 - Booking flow was hardened:

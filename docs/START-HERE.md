@@ -11,7 +11,7 @@ The product is trust-first: parents should feel calm, respected, and confident b
 - Static HTML pages at the project root.
 - One main stylesheet: `assets/css/styles.css`.
 - Shared JavaScript: `assets/js/main.js`.
-- Booking form page: `book-trial.html`.
+- Booking form page: `/book-trial`.
 - Booking backend: Google Apps Script.
 - Booking storage: Google Sheets.
 - Backend source in repo: `apps-script/Code.gs`.
@@ -46,15 +46,15 @@ The latest local code is not automatically live. Apps Script changes must be cop
 - Homepage stats are approved: 4 Teachers, 21+ Students, 100% Trusted by Families.
 
 ## Main pages
-- `index.html`: homepage.
-- `book-trial.html`: booking form.
-- `success.html`: post-booking confirmation page.
-- `teachers.html`: teacher profiles.
-- `pricing.html`: pricing.
-- `how-it-works.html`: process.
-- `about.html`: brand/about story.
-- `privacy-policy.html`: legal privacy page.
-- `terms.html`: legal terms page.
+- `/`: homepage.
+- `/book-trial`: booking form.
+- `/success`: post-booking confirmation page.
+- `/teachers`: teacher profiles.
+- `/pricing`: pricing.
+- `/how-it-works`: process.
+- `/about`: brand/about story.
+- `/privacy-policy`: legal privacy page.
+- `/terms`: legal terms page.
 
 ## Booking flow
 Required fields:
@@ -72,12 +72,12 @@ Required fields:
 - `consent = yes`
 
 Flow:
-1. Parent submits `book-trial.html`.
+1. Parent submits `/book-trial`.
 2. Form posts to the deployed Google Apps Script Web App.
 3. Apps Script validates required fields and allowed chip/dropdown values.
 4. Apps Script writes a row to Google Sheets.
 5. Apps Script emails `hello@tarteelhouse.com`.
-6. Parent redirects to `success.html`.
+6. Parent redirects to `/success`.
 7. If validation or backend completion fails, parent sees an error page instead of a false success.
 
 ## What is done
@@ -117,7 +117,7 @@ Flow:
    - `node --check assets/js/main.js`
    - `Get-Content -Raw apps-script/Code.gs | node --check --input-type=commonjs -`
 7. If you change booking fields, update:
-   - `book-trial.html`
+   - `/book-trial`
    - `apps-script/Code.gs`
    - `apps-script/README.md`
    - relevant legal/docs files

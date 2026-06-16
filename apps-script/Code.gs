@@ -2,7 +2,7 @@
  * Tarteel House — booking submission handler.
  *
  * Source of truth for the Apps Script Web App that receives form posts
- * from book-trial.html. Paste the contents of this file into the
+ * from book-trial. Paste the contents of this file into the
  * Apps Script editor (Code.gs) that is bound to the Bookings spreadsheet,
  * save, and redeploy the existing Web App version.
  *
@@ -16,7 +16,7 @@
 const CONFIG = {
   SHEET_NAME: 'Bookings',
   NOTIFICATION_EMAIL: 'hello@tarteelhouse.com',
-  SUCCESS_REDIRECT: 'https://www.tarteelhouse.com/success.html',
+  SUCCESS_REDIRECT: 'https://www.tarteelhouse.com/success',
   ALLOWED_REDIRECT_HOSTS: [
     'www.tarteelhouse.com'
   ]
@@ -297,7 +297,7 @@ function sendNotification_(p) {
 
 // ---------------------------------------------------------------------------
 // Redirect response — shown briefly on script.googleusercontent.com before
-// the browser lands on success.html.
+// the browser lands on success.
 // ---------------------------------------------------------------------------
 function htmlRedirect_(params) {
   const url = getSuccessRedirect_(params);
@@ -358,10 +358,10 @@ function isAllowedSuccessRedirect_(value) {
 
   const protocol = match[1].toLowerCase() + ':';
   const host = match[2].toLowerCase().split(':')[0];
-  const path = match[3].toLowerCase();
+  const path = match[3].toLowerCase().replace(/\/+$/, '');
 
   if (protocol !== 'https:' && protocol !== 'http:') return false;
-  if (!path.endsWith('/success.html')) return false;
+  if (path !== '/success') return false;
   if (host === 'localhost' || host === '127.0.0.1') return true;
 
   return CONFIG.ALLOWED_REDIRECT_HOSTS.indexOf(host) !== -1;

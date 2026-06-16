@@ -4,29 +4,29 @@
 Tarteel House is close to static-site launch. The main website pages are built, the booking form posts to Google Apps Script, submissions are stored in Google Sheets, and booking notifications go to `hello@tarteelhouse.com`.
 
 ## Completed pages
-- `index.html`: homepage with hero, trust stats band, how-it-works preview, teacher preview, why-us section, pricing preview, testimonials, final CTA, and footer.
-- `book-trial.html`: booking form with required WhatsApp, country dropdown, City / Region, chip-based preferences, consent, and success redirect field.
-- `success.html`: booking confirmation page with WhatsApp-first follow-up copy and WhatsApp CTA.
-- `pricing.html`: pricing bundles and FAQ.
-- `how-it-works.html`: full process page.
-- `teachers.html`: teacher page with four real teacher profiles and language filter.
-- `about.html`: about page.
-- `privacy-policy.html` and `terms.html`: legal pages with current business identity, but still requiring founder/legal review.
+- `/`: homepage with hero, trust stats band, how-it-works preview, teacher preview, why-us section, pricing preview, testimonials, final CTA, and footer.
+- `/book-trial`: booking form with required WhatsApp, country dropdown, City / Region, chip-based preferences, consent, and success redirect field.
+- `/success`: booking confirmation page with WhatsApp-first follow-up copy and WhatsApp CTA.
+- `/pricing`: pricing bundles and FAQ.
+- `/how-it-works`: full process page.
+- `/teachers`: teacher page with four real teacher profiles and language filter.
+- `/about`: about page.
+- `/privacy-policy` and `/terms`: legal pages with current business identity, but still requiring founder/legal review.
 
 ## Core files
 - `assets/css/styles.css`: global brand tokens, typography, layout, components, responsive styles, and motion rules.
 - `assets/js/main.js`: mobile nav, active nav link, scroll reveals, page transitions, stats count-up, and shared progressive enhancement.
-- `book-trial.html`: includes small inline JS for booking chips and success redirect.
+- `/book-trial`: includes small inline JS for booking chips and success redirect.
 - `apps-script/Code.gs`: canonical Google Apps Script booking backend.
 - `apps-script/README.md`: backend deployment and sheet documentation.
 
 ## Booking flow now
-1. Parent submits `book-trial.html`.
+1. Parent submits `/book-trial`.
 2. Form posts to deployed Google Apps Script Web App.
 3. Backend validates required fields and allowed values.
 4. Backend appends the booking to Google Sheets.
 5. Backend sends a plain-text notification to `hello@tarteelhouse.com`.
-6. Parent is redirected to `success.html` only after the booking flow completes.
+6. Parent is redirected to `/success` only after the booking flow completes.
 7. If validation or backend completion fails, Apps Script returns an error page instead of falsely showing success.
 
 ## Current required booking fields

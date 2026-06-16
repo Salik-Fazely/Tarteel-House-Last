@@ -26,7 +26,7 @@
 - Preferred days, preferred time, current Qur'an level, and session language are required chip fields.
 - No separate teacher-preference field exists; parents can mention a preferred teacher in notes.
 - Success page copy says a colleague will contact the parent on WhatsApp within one to two working days.
-- Success redirect should land on the site's `success.html`; verify this near final publish/staging.
+- Success redirect should land on the site's `/success`; verify this near final publish/staging.
 - Launch lesson platform copy should say Zoom or Google Meet.
 
 ## Product and operations decisions

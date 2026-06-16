@@ -2,6 +2,11 @@
    Lightweight progressive enhancement. No dependencies. */
 
 document.addEventListener('DOMContentLoaded', () => {
+  const cleanIndexPath = window.location.pathname.replace(/\/index\.html$/i, '/');
+  if (cleanIndexPath !== window.location.pathname) {
+    window.location.replace(`${cleanIndexPath}${window.location.search}${window.location.hash}`);
+    return;
+  }
 
   /* ----- Mobile nav toggle ----- */
   const navToggle = document.getElementById('nav-toggle');
@@ -45,11 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ----- Active nav link ----- */
   const navLinks = document.querySelectorAll('.nav__link');
-  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const normalizePath = (value) => {
+    let pathname;
+    try {
+      pathname = new URL(value, window.location.origin).pathname;
+    } catch (err) {
+      pathname = value || '/';
+    }
+
+    pathname = pathname.replace(/\/index\.html$/i, '/');
+    if (pathname.length > 1) pathname = pathname.replace(/\/+$/, '');
+    return pathname || '/';
+  };
+
+  const currentPath = normalizePath(window.location.href);
 
   navLinks.forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+    if (normalizePath(link.getAttribute('href')) === currentPath) {
       link.classList.add('is-active');
       link.setAttribute('aria-current', 'page');
     }
@@ -188,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (url.origin !== window.location.origin) return false;
 
-      /* Same-page hash link (e.g. about.html#approach while on about.html) */
+      /* Same-page hash link (e.g. /about/#approach while on /about) */
       if (url.pathname === window.location.pathname && url.hash && !url.search) return false;
 
       return true;

@@ -1,6 +1,6 @@
 # Apps Script — Booking handler
 
-The booking form on `book-trial.html` posts to a Google Apps Script Web App.
+The booking form at `/book-trial` posts to a Google Apps Script Web App.
 The Web App saves each booking to Google Sheets and emails hello@tarteelhouse.com.
 
 ## Files
@@ -14,7 +14,7 @@ The Web App saves each booking to Google Sheets and emails hello@tarteelhouse.co
    - Execute as: **Me**
    - Who has access: **Anyone**
 5. Copy the deployed `/exec` URL into the `action` attribute of the form in
-   `book-trial.html`.
+   `/book-trial`.
 
 ## Updating the script
 1. Edit `apps-script/Code.gs` in this repo.
@@ -27,7 +27,7 @@ The Web App saves each booking to Google Sheets and emails hello@tarteelhouse.co
 At the top of `Code.gs`:
 - `NOTIFICATION_EMAIL` — where booking notifications are sent. Launch value:
   `hello@tarteelhouse.com`.
-- `SUCCESS_REDIRECT` — fallback absolute URL of `success.html`.
+- `SUCCESS_REDIRECT` — fallback absolute URL of `/success`.
 - `ALLOWED_REDIRECT_HOSTS` — production/staging hostnames allowed for the
   form's `success_redirect` value. `localhost` and `127.0.0.1` are allowed
   automatically for local testing.
@@ -47,10 +47,10 @@ At the top of `Code.gs`:
 5. Sends a plain-text email to `NOTIFICATION_EMAIL` with all key booking
    details. `Reply-To` is set to the parent's email, so hitting reply
    responds straight to the parent.
-6. Returns a short HTML page that immediately redirects to `success.html`.
+6. Returns a short HTML page that immediately redirects to `/success`.
    The form can pass a `success_redirect` URL for local/staging/production;
    the script only uses it when the hostname is allowed and the path ends in
-   `/success.html`. Otherwise it falls back to `SUCCESS_REDIRECT`.
+   `/success`. Otherwise it falls back to `SUCCESS_REDIRECT`.
 
 ## Required booking fields
 The frontend and backend both require:
