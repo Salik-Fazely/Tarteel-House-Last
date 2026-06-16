@@ -2770,15 +2770,49 @@ em, i {
   justify-content: center;
 }
 
-.teacher-card__portrait--video {
-  background-color: var(--ink);
+.teacher-card__portrait--youtube {
+  position: relative;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+  background-color: var(--forest);
 }
 
-.teacher-card__video {
+.teacher-card__portrait--youtube::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(31, 58, 46, 0.08) 0%,
+    rgba(26, 24, 20, 0.32) 100%
+  );
+}
+
+.teacher-card__portrait--youtube:focus-visible {
+  outline: 3px solid var(--bronze-2);
+  outline-offset: -3px;
+}
+
+.teacher-card__thumbnail {
   display: block;
   width: 100%;
   height: 100%;
-  border: 0;
+  object-fit: cover;
+  opacity: 0.78;
+  transition: transform var(--duration-slow) var(--ease),
+              opacity var(--duration) var(--ease);
+}
+
+.teacher-card__portrait--youtube:hover .teacher-card__thumbnail,
+.teacher-card__portrait--youtube:focus-visible .teacher-card__thumbnail {
+  transform: scale(1.04);
+  opacity: 0.9;
+}
+
+.teacher-card__portrait--youtube .teacher-card__play {
+  position: absolute;
+  z-index: 1;
 }
 
 /* Play button circle */
