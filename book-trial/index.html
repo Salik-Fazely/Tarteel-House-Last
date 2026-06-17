@@ -221,6 +221,8 @@
             </label>
           </div>
 
+          <p class="form-status" id="trial-form-status" role="status" aria-live="polite" hidden></p>
+
           <button type="submit" class="btn btn--primary trial-form__submit">
             Request my free trial
           </button>
@@ -250,7 +252,6 @@
               alt="Tarteel House"
               class="footer__logo"
               height="40"
-              width="auto"
             />
           </a>
           <p class="footer__tagline">One-to-one Qur’an learning for children</p>
@@ -316,50 +317,76 @@
 
     var trialForm = document.getElementById('trial-form');
     if (trialForm) {
+      var formStatus = document.getElementById('trial-form-status');
+      var submitBtn = trialForm.querySelector('button[type="submit"]');
+      var initialSubmitText = submitBtn ? submitBtn.textContent.trim() : 'Request my free trial';
+
+      function setFormStatus(message) {
+        if (!formStatus) return;
+        formStatus.textContent = message || '';
+        formStatus.hidden = !message;
+      }
+
+      function resetSubmitButton() {
+        if (!submitBtn) return;
+        submitBtn.disabled = false;
+        submitBtn.textContent = initialSubmitText;
+      }
+
       trialForm.addEventListener('submit', function(event) {
-  // Always stop the browser from navigating to the Apps Script URL
-  event.preventDefault();
+        // Always stop the browser from navigating to the Apps Script URL.
+        event.preventDefault();
+        setFormStatus('');
 
-  var requiredChipFields = [
-    { id: 'quran-level-value',     message: "Please choose your child's current Qur'an level." },
-    { id: 'session-language-value', message: 'Please choose a preferred session language.' },
-    { id: 'preferred-days-value',   message: 'Please choose at least one preferred day.' },
-    { id: 'preferred-time-value',   message: 'Please choose a preferred time of day.' }
-  ];
-  for (var i = 0; i < requiredChipFields.length; i++) {
-    var field = requiredChipFields[i];
-    var hidden = document.getElementById(field.id);
-    if (!hidden || !hidden.value.trim()) {
-      alert(field.message);
-      var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
-      var firstChip = group && group.querySelector('.chip');
-      if (firstChip) firstChip.focus();
-      return;
-    }
-  }
+        if (typeof trialForm.checkValidity === 'function' && !trialForm.checkValidity()) {
+          if (typeof trialForm.reportValidity === 'function') {
+            trialForm.reportValidity();
+          }
+          return;
+        }
 
-  // Disable the button so the parent doesn't double-click
-  var submitBtn = trialForm.querySelector('button[type="submit"]');
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
-  }
+        var requiredChipFields = [
+          { id: 'quran-level-value',      message: "Please choose your child's current Qur'an level." },
+          { id: 'session-language-value', message: 'Please choose a preferred session language.' },
+          { id: 'preferred-days-value',   message: 'Please choose at least one preferred day.' },
+          { id: 'preferred-time-value',   message: 'Please choose a preferred time of day.' }
+        ];
 
-  // Send the data to Apps Script in the background, then go to success
-  var formData = new FormData(trialForm);
-  fetch(trialForm.action, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: formData
-  })
-  .then(function() {
-    window.location.href = '/success/';
-  })
-  .catch(function() {
-    // no-cors means the request was almost certainly sent anyway
-    window.location.href = '/success/';
-  });
-});
+        for (var i = 0; i < requiredChipFields.length; i++) {
+          var field = requiredChipFields[i];
+          var hidden = document.getElementById(field.id);
+          if (!hidden || !hidden.value.trim()) {
+            alert(field.message);
+            var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
+            var firstChip = group && group.querySelector('.chip');
+            if (firstChip) firstChip.focus();
+            return;
+          }
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending...';
+        }
+
+        var formData = new FormData(trialForm);
+
+        // Apps Script does not expose a readable CORS response here. With
+        // no-cors, a resolved fetch only means the browser sent the request;
+        // it cannot prove that Apps Script saved the booking successfully.
+        fetch(trialForm.action, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: formData
+        })
+          .then(function() {
+            window.location.href = '/success/';
+          })
+          .catch(function() {
+            setFormStatus('We could not send your request from this browser. Please check your connection and try again, or message us on WhatsApp.');
+            resetSubmitButton();
+          });
+      });
     }
 
     function syncHidden(group) {

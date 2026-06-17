@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const scrollToSnap = (index) => {
+      snapPoints = getSnapPoints();
       const nextIndex = Math.min(Math.max(index, 0), snapPoints.length - 1);
       track.scrollTo({
         left: snapPoints[nextIndex] || 0,
@@ -154,8 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'feedback-videos__dot';
+        dot.dataset.carouselIndex = String(index);
         dot.setAttribute('aria-label', `Show video message ${index + 1}`);
-        dot.addEventListener('click', () => scrollToSnap(index));
         dots.append(dot);
       });
     };
@@ -172,6 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (nextButton) {
       nextButton.addEventListener('click', () => scrollToSnap(activeIndex + 1));
+    }
+
+    if (dots) {
+      dots.addEventListener('click', (event) => {
+        const dot = event.target.closest('.feedback-videos__dot');
+        if (!dot) return;
+        scrollToSnap(Number(dot.dataset.carouselIndex || 0));
+      });
     }
 
     track.addEventListener('scroll', () => {
