@@ -903,12 +903,124 @@ em, i {
   margin-top: var(--space-4);
 }
 
-.feedback-videos__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 280px));
-  justify-content: center;
-  gap: var(--space-6);
+.feedback-videos__carousel {
   margin-top: var(--space-12);
+}
+
+.feedback-videos__track {
+  --feedback-carousel-gap: var(--space-6);
+
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - (var(--feedback-carousel-gap) * 2)) / 3);
+  gap: var(--feedback-carousel-gap);
+  justify-content: center;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding-block: var(--space-1) var(--space-3);
+  scroll-behavior: smooth;
+  scroll-snap-type: inline mandatory;
+  scrollbar-width: none;
+}
+
+.feedback-videos__track:has(.feedback-videos__item:nth-child(4)) {
+  justify-content: start;
+}
+
+.feedback-videos__track::-webkit-scrollbar {
+  display: none;
+}
+
+.feedback-videos__item {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.feedback-videos__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.feedback-videos__carousel.is-static .feedback-videos__controls {
+  display: none;
+}
+
+.feedback-videos__arrow {
+  display: flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(31, 58, 46, 0.22);
+  border-radius: var(--radius-full);
+  background-color: rgba(245, 241, 232, 0.82);
+  color: var(--forest);
+  transition: background-color var(--duration) var(--ease),
+              border-color var(--duration) var(--ease),
+              color var(--duration) var(--ease),
+              opacity var(--duration) var(--ease);
+}
+
+.feedback-videos__arrow::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+}
+
+.feedback-videos__arrow--prev::before {
+  transform: rotate(135deg) translate(-1px, -1px);
+}
+
+.feedback-videos__arrow--next::before {
+  transform: rotate(-45deg) translate(-1px, -1px);
+}
+
+.feedback-videos__arrow:hover:not(:disabled) {
+  border-color: rgba(31, 58, 46, 0.42);
+  background-color: var(--forest-soft);
+  color: var(--forest);
+}
+
+.feedback-videos__arrow:focus-visible {
+  outline: 3px solid var(--bronze-2);
+  outline-offset: 3px;
+}
+
+.feedback-videos__arrow:disabled {
+  cursor: default;
+  opacity: 0.36;
+}
+
+.feedback-videos__dots {
+  display: flex;
+  min-height: 12px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.feedback-videos__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background-color: rgba(122, 90, 46, 0.28);
+  transition: width var(--duration) var(--ease),
+              background-color var(--duration) var(--ease);
+}
+
+.feedback-videos__dot.is-active {
+  width: 22px;
+  background-color: var(--bronze);
+}
+
+.feedback-videos__dot:focus-visible {
+  outline: 3px solid var(--bronze-2);
+  outline-offset: 3px;
 }
 
 .feedback-video-card {
@@ -1003,6 +1115,16 @@ em, i {
   color: var(--bronze);
 }
 
+.feedback-video-card__title {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-normal);
+  color: var(--ink);
+  margin-top: var(--space-2);
+}
+
 .feedback-video-card__text {
   color: var(--subtle);
   font-size: var(--text-sm);
@@ -1010,9 +1132,30 @@ em, i {
   margin-top: var(--space-2);
 }
 
+@media (max-width: 900px) {
+  .feedback-videos__track {
+    grid-auto-columns: calc((100% - var(--feedback-carousel-gap)) / 2);
+    justify-content: start;
+  }
+}
+
+@media (max-width: 767px) {
+  .feedback-videos__arrow {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
-  .feedback-videos__grid {
-    grid-template-columns: minmax(0, 280px);
+  .feedback-videos__track {
+    --feedback-mobile-card-width: min(100%, 320px);
+
+    grid-auto-columns: var(--feedback-mobile-card-width);
+    padding-inline: calc((100% - var(--feedback-mobile-card-width)) / 2);
+    scroll-padding-inline: calc((100% - var(--feedback-mobile-card-width)) / 2);
+  }
+
+  .feedback-videos__controls {
+    margin-top: var(--space-3);
   }
 }
 

@@ -75,6 +75,124 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ----- Scroll-reveal animations ----- */
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ----- Video message carousel ----- */
+  document.querySelectorAll('[data-feedback-carousel]').forEach(carousel => {
+    const track = carousel.querySelector('[data-carousel-track]');
+    if (!track) return;
+
+    const items = Array.from(track.children);
+    const prevButton = carousel.querySelector('[data-carousel-prev]');
+    const nextButton = carousel.querySelector('[data-carousel-next]');
+    const dots = carousel.querySelector('[data-carousel-dots]');
+    let snapPoints = [];
+    let activeIndex = 0;
+    let scrollTicking = false;
+
+    const getMaxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
+
+    const getScrollPaddingStart = () => {
+      const style = window.getComputedStyle(track);
+      const padding = style.scrollPaddingInlineStart || style.scrollPaddingLeft || '0';
+      return Number.parseFloat(padding) || 0;
+    };
+
+    const getSnapPoints = () => {
+      const maxScroll = getMaxScroll();
+      const trackRect = track.getBoundingClientRect();
+      const scrollPaddingStart = getScrollPaddingStart();
+
+      return items
+        .map(item => {
+          const itemRect = item.getBoundingClientRect();
+          const rawPoint = itemRect.left - trackRect.left + track.scrollLeft - scrollPaddingStart;
+          return Math.min(Math.max(0, Math.round(rawPoint)), maxScroll);
+        })
+        .filter((point, index, points) => index === 0 || Math.abs(point - points[index - 1]) > 4);
+    };
+
+    const closestSnapIndex = () => {
+      if (!snapPoints.length) return 0;
+
+      return snapPoints.reduce((closest, point, index) => {
+        const currentDistance = Math.abs(track.scrollLeft - point);
+        const closestDistance = Math.abs(track.scrollLeft - snapPoints[closest]);
+        return currentDistance < closestDistance ? index : closest;
+      }, 0);
+    };
+
+    const updateCarousel = () => {
+      const maxScroll = getMaxScroll();
+      activeIndex = closestSnapIndex();
+
+      carousel.classList.toggle('is-static', maxScroll <= 1 || snapPoints.length <= 1);
+
+      if (prevButton) prevButton.disabled = track.scrollLeft <= 1;
+      if (nextButton) nextButton.disabled = maxScroll - track.scrollLeft <= 1;
+
+      if (dots) {
+        dots.querySelectorAll('.feedback-videos__dot').forEach((dot, index) => {
+          const isActive = index === activeIndex;
+          dot.classList.toggle('is-active', isActive);
+          dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+      }
+    };
+
+    const scrollToSnap = (index) => {
+      const nextIndex = Math.min(Math.max(index, 0), snapPoints.length - 1);
+      track.scrollTo({
+        left: snapPoints[nextIndex] || 0,
+        behavior: prefersReduced ? 'auto' : 'smooth',
+      });
+    };
+
+    const renderDots = () => {
+      if (!dots) return;
+
+      dots.replaceChildren();
+      snapPoints.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'feedback-videos__dot';
+        dot.setAttribute('aria-label', `Show video message ${index + 1}`);
+        dot.addEventListener('click', () => scrollToSnap(index));
+        dots.append(dot);
+      });
+    };
+
+    const rebuildCarousel = () => {
+      snapPoints = getSnapPoints();
+      renderDots();
+      updateCarousel();
+    };
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => scrollToSnap(activeIndex - 1));
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener('click', () => scrollToSnap(activeIndex + 1));
+    }
+
+    track.addEventListener('scroll', () => {
+      if (scrollTicking) return;
+
+      scrollTicking = true;
+      window.requestAnimationFrame(() => {
+        updateCarousel();
+        scrollTicking = false;
+      });
+    }, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(rebuildCarousel).observe(track);
+    } else {
+      window.addEventListener('resize', rebuildCarousel);
+    }
+
+    rebuildCarousel();
+  });
+
   if (!prefersReduced && 'IntersectionObserver' in window) {
 
     /* -- Section-level reveal -- */

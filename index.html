@@ -192,65 +192,79 @@
         <h2 class="feedback-videos__headline" id="feedback-videos-headline">Messages from our students and parents</h2>
         <p class="feedback-videos__desc">Short messages from families and students sharing their appreciation, progress, and learning experience with Tarteel House.</p>
 
-        <div class="feedback-videos__grid">
+        <div class="feedback-videos__carousel" data-feedback-carousel>
+          <div class="feedback-videos__track" data-carousel-track>
 
-          <!-- To add another message later, duplicate one card and change the YouTube ID, title, label, and description. -->
-          <article class="feedback-video-card">
-            <button
-              type="button"
-              class="feedback-video-card__media"
-              data-youtube-id="to3h-qq7_FM"
-              data-youtube-title="Student message"
-              aria-label="Play student message"
-            >
-              <img
-                class="feedback-video-card__thumbnail"
-                src="https://i.ytimg.com/vi/to3h-qq7_FM/hqdefault.jpg"
-                alt=""
-                width="480"
-                height="360"
-                loading="lazy"
-              />
-              <span class="feedback-video-card__play" aria-hidden="true">
-                <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
-                  <path d="M1 1l10 6L1 13V1z" fill="white"/>
-                </svg>
-              </span>
-            </button>
-            <div class="feedback-video-card__body">
-              <p class="feedback-video-card__label">Student message</p>
-              <p class="feedback-video-card__text">A short message of appreciation from a student sharing their learning experience.</p>
+            <!-- To add another message later, duplicate one carousel item and change the YouTube ID, label, title, and description. -->
+            <div class="feedback-videos__item">
+              <article class="feedback-video-card">
+                <button
+                  type="button"
+                  class="feedback-video-card__media"
+                  data-youtube-id="to3h-qq7_FM"
+                  data-youtube-title="Student message"
+                  aria-label="Play student message"
+                >
+                  <img
+                    class="feedback-video-card__thumbnail"
+                    src="https://i.ytimg.com/vi/to3h-qq7_FM/hqdefault.jpg"
+                    alt=""
+                    width="480"
+                    height="360"
+                    loading="lazy"
+                  />
+                  <span class="feedback-video-card__play" aria-hidden="true">
+                    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
+                      <path d="M1 1l10 6L1 13V1z" fill="white"/>
+                    </svg>
+                  </span>
+                </button>
+                <div class="feedback-video-card__body">
+                  <p class="feedback-video-card__label">Student message</p>
+                  <h3 class="feedback-video-card__title">A student shares appreciation</h3>
+                  <p class="feedback-video-card__text">A short message of appreciation from a student sharing their learning experience.</p>
+                </div>
+              </article>
             </div>
-          </article>
 
-          <article class="feedback-video-card">
-            <button
-              type="button"
-              class="feedback-video-card__media"
-              data-youtube-id="6WxiPdZNcCY"
-              data-youtube-title="Student message"
-              aria-label="Play student message"
-            >
-              <img
-                class="feedback-video-card__thumbnail"
-                src="https://i.ytimg.com/vi/6WxiPdZNcCY/hqdefault.jpg"
-                alt=""
-                width="480"
-                height="360"
-                loading="lazy"
-              />
-              <span class="feedback-video-card__play" aria-hidden="true">
-                <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
-                  <path d="M1 1l10 6L1 13V1z" fill="white"/>
-                </svg>
-              </span>
-            </button>
-            <div class="feedback-video-card__body">
-              <p class="feedback-video-card__label">Student message</p>
-              <p class="feedback-video-card__text">A student shares thanks and happiness about their Quran learning journey.</p>
+            <div class="feedback-videos__item">
+              <article class="feedback-video-card">
+                <button
+                  type="button"
+                  class="feedback-video-card__media"
+                  data-youtube-id="6WxiPdZNcCY"
+                  data-youtube-title="Student message"
+                  aria-label="Play student message"
+                >
+                  <img
+                    class="feedback-video-card__thumbnail"
+                    src="https://i.ytimg.com/vi/6WxiPdZNcCY/hqdefault.jpg"
+                    alt=""
+                    width="480"
+                    height="360"
+                    loading="lazy"
+                  />
+                  <span class="feedback-video-card__play" aria-hidden="true">
+                    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
+                      <path d="M1 1l10 6L1 13V1z" fill="white"/>
+                    </svg>
+                  </span>
+                </button>
+                <div class="feedback-video-card__body">
+                  <p class="feedback-video-card__label">Student message</p>
+                  <h3 class="feedback-video-card__title">Thanks from a young learner</h3>
+                  <p class="feedback-video-card__text">A student shares thanks and happiness about their Quran learning journey.</p>
+                </div>
+              </article>
             </div>
-          </article>
 
+          </div>
+
+          <div class="feedback-videos__controls" aria-label="Video messages carousel controls">
+            <button class="feedback-videos__arrow feedback-videos__arrow--prev" type="button" data-carousel-prev aria-label="Previous video message"></button>
+            <div class="feedback-videos__dots" data-carousel-dots></div>
+            <button class="feedback-videos__arrow feedback-videos__arrow--next" type="button" data-carousel-next aria-label="Next video message"></button>
+          </div>
         </div>
       </div>
     </section>
