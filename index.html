@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVLW7QGYR1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-ZVLW7QGYR1');
-  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -29,6 +20,32 @@
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="762" />
   <meta property="og:image:alt"   content="Tarteel House" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Online Quran Classes for Kids | Tarteel House" />
+  <meta name="twitter:description" content="One-to-one online Quran classes for kids with caring teachers, structured learning, and a free trial." />
+  <meta name="twitter:image" content="https://www.tarteelhouse.com/assets/logo/tarteel-house@2x.png" />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Tarteel House",
+    "url": "https://www.tarteelhouse.com/",
+    "logo": "https://www.tarteelhouse.com/assets/logo/tarteel-house@2x.png",
+    "email": "hello@tarteelhouse.com",
+    "telephone": "+34 614 494 311",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Barcelona",
+      "addressCountry": "ES"
+    },
+    "areaServed": ["Europe", "United States", "Canada"],
+    "description": "One-to-one online Quran learning for Muslim children, with caring teachers, structured lessons, and a free trial first."
+  }
+  </script>
 
   <!-- Favicons -->
   <link rel="icon"             href="/assets/logo/favicon.ico" />
@@ -65,6 +82,7 @@
           <li><a href="/teachers/"     class="nav__link">Teachers</a></li>
           <li><a href="/pricing/"      class="nav__link">Pricing</a></li>
           <li><a href="/about/"        class="nav__link">About</a></li>
+          <li class="nav__mobile-cta"><a href="/book-trial/" class="btn btn--primary nav__mobile-cta-link">Book a Free Trial</a></li>
         </ul>
 
         <!-- CTA -->
@@ -126,26 +144,13 @@
         <!-- 8. Subheadline -->
         <p class="hero__sub">Tarteel House is a premium online Qur&rsquo;an programme for Muslim families in Europe and the US — with one dedicated teacher per child, a structured path forward, and a free trial session to begin.</p>
 
-        <!-- 9. Language badges -->
-        <div class="hero__badges">
-          <div class="hero__badge-row">
-            <span class="hero__badge-label">Teaching languages</span>
-            <ul class="hero__badge-list" role="list">
-              <li class="hero__badge">English</li>
-              <li class="hero__badge" lang="ar">العربية</li>
-              <li class="hero__badge" lang="tr">Türkçe</li>
-              <li class="hero__badge" lang="fa">فارسی</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- 10. CTA buttons -->
+        <!-- 9. CTA buttons -->
         <div class="hero__actions">
-          <a href="/book-trial/" class="btn btn--primary">Book a free trial</a>
+          <a href="/book-trial/" class="btn btn--primary">Book a Free Trial</a>
           <a href="/teachers/"   class="btn btn--ghost">Meet our teachers</a>
         </div>
 
-        <!-- 11. Trust row -->
+        <!-- 10. Trust row -->
         <ul class="hero__trust" role="list">
           <li class="hero__trust-item">
             <span class="hero__trust-icon" aria-hidden="true"></span>
@@ -160,6 +165,19 @@
             English, Arabic, Turkish, or Persian
           </li>
         </ul>
+
+        <!-- 11. Language badges -->
+        <div class="hero__badges">
+          <div class="hero__badge-row">
+            <span class="hero__badge-label">Teaching languages</span>
+            <ul class="hero__badge-list" role="list">
+              <li class="hero__badge">English</li>
+              <li class="hero__badge" lang="ar">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</li>
+              <li class="hero__badge" lang="tr">T&uuml;rk&ccedil;e</li>
+              <li class="hero__badge" lang="fa">&#1601;&#1575;&#1585;&#1587;&#1740;</li>
+            </ul>
+          </div>
+        </div>
 
       </div>
     </section>
@@ -295,7 +313,7 @@
 
           <article class="step-card">
             <span class="step-card__num">02</span>
-            <h3 class="step-card__title">Book a free trial</h3>
+            <h3 class="step-card__title">Book a Free Trial</h3>
             <p class="step-card__desc">A 30-minute session with your matched teacher. No payment, no commitment.</p>
           </article>
 
@@ -363,7 +381,7 @@
             </button>
             <div class="teacher-card__info">
               <p class="teacher-card__name">Farkhonda Jami</p>
-              <p class="teacher-card__spec">Turkish &amp; Persian &middot; 2 years teaching Tajweed and Tafsir</p>
+              <p class="teacher-card__spec">Turkish &amp; Persian &middot; 3 years teaching Hifz and Tajweed</p>
             </div>
           </article>
 
@@ -372,8 +390,8 @@
               type="button"
               class="teacher-card__thumb teacher-card__portrait--youtube"
               data-youtube-id="iurgyXOzqFU"
-              data-youtube-title="Foruhar Rahmani lesson sample"
-              aria-label="Play Foruhar Rahmani lesson sample"
+              data-youtube-title="Forouhar Rahmani lesson sample"
+              aria-label="Play Forouhar Rahmani lesson sample"
             >
               <img
                 class="teacher-card__thumbnail"
@@ -390,8 +408,8 @@
               </span>
             </button>
             <div class="teacher-card__info">
-              <p class="teacher-card__name">Foruhar Rahmani</p>
-              <p class="teacher-card__spec">Persian &amp; English &middot; 2 years teaching Tajweed</p>
+              <p class="teacher-card__name">Forouhar Rahmani</p>
+              <p class="teacher-card__spec">English &amp; Persian &middot; 9 years teaching Tajweed</p>
             </div>
           </article>
 
@@ -437,7 +455,7 @@
 
           <article class="value-card">
             <h3 class="value-card__title">Flexible around family life</h3>
-            <p class="value-card__desc">Six months of rescheduling with twenty-four hours&rsquo; notice. Up to three make-up sessions per bundle. We understand how real weeks unfold.</p>
+            <p class="value-card__desc">Flexible rescheduling with twenty-four hours&rsquo; notice. Up to four make-up classes are available so learning can fit real family life.</p>
           </article>
 
         </div>
@@ -468,15 +486,15 @@
             <p class="price-card__bundle">STARTER</p>
             <p class="price-card__best-for">For families who want to begin gently</p>
             <p class="price-card__price">&euro;120</p>
-            <p class="price-card__detail">5 sessions &middot; &euro;24 per session</p>
+            <p class="price-card__detail">6 sessions &middot; &euro;20 per session</p>
             <hr class="price-card__divider" aria-hidden="true" />
             <ul class="price-card__includes" role="list">
-              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>5 one-to-one Qur&rsquo;an sessions</li>
+              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>6 one-to-one Qur&rsquo;an sessions</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Same dedicated teacher</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Free trial session first</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Flexible scheduling</li>
             </ul>
-            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Begin with a free trial</a>
+            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Book a Free Trial</a>
           </article>
 
           <!-- Card 2: Steady (featured) -->
@@ -485,16 +503,16 @@
             <p class="price-card__bundle">STEADY</p>
             <p class="price-card__best-for">Best for building a weekly rhythm</p>
             <p class="price-card__price">&euro;220</p>
-            <p class="price-card__detail">10 sessions &middot; &euro;22 per session</p>
+            <p class="price-card__detail">12 sessions &middot; &euro;18.33 per session</p>
             <hr class="price-card__divider" aria-hidden="true" />
             <ul class="price-card__includes" role="list">
-              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>10 one-to-one Qur&rsquo;an sessions</li>
+              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>12 one-to-one Qur&rsquo;an sessions</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>5 complimentary ethics sessions</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Same dedicated teacher</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Parent check-in call included</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Flexible scheduling</li>
             </ul>
-            <a href="/book-trial/" class="btn btn--primary price-card__btn">Begin with a free trial</a>
+            <a href="/book-trial/" class="btn btn--primary price-card__btn">Book a Free Trial</a>
           </article>
 
           <!-- Card 3: Committed -->
@@ -502,17 +520,17 @@
             <p class="price-card__bundle">COMMITTED</p>
             <p class="price-card__best-for">For families ready for a deeper, steadier journey</p>
             <p class="price-card__price">&euro;400</p>
-            <p class="price-card__detail">20 sessions &middot; &euro;20 per session</p>
+            <p class="price-card__detail">25 sessions &middot; &euro;16 per session</p>
             <hr class="price-card__divider" aria-hidden="true" />
             <ul class="price-card__includes" role="list">
-              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>20 one-to-one Qur&rsquo;an sessions</li>
+              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>25 one-to-one Qur&rsquo;an sessions</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>10 complimentary ethics sessions</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Same dedicated teacher</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Parent check-in calls included</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Written progress summaries</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Flexible scheduling</li>
             </ul>
-            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Begin with a free trial</a>
+            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Book a Free Trial</a>
           </article>
 
         </div>
@@ -586,7 +604,7 @@
         <p class="final-cta__body">Meet your matched teacher for thirty minutes. Experience the quality first. Choose a bundle only when it feels right.</p>
 
         <!-- Button -->
-        <a href="/book-trial/" class="btn btn--ivory final-cta__btn">Book a free trial</a>
+        <a href="/book-trial/" class="btn btn--ivory final-cta__btn">Book a Free Trial</a>
 
         <!-- Reassurance -->
         <p class="final-cta__reassurance">No payment required. No commitment.</p>
@@ -623,7 +641,7 @@
             <li><a href="/how-it-works/" class="footer__link">How it works</a></li>
             <li><a href="/teachers/"     class="footer__link">Teachers</a></li>
             <li><a href="/pricing/"      class="footer__link">Pricing</a></li>
-            <li><a href="/book-trial/"   class="footer__link">Book a trial</a></li>
+            <li><a href="/book-trial/"   class="footer__link">Book a Free Trial</a></li>
           </ul>
         </nav>
 

@@ -408,6 +408,10 @@ em, i {
   flex-shrink: 0;
 }
 
+.nav__mobile-cta {
+  display: none;
+}
+
 /* Mobile toggle — hidden on desktop */
 .nav__toggle {
   display: none;
@@ -456,6 +460,15 @@ em, i {
 
   .nav__links li:last-child {
     border-bottom: none;
+  }
+
+  .nav__mobile-cta {
+    display: block;
+    margin-top: var(--space-2);
+  }
+
+  .nav__mobile-cta .btn {
+    width: 100%;
   }
 
   .nav__cta {
@@ -786,6 +799,52 @@ em, i {
 
 .hero__trust-icon::before {
   content: '\2713';
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-block: 2rem 3rem;
+  }
+
+  .hero__arabic {
+    font-size: clamp(1.5rem, 8vw, 1.75rem);
+    line-height: 1.45;
+    margin-top: var(--space-4);
+  }
+
+  .hero__translation {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    margin-top: var(--space-3);
+  }
+
+  .hero__attribution {
+    display: none;
+    margin-top: var(--space-2);
+  }
+
+  .hero__divider {
+    margin-top: var(--space-5);
+  }
+
+  .hero__headline {
+    font-size: 1.625rem;
+    margin-top: var(--space-5);
+  }
+
+  .hero__sub {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    margin-top: var(--space-3);
+  }
+
+  .hero__badges {
+    margin-top: var(--space-4);
+  }
+
+  .hero__actions {
+    margin-top: var(--space-5);
+  }
 }
 
 /* Trust stats band */
@@ -2024,6 +2083,14 @@ em, i {
   color: var(--ivory);
 }
 
+.chip-group.is-invalid .chip {
+  border-color: rgba(160, 64, 48, 0.75);
+}
+
+.chip-group.is-invalid .chip:focus-visible {
+  outline-color: rgba(160, 64, 48, 0.95);
+}
+
 /* Consent row */
 .form-consent {
   margin-top: var(--space-8);
@@ -2106,6 +2173,11 @@ em, i {
 
 .form-status[hidden] {
   display: none;
+}
+
+.form-status--error {
+  border-color: rgba(160, 64, 48, 0.28);
+  background-color: rgba(160, 64, 48, 0.08);
 }
 
 /* Submit button */
@@ -2445,6 +2517,22 @@ em, i {
   border-radius: 12px;
   max-width: 860px;
   margin-inline: auto;
+  position: relative;
+  box-shadow: inset -24px 0 18px -18px rgba(122, 90, 46, 0.22);
+  scrollbar-color: rgba(122, 90, 46, 0.45) rgba(239, 230, 211, 0.55);
+}
+
+.comparison-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.comparison-table-wrapper::-webkit-scrollbar-track {
+  background-color: rgba(239, 230, 211, 0.55);
+}
+
+.comparison-table-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(122, 90, 46, 0.45);
+  border-radius: var(--radius-full);
 }
 
 .comparison-table {
@@ -2509,6 +2597,54 @@ em, i {
 /* Center check icons within table cells */
 .comparison-table td .check-icon {
   margin-inline: auto;
+}
+
+.cookie-consent {
+  position: fixed;
+  right: clamp(1rem, 4vw, 2rem);
+  bottom: clamp(1rem, 4vw, 2rem);
+  z-index: 200;
+  width: min(100% - 2rem, 430px);
+  padding: var(--space-5);
+  background-color: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.cookie-consent__text {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.cookie-consent__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+.cookie-consent__actions .btn {
+  padding-inline: 1.2em;
+}
+
+@media (max-width: 480px) {
+  .cookie-consent {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    width: auto;
+  }
+
+  .cookie-consent__actions {
+    flex-direction: column;
+  }
+
+  .cookie-consent__actions .btn {
+    width: 100%;
+  }
 }
 
 /* ── S6: FAQ ── */

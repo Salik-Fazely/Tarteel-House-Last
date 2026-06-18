@@ -39,9 +39,9 @@
   4 Teachers, 21+ Students, 100% Trusted by Families.
 
 ## Pricing decisions
-- Starter: EUR 120 / 5 sessions.
-- Steady: EUR 220 / 10 sessions, most popular.
-- Committed: EUR 400 / 20 sessions.
+- Starter: EUR 120 / 6 sessions.
+- Steady: EUR 220 / 12 sessions, most popular.
+- Committed: EUR 400 / 25 sessions.
 - "Family" was renamed to "Steady" to avoid sibling-sharing confusion.
 
 ## Brand and design decisions
