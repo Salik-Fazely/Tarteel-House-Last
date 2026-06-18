@@ -8,87 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  /* ----- Analytics consent ----- */
-  const GA_MEASUREMENT_ID = 'G-ZVLW7QGYR1';
-  const CONSENT_KEY = 'tarteelAnalyticsConsent';
-
-  const readConsent = () => {
-    try {
-      return window.localStorage.getItem(CONSENT_KEY);
-    } catch (err) {
-      const match = document.cookie.match(new RegExp(`(?:^|; )${CONSENT_KEY}=([^;]*)`));
-      return match ? decodeURIComponent(match[1]) : null;
-    }
-  };
-
-  const writeConsent = (value) => {
-    try {
-      window.localStorage.setItem(CONSENT_KEY, value);
-    } catch (err) {
-      document.cookie = `${CONSENT_KEY}=${encodeURIComponent(value)}; max-age=31536000; path=/; SameSite=Lax`;
-    }
-  };
-
-  const loadAnalytics = () => {
-    if (window.__tarteelAnalyticsLoaded) return;
-    window.__tarteelAnalyticsLoaded = true;
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag(){ window.dataLayer.push(arguments); };
-    window.gtag('js', new Date());
-    window.gtag('config', GA_MEASUREMENT_ID);
-
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.append(script);
-  };
-
-  const consent = readConsent();
-  if (consent === 'accepted') {
-    loadAnalytics();
-  } else if (!consent) {
-    const banner = document.createElement('div');
-    banner.className = 'cookie-consent';
-    banner.setAttribute('role', 'region');
-    banner.setAttribute('aria-label', 'Analytics consent');
-    banner.innerHTML = `
-      <p class="cookie-consent__text">We use optional analytics to understand how parents use the site. You can accept or decline.</p>
-      <div class="cookie-consent__actions">
-        <button type="button" class="btn btn--ghost cookie-consent__decline">Decline</button>
-        <button type="button" class="btn btn--primary cookie-consent__accept">Accept analytics</button>
-      </div>
-    `;
-
-    banner.querySelector('.cookie-consent__accept').addEventListener('click', () => {
-      writeConsent('accepted');
-      loadAnalytics();
-      banner.remove();
-    });
-
-    banner.querySelector('.cookie-consent__decline').addEventListener('click', () => {
-      writeConsent('declined');
-      banner.remove();
-    });
-
-    document.body.append(banner);
-  }
-
   /* ----- Mobile nav toggle ----- */
   const navToggle = document.getElementById('nav-toggle');
   const navMenu   = document.getElementById('nav-menu');
-
-  const navCta = document.querySelector('.nav__cta');
-
-  if (navMenu && navCta && !navMenu.querySelector('.nav__mobile-cta')) {
-    const ctaItem = document.createElement('li');
-    const ctaLink = navCta.cloneNode(true);
-    ctaItem.className = 'nav__mobile-cta';
-    ctaLink.classList.remove('nav__cta');
-    ctaLink.classList.add('nav__mobile-cta-link');
-    ctaLink.textContent = 'Book a Free Trial';
-    ctaItem.append(ctaLink);
-    navMenu.append(ctaItem);
-  }
 
   if (navToggle && navMenu) {
     navToggle.addEventListener('click', () => {
@@ -308,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const STAGGER_SELECTORS = [
       '.teacher-card',
       '.feedback-video-card',
-      '.price-card',
+      '.pricing-card',
       '.trust-stats__item',
     ];
 

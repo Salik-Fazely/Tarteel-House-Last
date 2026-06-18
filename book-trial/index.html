@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZVLW7QGYR1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-ZVLW7QGYR1');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Free Quran Trial Class | Tarteel House</title>
   <meta name="description" content="Book a free online Quran trial class for your child. Tell us your child&rsquo;s level, language, and availability, and we&rsquo;ll guide you through the next step." />
   <link rel="canonical" href="https://www.tarteelhouse.com/book-trial/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Book a Free Quran Trial Class | Tarteel House" />
-  <meta property="og:description" content="Book a free online Quran trial class for your child. Tell us your child&rsquo;s level, language, and availability, and we&rsquo;ll guide you through the next step." />
-  <meta property="og:url" content="https://www.tarteelhouse.com/book-trial/" />
-  <meta property="og:image" content="https://www.tarteelhouse.com/assets/logo/tarteel-house@2x.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="762" />
-  <meta property="og:image:alt" content="Tarteel House" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Book a Free Quran Trial Class | Tarteel House" />
-  <meta name="twitter:description" content="Book a free online Quran trial class for your child. Tell us your child&rsquo;s level, language, and availability, and we&rsquo;ll guide you through the next step." />
-  <meta name="twitter:image" content="https://www.tarteelhouse.com/assets/logo/tarteel-house@2x.png" />
   <link rel="icon" href="/assets/logo/favicon.ico" />
   <link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,7 +34,6 @@
           <li><a href="/teachers/" class="nav__link">Teachers</a></li>
           <li><a href="/pricing/" class="nav__link">Pricing</a></li>
           <li><a href="/about/" class="nav__link">About</a></li>
-          <li class="nav__mobile-cta"><a href="/book-trial/" class="btn btn--primary nav__mobile-cta-link">Book a Free Trial</a></li>
         </ul>
         <a href="/book-trial/" class="btn btn--primary nav__cta">Book a Free Trial</a>
         <button class="nav__toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open navigation menu">
@@ -66,7 +62,6 @@
           id="trial-form"
           action="https://script.google.com/macros/s/AKfycbxdUb5dS1GDdlbJpjiFmBEW_aagYUlyYUhkEU068pkSYIrT24sw-RlGDmDTZJZ8X87DAA/exec"
           method="POST"
-          accept-charset="UTF-8"
         >
           <input type="hidden" name="source" value="website">
           <input type="hidden" name="success_redirect" id="success-redirect" value="/success/">
@@ -268,7 +263,7 @@
             <li><a href="/how-it-works/" class="footer__link">How it works</a></li>
             <li><a href="/teachers/" class="footer__link">Teachers</a></li>
             <li><a href="/pricing/" class="footer__link">Pricing</a></li>
-            <li><a href="/book-trial/" class="footer__link">Book a Free Trial</a></li>
+            <li><a href="/book-trial/" class="footer__link">Book a trial</a></li>
           </ul>
         </nav>
 
@@ -293,33 +288,11 @@
 
       <div class="footer__bottom">
         <p class="footer__copy">&copy; 2026 Tarteel House &middot; Barcelona, Spain</p>
-      </div>
     </div>
   </footer>
 
   <script src="/assets/js/main.js"></script>
   <script>
-    var trialForm = document.getElementById('trial-form');
-    var formStatus = document.getElementById('trial-form-status');
-
-    function setFormStatus(message, isError) {
-      if (!formStatus) return;
-      formStatus.textContent = message || '';
-      formStatus.hidden = !message;
-      formStatus.classList.toggle('form-status--error', Boolean(isError));
-    }
-
-      function setGroupInvalid(group, invalid) {
-        if (!group) return;
-        group.classList.toggle('is-invalid', Boolean(invalid));
-        group.setAttribute('aria-invalid', invalid ? 'true' : 'false');
-        if (invalid) {
-          group.setAttribute('aria-describedby', 'trial-form-status');
-        } else {
-          group.removeAttribute('aria-describedby');
-        }
-      }
-
     document.querySelectorAll('.chip-group').forEach(function(group) {
       var isMulti = group.dataset.select === 'multi';
 
@@ -338,26 +311,37 @@
             chip.setAttribute('aria-checked', 'true');
           }
           syncHidden(group);
-          setGroupInvalid(group, false);
-          setFormStatus('', false);
         });
       });
     });
 
+    var trialForm = document.getElementById('trial-form');
     if (trialForm) {
+      var formStatus = document.getElementById('trial-form-status');
       var submitBtn = trialForm.querySelector('button[type="submit"]');
+      var initialSubmitText = submitBtn ? submitBtn.textContent.trim() : 'Request my free trial';
+
+      function setFormStatus(message) {
+        if (!formStatus) return;
+        formStatus.textContent = message || '';
+        formStatus.hidden = !message;
+      }
+
+      function resetSubmitButton() {
+        if (!submitBtn) return;
+        submitBtn.disabled = false;
+        submitBtn.textContent = initialSubmitText;
+      }
 
       trialForm.addEventListener('submit', function(event) {
-        setFormStatus('', false);
-        document.querySelectorAll('.chip-group.is-invalid').forEach(function(group) {
-          setGroupInvalid(group, false);
-        });
+        // Always stop the browser from navigating to the Apps Script URL.
+        event.preventDefault();
+        setFormStatus('');
 
         if (typeof trialForm.checkValidity === 'function' && !trialForm.checkValidity()) {
           if (typeof trialForm.reportValidity === 'function') {
             trialForm.reportValidity();
           }
-          event.preventDefault();
           return;
         }
 
@@ -372,12 +356,10 @@
           var field = requiredChipFields[i];
           var hidden = document.getElementById(field.id);
           if (!hidden || !hidden.value.trim()) {
+            alert(field.message);
             var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
-            setGroupInvalid(group, true);
-            setFormStatus(field.message, true);
             var firstChip = group && group.querySelector('.chip');
             if (firstChip) firstChip.focus();
-            event.preventDefault();
             return;
           }
         }
@@ -386,7 +368,24 @@
           submitBtn.disabled = true;
           submitBtn.textContent = 'Sending...';
         }
-        setFormStatus('Sending your request securely...', false);
+
+        var formData = new FormData(trialForm);
+
+        // Apps Script does not expose a readable CORS response here. With
+        // no-cors, a resolved fetch only means the browser sent the request;
+        // it cannot prove that Apps Script saved the booking successfully.
+        fetch(trialForm.action, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: formData
+        })
+          .then(function() {
+            window.location.href = '/success/';
+          })
+          .catch(function() {
+            setFormStatus('We could not send your request from this browser. Please check your connection and try again, or message us on WhatsApp.');
+            resetSubmitButton();
+          });
       });
     }
 
