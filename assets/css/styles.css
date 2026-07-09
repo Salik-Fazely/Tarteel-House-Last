@@ -1800,6 +1800,10 @@ em, i {
   margin-top: var(--space-5);
 }
 
+.final-cta__sub {
+  color: rgba(245, 241, 232, 0.78);
+}
+
 .final-cta__btn {
   margin-top: var(--space-10);
   padding: 1em 2.5em;
