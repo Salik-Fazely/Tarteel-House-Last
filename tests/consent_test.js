@@ -1,7 +1,25 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
 
 const consent = require('../assets/js/consent.js');
+
+test('exposes the shared consent API to browser modules', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/consent.js'), 'utf8');
+  const window = {};
+  const document = {
+    readyState: 'loading',
+    addEventListener() {},
+  };
+
+  vm.runInNewContext(source, { document, window });
+
+  assert.equal(typeof window.TarteelHouseConsent.readSavedPreference, 'function');
+  assert.equal(window.TarteelHouseConsent.loadAnalytics, undefined);
+  assert.equal(Object.keys(window.TarteelHouseConsent).join(','), 'readSavedPreference');
+});
 
 test('stores granted consent for one calendar year', () => {
   const now = Date.UTC(2026, 6, 13, 12);

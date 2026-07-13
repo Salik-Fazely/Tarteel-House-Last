@@ -7,6 +7,10 @@
     return;
   }
 
+  window.TarteelHouseConsent = Object.freeze({
+    readSavedPreference: consent.readSavedPreference,
+  });
+
   const start = () => consent.init(window, document);
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
