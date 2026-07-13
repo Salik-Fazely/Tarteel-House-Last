@@ -64,6 +64,12 @@ class ConsentStaticTests(unittest.TestCase):
             self.assertIn(copy, source)
         self.assertEqual(3, len(re.findall(r"makeElement\(doc, ['\"]button['\"]", source)))
 
+    def test_consent_choice_focus_does_not_scroll_the_page(self):
+        source = (ROOT / "assets/js/consent.js").read_text(encoding="utf-8")
+
+        self.assertEqual(2, source.count("ui.settings.focus({ preventScroll: true });"))
+        self.assertNotIn("ui.settings.focus();", source)
+
     def test_existing_local_links_resolve(self):
         missing = []
         for page in public_pages():
