@@ -552,6 +552,112 @@ em, i {
   line-height: var(--leading-normal);
 }
 
+.footer__cookie-settings {
+  color: rgba(245, 241, 232, 0.65);
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--duration) var(--ease);
+}
+
+.footer__cookie-settings:hover {
+  color: var(--ivory);
+}
+
+/* Analytics consent */
+.consent-banner[hidden] {
+  display: none;
+}
+
+.consent-banner {
+  position: fixed;
+  z-index: 1000;
+  inset: auto var(--space-4) var(--space-4);
+  color: var(--ink);
+}
+
+.consent-banner__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-8);
+  width: min(100%, 1060px);
+  margin-inline: auto;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--paper);
+  border: 1px solid rgba(122, 90, 46, 0.3);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.consent-banner__title {
+  margin-bottom: var(--space-2);
+  font-size: var(--text-xl);
+}
+
+.consent-banner__body {
+  max-width: 720px;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.consent-banner__privacy {
+  display: inline-block;
+  margin-top: var(--space-3);
+  color: var(--forest);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.consent-banner__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.consent-banner__button {
+  min-height: 44px;
+  padding: var(--space-3) var(--space-4);
+  color: var(--ivory);
+  background: var(--forest);
+  border: 1px solid var(--forest);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color var(--duration) var(--ease),
+              border-color var(--duration) var(--ease);
+}
+
+.consent-banner__button:hover {
+  background: var(--forest-2);
+  border-color: var(--forest-2);
+}
+
+@media (max-width: 760px) {
+  .consent-banner {
+    inset: auto var(--space-3) var(--space-3);
+  }
+
+  .consent-banner__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+}
+
+@media (max-width: 420px) {
+  .consent-banner__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .consent-banner__button {
+    white-space: normal;
+  }
+}
+
 /* Language switcher — plain text with separator dots */
 /* Responsive */
 @media (max-width: 860px) {
