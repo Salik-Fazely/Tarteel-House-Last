@@ -1689,7 +1689,7 @@ em, i {
 
 @media (max-width: 680px) {
   .pricing-preview__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     max-width: 420px;
   }
 }
