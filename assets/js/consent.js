@@ -203,7 +203,7 @@
       preference = savePreference(storage, 'granted');
       loadAnalytics(win, doc);
       hide();
-      ui.settings.focus();
+      ui.settings.focus({ preventScroll: true });
     });
     ui.reject.addEventListener('click', () => {
       const analyticsWasActive = preference?.status === 'granted' || Boolean(win.__tarteelHouseGa4Initialized);
@@ -214,7 +214,7 @@
       if (analyticsWasActive) {
         win.location.reload();
       } else {
-        ui.settings.focus();
+        ui.settings.focus({ preventScroll: true });
       }
     });
 
