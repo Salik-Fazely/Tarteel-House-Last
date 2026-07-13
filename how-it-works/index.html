@@ -241,61 +241,61 @@
         <div class="faq-list" role="list">
 
           <div class="faq-item" role="listitem">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="hiw-faq-panel-1">
               What age do you teach from?
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer">
+            <div class="faq-answer" id="hiw-faq-panel-1" hidden>
               <p>We teach girls and boys aged 5 to 16. Our youngest students may be beginning to recognise Arabic letters, while older students may be working on tajweed and memorisation. We do not currently offer classes for adults.</p>
             </div>
           </div>
 
           <div class="faq-item" role="listitem">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="hiw-faq-panel-2">
               My child has never touched the Qur&rsquo;an &mdash; is that okay?
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer">
+            <div class="faq-answer" id="hiw-faq-panel-2" hidden>
               <p>Completely fine. Many of our students start as complete beginners. The teacher will begin with the Arabic alphabet and build from there at your child&rsquo;s own pace.</p>
             </div>
           </div>
 
           <div class="faq-item" role="listitem">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="hiw-faq-panel-3">
               What platform do you use for lessons?
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer">
+            <div class="faq-answer" id="hiw-faq-panel-3" hidden>
               <p>We use Zoom or Google Meet &mdash; whichever your family prefers. Both are free and work on any device. Your teacher will send you the link before each session.</p>
             </div>
           </div>
 
           <div class="faq-item" role="listitem">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="hiw-faq-panel-4">
               How is my child&rsquo;s teacher matched?
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer">
+            <div class="faq-answer" id="hiw-faq-panel-4" hidden>
               <p>Parents do not directly select or reserve a specific teacher. You may browse the <a href="/teachers/" class="text-link">Teachers page</a> and express a preference, but Tarteel House makes the match based on language, level, learning needs, and scheduling availability.</p>
             </div>
           </div>
 
           <div class="faq-item" role="listitem">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="hiw-faq-panel-5">
               What if the teacher isn&rsquo;t a good fit?
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer">
+            <div class="faq-answer" id="hiw-faq-panel-5" hidden>
               <p>If your family is not satisfied with the teaching approach, you may request a teacher change. We will consider the request and propose another suitable teacher subject to availability; we cannot promise an immediate replacement or the same schedule.</p>
             </div>
           </div>
 
           <div class="faq-item" role="listitem">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="hiw-faq-panel-6">
               What happens if my child misses a lesson?
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer">
+            <div class="faq-answer" id="hiw-faq-panel-6" hidden>
               <p>With at least 24 hours&rsquo; notice, the lesson is rescheduled without using a make-up allowance. The 6-lesson package has no allowance for late-notice or unnotified absences; the 12-lesson and 25-lesson packages include up to four make-up lessons. Full rules are on the <a href="/pricing/" class="text-link">pricing page</a>.</p>
             </div>
           </div>
@@ -391,28 +391,6 @@
   <script src="/assets/js/consent.js"></script>
   <script src="/assets/js/analytics-events.js"></script>
   <script src="/assets/js/main.js"></script>
-  <script>
-    /* ── FAQ accordion ── */
-    document.querySelectorAll('.faq-question').forEach(function(btn) {
-      var answer = btn.nextElementSibling;
-      answer.style.maxHeight = '0';
-      answer.style.overflow = 'hidden';
-      btn.addEventListener('click', function() {
-        var item = btn.closest('.faq-item');
-        var isOpen = item.classList.contains('is-open');
-        document.querySelectorAll('.faq-item.is-open').forEach(function(open) {
-          open.classList.remove('is-open');
-          open.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-          open.querySelector('.faq-answer').style.maxHeight = '0';
-        });
-        if (!isOpen) {
-          item.classList.add('is-open');
-          btn.setAttribute('aria-expanded', 'true');
-          answer.style.maxHeight = answer.scrollHeight + 'px';
-        }
-      });
-    });
-  </script>
 
 </body>
 </html>

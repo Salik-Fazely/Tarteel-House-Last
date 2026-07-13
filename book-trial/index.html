@@ -88,27 +88,33 @@
               </select>
             </div>
 
-            <div class="form-field">
-              <label class="form-label">Current Qur’an level</label>
-              <div class="chip-group" data-select="single" data-required="true" role="radiogroup" aria-label="Current Qur'an level" aria-required="true">
-                <button type="button" class="chip" data-value="complete-beginner" role="radio" aria-checked="false">Complete beginner</button>
-                <button type="button" class="chip" data-value="knows-arabic-letters" role="radio" aria-checked="false">Knows the Arabic letters</button>
-                <button type="button" class="chip" data-value="reading-short-words" role="radio" aria-checked="false">Reading short words</button>
-                <button type="button" class="chip" data-value="reading-independently" role="radio" aria-checked="false">Reading independently</button>
+            <fieldset class="form-field choice-fieldset">
+              <legend class="form-label">Current Qur’an level</legend>
+              <div class="chip-group">
+                <input type="radio" class="chip-control" id="quran-level-beginner" name="quran_level" value="complete-beginner" required />
+                <label class="chip" for="quran-level-beginner">Complete beginner</label>
+                <input type="radio" class="chip-control" id="quran-level-letters" name="quran_level" value="knows-arabic-letters" required />
+                <label class="chip" for="quran-level-letters">Knows the Arabic letters</label>
+                <input type="radio" class="chip-control" id="quran-level-words" name="quran_level" value="reading-short-words" required />
+                <label class="chip" for="quran-level-words">Reading short words</label>
+                <input type="radio" class="chip-control" id="quran-level-independent" name="quran_level" value="reading-independently" required />
+                <label class="chip" for="quran-level-independent">Reading independently</label>
               </div>
-              <input type="hidden" name="quran_level" id="quran-level-value" />
-            </div>
+            </fieldset>
 
-            <div class="form-field">
-              <label class="form-label">Preferred session language</label>
-              <div class="chip-group" data-select="single" data-required="true" role="radiogroup" aria-label="Preferred session language" aria-required="true">
-                <button type="button" class="chip" data-value="english" role="radio" aria-checked="false">English</button>
-                <button type="button" class="chip" data-value="arabic" role="radio" aria-checked="false">Arabic</button>
-                <button type="button" class="chip" data-value="turkish" role="radio" aria-checked="false">Turkish</button>
-                <button type="button" class="chip" data-value="persian" role="radio" aria-checked="false">Persian</button>
+            <fieldset class="form-field choice-fieldset">
+              <legend class="form-label">Preferred session language</legend>
+              <div class="chip-group">
+                <input type="radio" class="chip-control" id="session-language-english" name="session_language" value="english" required />
+                <label class="chip" for="session-language-english">English</label>
+                <input type="radio" class="chip-control" id="session-language-arabic" name="session_language" value="arabic" required />
+                <label class="chip" for="session-language-arabic">Arabic</label>
+                <input type="radio" class="chip-control" id="session-language-turkish" name="session_language" value="turkish" required />
+                <label class="chip" for="session-language-turkish">Turkish</label>
+                <input type="radio" class="chip-control" id="session-language-persian" name="session_language" value="persian" required />
+                <label class="chip" for="session-language-persian">Persian</label>
               </div>
-              <input type="hidden" name="session_language" id="session-language-value" />
-            </div>
+            </fieldset>
           </div>
 
           <div class="form-group-section">
@@ -156,29 +162,38 @@
           <div class="form-group-section">
             <p class="form-section-label">SCHEDULING</p>
 
-            <div class="form-field">
-              <label class="form-label">Preferred days</label>
-              <div class="chip-group" data-select="multi" data-required="true" role="group" aria-label="Preferred days" aria-required="true">
-                <button type="button" class="chip" data-value="mon" role="checkbox" aria-checked="false">Mon</button>
-                <button type="button" class="chip" data-value="tue" role="checkbox" aria-checked="false">Tue</button>
-                <button type="button" class="chip" data-value="wed" role="checkbox" aria-checked="false">Wed</button>
-                <button type="button" class="chip" data-value="thu" role="checkbox" aria-checked="false">Thu</button>
-                <button type="button" class="chip" data-value="fri" role="checkbox" aria-checked="false">Fri</button>
-                <button type="button" class="chip" data-value="sat" role="checkbox" aria-checked="false">Sat</button>
-                <button type="button" class="chip" data-value="sun" role="checkbox" aria-checked="false">Sun</button>
+            <fieldset class="form-field choice-fieldset" data-required="true" aria-describedby="preferred-days-requirement">
+              <legend class="form-label">Preferred days</legend>
+              <span class="sr-only" id="preferred-days-requirement">Choose at least one preferred day.</span>
+              <div class="chip-group">
+                <input type="checkbox" class="chip-control" id="preferred-day-mon" name="preferred_days" value="mon" />
+                <label class="chip" for="preferred-day-mon">Mon</label>
+                <input type="checkbox" class="chip-control" id="preferred-day-tue" name="preferred_days" value="tue" />
+                <label class="chip" for="preferred-day-tue">Tue</label>
+                <input type="checkbox" class="chip-control" id="preferred-day-wed" name="preferred_days" value="wed" />
+                <label class="chip" for="preferred-day-wed">Wed</label>
+                <input type="checkbox" class="chip-control" id="preferred-day-thu" name="preferred_days" value="thu" />
+                <label class="chip" for="preferred-day-thu">Thu</label>
+                <input type="checkbox" class="chip-control" id="preferred-day-fri" name="preferred_days" value="fri" />
+                <label class="chip" for="preferred-day-fri">Fri</label>
+                <input type="checkbox" class="chip-control" id="preferred-day-sat" name="preferred_days" value="sat" />
+                <label class="chip" for="preferred-day-sat">Sat</label>
+                <input type="checkbox" class="chip-control" id="preferred-day-sun" name="preferred_days" value="sun" />
+                <label class="chip" for="preferred-day-sun">Sun</label>
               </div>
-              <input type="hidden" name="preferred_days" id="preferred-days-value" />
-            </div>
+            </fieldset>
 
-            <div class="form-field">
-              <label class="form-label">Preferred time of day</label>
-              <div class="chip-group" data-select="single" data-required="true" role="radiogroup" aria-label="Preferred time of day" aria-required="true">
-                <button type="button" class="chip" data-value="morning" role="radio" aria-checked="false">Morning</button>
-                <button type="button" class="chip" data-value="afternoon" role="radio" aria-checked="false">Afternoon</button>
-                <button type="button" class="chip" data-value="evening" role="radio" aria-checked="false">Evening</button>
+            <fieldset class="form-field choice-fieldset">
+              <legend class="form-label">Preferred time of day</legend>
+              <div class="chip-group">
+                <input type="radio" class="chip-control" id="preferred-time-morning" name="preferred_time" value="morning" required />
+                <label class="chip" for="preferred-time-morning">Morning</label>
+                <input type="radio" class="chip-control" id="preferred-time-afternoon" name="preferred_time" value="afternoon" required />
+                <label class="chip" for="preferred-time-afternoon">Afternoon</label>
+                <input type="radio" class="chip-control" id="preferred-time-evening" name="preferred_time" value="evening" required />
+                <label class="chip" for="preferred-time-evening">Evening</label>
               </div>
-              <input type="hidden" name="preferred_time" id="preferred-time-value" />
-            </div>
+            </fieldset>
 
             <div class="form-field">
               <label class="form-label" for="city-region">City / Region</label>
@@ -288,33 +303,32 @@
   <script src="/assets/js/analytics-events.js"></script>
   <script src="/assets/js/main.js"></script>
   <script>
-    document.querySelectorAll('.chip-group').forEach(function(group) {
-      var isMulti = group.dataset.select === 'multi';
-
-      group.querySelectorAll('.chip').forEach(function(chip) {
-        chip.addEventListener('click', function() {
-          if (isMulti) {
-            var nowSelected = !chip.classList.contains('chip--selected');
-            chip.classList.toggle('chip--selected');
-            chip.setAttribute('aria-checked', nowSelected ? 'true' : 'false');
-          } else {
-            group.querySelectorAll('.chip').forEach(function(c) {
-              c.classList.remove('chip--selected');
-              c.setAttribute('aria-checked', 'false');
-            });
-            chip.classList.add('chip--selected');
-            chip.setAttribute('aria-checked', 'true');
-          }
-          syncHidden(group);
-        });
-      });
-    });
+    function normalizePreferredDaysPayload(formData, form) {
+      var selectedDays = Array.from(form.querySelectorAll('input[name="preferred_days"]:checked'))
+        .map(function(control) { return control.value; });
+      formData.delete('preferred_days');
+      formData.append('preferred_days', selectedDays.join(','));
+    }
 
     var trialForm = document.getElementById('trial-form');
     if (trialForm) {
       var formStatus = document.getElementById('trial-form-status');
       var submitBtn = trialForm.querySelector('button[type="submit"]');
       var initialSubmitText = submitBtn ? submitBtn.textContent.trim() : 'Request my free trial';
+      var preferredDayInputs = Array.from(trialForm.querySelectorAll('input[name="preferred_days"]'));
+
+      function syncPreferredDaysValidity() {
+        if (!preferredDayInputs.length) return;
+        var hasSelectedDay = preferredDayInputs.some(function(control) { return control.checked; });
+        preferredDayInputs[0].setCustomValidity(
+          hasSelectedDay ? '' : 'Please choose at least one preferred day.'
+        );
+      }
+
+      preferredDayInputs.forEach(function(control) {
+        control.addEventListener('change', syncPreferredDaysValidity);
+      });
+      syncPreferredDaysValidity();
 
       function setFormStatus(message) {
         if (!formStatus) return;
@@ -332,6 +346,7 @@
         // Always stop the browser from navigating to the Apps Script URL.
         event.preventDefault();
         setFormStatus('');
+        syncPreferredDaysValidity();
 
         if (typeof trialForm.checkValidity === 'function' && !trialForm.checkValidity()) {
           if (typeof trialForm.reportValidity === 'function') {
@@ -340,31 +355,13 @@
           return;
         }
 
-        var requiredChipFields = [
-          { id: 'quran-level-value',      message: "Please choose your child's current Qur'an level." },
-          { id: 'session-language-value', message: 'Please choose a preferred session language.' },
-          { id: 'preferred-days-value',   message: 'Please choose at least one preferred day.' },
-          { id: 'preferred-time-value',   message: 'Please choose a preferred time of day.' }
-        ];
-
-        for (var i = 0; i < requiredChipFields.length; i++) {
-          var field = requiredChipFields[i];
-          var hidden = document.getElementById(field.id);
-          if (!hidden || !hidden.value.trim()) {
-            alert(field.message);
-            var group = hidden && hidden.closest('.form-field') && hidden.closest('.form-field').querySelector('.chip-group');
-            var firstChip = group && group.querySelector('.chip');
-            if (firstChip) firstChip.focus();
-            return;
-          }
-        }
-
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.textContent = 'Sending...';
         }
 
         var formData = new FormData(trialForm);
+        normalizePreferredDaysPayload(formData, trialForm);
 
         // Apps Script does not expose a readable CORS response here. With
         // no-cors, a resolved fetch only means the browser sent the request;
@@ -382,15 +379,6 @@
             resetSubmitButton();
           });
       });
-    }
-
-    function syncHidden(group) {
-      var field = group.closest('.form-field');
-      var hidden = field && field.querySelector('input[type="hidden"]');
-      if (!hidden) return;
-      hidden.value = Array.from(group.querySelectorAll('.chip--selected'))
-        .map(function(c) { return c.dataset.value; })
-        .join(',');
     }
 
     (function() {

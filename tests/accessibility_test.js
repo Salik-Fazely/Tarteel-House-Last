@@ -1,0 +1,194 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+
+
+const source = fs.readFileSync(path.join(__dirname, '../assets/js/main.js'), 'utf8');
+
+
+function eventTarget() {
+  const listeners = new Map();
+  return {
+    addEventListener(type, listener) {
+      const registered = listeners.get(type) || [];
+      registered.push(listener);
+      listeners.set(type, registered);
+    },
+    dispatch(type, event = {}) {
+      for (const listener of listeners.get(type) || []) listener(event);
+    },
+  };
+}
+
+
+function classList(initial = []) {
+  const classes = new Set(initial);
+  return {
+    add(...names) { names.forEach(name => classes.add(name)); },
+    remove(...names) { names.forEach(name => classes.delete(name)); },
+    contains(name) { return classes.has(name); },
+    toggle(name, force) {
+      const enabled = force === undefined ? !classes.has(name) : Boolean(force);
+      if (enabled) classes.add(name);
+      else classes.delete(name);
+      return enabled;
+    },
+  };
+}
+
+
+function element({ attrs = {}, classes = [] } = {}) {
+  const target = eventTarget();
+  const node = {
+    ...target,
+    attrs: new Map(Object.entries(attrs)),
+    classList: classList(classes),
+    hidden: false,
+    setAttribute(name, value) { node.attrs.set(name, String(value)); },
+    getAttribute(name) { return node.attrs.get(name) ?? null; },
+    hasAttribute(name) { return node.attrs.has(name); },
+  };
+  return node;
+}
+
+
+function fixture({ reducedMotion = true } = {}) {
+  const documentTarget = eventTarget();
+  const windowTarget = eventTarget();
+  const firstItem = element({ classes: ['faq-item'] });
+  const secondItem = element({ classes: ['faq-item'] });
+  const firstPanel = element({ attrs: { id: 'faq-panel-one' }, classes: ['faq-answer'] });
+  const secondPanel = element({ attrs: { id: 'faq-panel-two' }, classes: ['faq-answer'] });
+  firstPanel.hidden = true;
+  secondPanel.hidden = true;
+
+  const firstTrigger = element({
+    attrs: { 'aria-controls': 'faq-panel-one', 'aria-expanded': 'false' },
+    classes: ['faq-question'],
+  });
+  const secondTrigger = element({
+    attrs: { 'aria-controls': 'faq-panel-two', 'aria-expanded': 'false' },
+    classes: ['faq-question'],
+  });
+  firstTrigger.closest = selector => selector === '.faq-item' ? firstItem : null;
+  secondTrigger.closest = selector => selector === '.faq-item' ? secondItem : null;
+
+  const firstSection = element();
+  const secondSection = element();
+  const observed = [];
+  class Observer {
+    constructor(callback) { this.callback = callback; }
+    observe(target) { observed.push(target); }
+    unobserve() {}
+  }
+
+  const selectorResults = new Map([
+    ['.faq-question', [firstTrigger, secondTrigger]],
+    ['.nav__link', []],
+    ['[data-youtube-id]', []],
+    ['[data-feedback-carousel]', []],
+    ['main > section', [firstSection, secondSection]],
+    ['.teacher-card', []],
+    ['.feedback-video-card', []],
+    ['.pricing-card', []],
+    ['.trust-stats__item', []],
+    ['.trust-stats__value[data-count-to]', []],
+    ['.trust-stats', []],
+  ]);
+  const document = {
+    ...documentTarget,
+    body: element(),
+    getElementById(id) {
+      return {
+        'faq-panel-one': firstPanel,
+        'faq-panel-two': secondPanel,
+      }[id] || null;
+    },
+    querySelectorAll(selector) { return selectorResults.get(selector) || []; },
+  };
+  const window = {
+    ...windowTarget,
+    IntersectionObserver: Observer,
+    location: {
+      pathname: '/',
+      href: 'https://www.tarteelhouse.com/',
+      origin: 'https://www.tarteelhouse.com',
+      search: '',
+      hash: '',
+      replace() {},
+    },
+    matchMedia(query) {
+      return {
+        matches: query === '(prefers-reduced-motion: reduce)' ? reducedMotion : false,
+        addEventListener() {},
+        addListener() {},
+      };
+    },
+    setTimeout() {},
+  };
+
+  vm.runInNewContext(source, {
+    document,
+    window,
+    URL,
+    IntersectionObserver: Observer,
+    performance: { now: () => 0 },
+    requestAnimationFrame() {},
+  });
+  document.dispatch('DOMContentLoaded');
+
+  return {
+    firstItem,
+    firstPanel,
+    firstSection,
+    firstTrigger,
+    observed,
+    secondItem,
+    secondPanel,
+    secondSection,
+    secondTrigger,
+  };
+}
+
+
+test('FAQ disclosure keeps hidden, expanded, and visual states synchronized', () => {
+  const view = fixture();
+
+  view.firstTrigger.dispatch('click');
+  assert.equal(view.firstTrigger.getAttribute('aria-expanded'), 'true');
+  assert.equal(view.firstPanel.hidden, false);
+  assert.equal(view.firstItem.classList.contains('is-open'), true);
+
+  view.secondTrigger.dispatch('click');
+  assert.equal(view.firstTrigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(view.firstPanel.hidden, true);
+  assert.equal(view.firstItem.classList.contains('is-open'), false);
+  assert.equal(view.secondTrigger.getAttribute('aria-expanded'), 'true');
+  assert.equal(view.secondPanel.hidden, false);
+  assert.equal(view.secondItem.classList.contains('is-open'), true);
+
+  view.secondTrigger.dispatch('click');
+  assert.equal(view.secondTrigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(view.secondPanel.hidden, true);
+  assert.equal(view.secondItem.classList.contains('is-open'), false);
+});
+
+
+test('reduced motion leaves sections immediately visible and unobserved', () => {
+  const view = fixture({ reducedMotion: true });
+
+  assert.equal(view.firstSection.classList.contains('reveal-section'), false);
+  assert.equal(view.secondSection.classList.contains('reveal-section'), false);
+  assert.deepEqual(view.observed, []);
+});
+
+
+test('normal motion retains the existing section reveal behavior', () => {
+  const view = fixture({ reducedMotion: false });
+
+  assert.equal(view.firstSection.classList.contains('is-revealed'), true);
+  assert.equal(view.secondSection.classList.contains('reveal-section'), true);
+  assert.deepEqual(view.observed, [view.secondSection]);
+});
