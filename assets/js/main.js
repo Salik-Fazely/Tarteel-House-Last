@@ -13,10 +13,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const navMenu   = document.getElementById('nav-menu');
 
   if (navToggle && navMenu) {
+    const mobileNav = window.matchMedia('(max-width: 767px)');
+
+    const setNavState = (open, { focusFirst = false, returnFocus = false } = {}) => {
+      const isOpen = mobileNav.matches && open;
+      const isClosedMobile = mobileNav.matches && !isOpen;
+
+      navMenu.classList.toggle('is-open', isOpen);
+      navMenu.hidden = isClosedMobile;
+      navMenu.inert = isClosedMobile;
+      navMenu.toggleAttribute('inert', isClosedMobile);
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+      navToggle.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+
+      if (isOpen && focusFirst) {
+        navMenu.querySelector('a[href]')?.focus();
+      } else if (!isOpen && returnFocus) {
+        navToggle.focus();
+      }
+    };
+
     navToggle.addEventListener('click', () => {
-      const isOpen = navMenu.classList.toggle('is-open');
-      navToggle.setAttribute('aria-expanded', isOpen);
+      const willOpen = navToggle.getAttribute('aria-expanded') !== 'true';
+      setNavState(willOpen, { focusFirst: willOpen });
     });
+
+    navMenu.addEventListener('click', (event) => {
+      if (!mobileNav.matches || !event.target.closest?.('a[href]')) return;
+      setNavState(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || navToggle.getAttribute('aria-expanded') !== 'true') return;
+      setNavState(false, { returnFocus: true });
+    });
+
+    const resetNavState = () => setNavState(false);
+    if (typeof mobileNav.addEventListener === 'function') {
+      mobileNav.addEventListener('change', resetNavState);
+    } else {
+      mobileNav.addListener(resetNavState);
+    }
+    window.addEventListener('resize', resetNavState);
+
+    resetNavState();
   }
 
   /* ----- Click-to-play YouTube videos ----- */
