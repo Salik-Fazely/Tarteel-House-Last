@@ -41,9 +41,14 @@ The latest local code is not automatically live. Apps Script changes must be cop
 - WhatsApp is required in the booking form.
 - Country is a required dropdown shortlist.
 - City / Region is required and replaces the old timezone field.
-- Success page says a colleague will contact the parent on WhatsApp within one to two working days.
+- Tarteel House contacts the parent on WhatsApp within two days; the team may also respond on weekends.
 - Lesson platform copy should say Zoom or Google Meet.
 - Homepage stats are approved: 4 Teachers, 21+ Students, 100% Trusted by Families.
+- Tarteel House serves girls and boys aged 5 to 16; adult classes are not currently offered.
+- The free trial and every paid lesson are 40 minutes.
+- Packages are EUR 120 / 6 lessons, EUR 220 / 12 lessons, and EUR 400 / 25 lessons. Every package is valid for one year from the purchase date.
+- Every two months, we invite parents to a 15-minute progress review. If a parent is unavailable or does not want a meeting, we send a visual progress report through WhatsApp instead.
+- The on-site payment system is not configured. After the trial, Tarteel House confirms the package and shares payment instructions or a secure payment link through WhatsApp; paid lessons are scheduled after payment confirmation.
 
 ## Main pages
 - `/`: homepage.

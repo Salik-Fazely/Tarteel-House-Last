@@ -25,7 +25,7 @@
 - City / Region replaced the older technical timezone field.
 - Preferred days, preferred time, current Qur'an level, and session language are required chip fields.
 - No separate teacher-preference field exists; parents can mention a preferred teacher in notes.
-- Success page copy says a colleague will contact the parent on WhatsApp within one to two working days.
+- Tarteel House contacts the parent on WhatsApp within two days; the team may also respond on weekends.
 - Success redirect should land on the site's `/success`; verify this near final publish/staging.
 - Launch lesson platform copy should say Zoom or Google Meet.
 
@@ -33,16 +33,33 @@
 - Teacher matching is handled personally, not algorithmically.
 - Founder-led, intentionally small team.
 - One dedicated teacher per child.
-- One bundle = one child.
-- Larger bundles add ethics sessions, parent check-ins, and progress summaries.
+- One package = one child.
+- Tarteel House currently serves girls and boys aged 5 to 16 and does not advertise adult classes.
+- The free trial and every paid lesson are 40 minutes.
+- Every two months, we invite parents to a 15-minute progress review. If a parent is unavailable or does not want a meeting, we send a visual progress report through WhatsApp instead.
+- Certificates require at least 30 completed lessons, completion of an identifiable learning stage, and teacher confirmation of that stage.
+- Teacher matching considers language, level, learning needs, and scheduling availability. Parents may express a preference but do not select or reserve a teacher.
+- Families may request a teacher change; another suitable teacher is proposed subject to availability, without a promise of an immediate replacement or the same schedule.
 - Public homepage stats are approved:
   4 Teachers, 21+ Students, 100% Trusted by Families.
 
 ## Pricing decisions
-- Starter: EUR 120 / 5 sessions.
-- Steady: EUR 220 / 10 sessions, most popular.
-- Committed: EUR 400 / 20 sessions.
+- Starter: EUR 120 / 6 lessons (EUR 20 per lesson).
+- Steady: EUR 220 / 12 lessons (approximately EUR 18.33 per lesson), most popular.
+- Committed: EUR 400 / 25 lessons (EUR 16 per lesson).
+- Every package is valid for one year from the purchase date.
+- With at least 24 hours' notice, a lesson is rescheduled without using a make-up allowance.
+- Teacher or Tarteel House cancellations or changes are always rescheduled and never use the family's allowance. The new time depends on teacher and family availability.
+- The 6-lesson package has no make-up allowance for late-notice or unnotified absences; the missed lesson is counted as used.
+- The 12-lesson and 25-lesson packages include up to four make-up lessons, including for absences without prior notice. After all four are used, another late-notice or unnotified absence is counted as used.
+- Make-up allowances cover missed scheduled lessons; they are not additional free lessons.
 - "Family" was renamed to "Steady" to avoid sibling-sharing confusion.
+
+## Payment decisions
+- The on-site payment system is not yet configured.
+- The family takes the free trial first. If they continue, Tarteel House confirms the suitable package and shares payment instructions or a secure payment link through WhatsApp.
+- Paid lessons are scheduled after payment confirmation.
+- Do not publicly name a payment provider or payment method until it is configured and tested.
 
 ## Brand and design decisions
 - Preserve the current minimal premium editorial design.
@@ -54,6 +71,7 @@
 
 ## Legal decisions
 - Legal pages exist but still need proper founder/legal review.
+- Approved refund wording: "Payments are generally non-refundable once a package has started. Lessons already delivered, missed without the required notice, or cancelled late are not refundable. This policy does not affect any mandatory consumer rights that apply under EU law."
 - Earlier plan mentioned iubenda; this remains an option, not a confirmed final legal provider.
 - Do not invent legal facts. Use confirmed business details only.
 

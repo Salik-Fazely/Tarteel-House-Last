@@ -7,7 +7,7 @@ Tarteel House is close to static-site launch. The main website pages are built, 
 - `/`: homepage with hero, trust stats band, how-it-works preview, teacher preview, why-us section, pricing preview, testimonials, final CTA, and footer.
 - `/book-trial`: booking form with required WhatsApp, country dropdown, City / Region, chip-based preferences, consent, and success redirect field.
 - `/success`: booking confirmation page with WhatsApp-first follow-up copy and WhatsApp CTA.
-- `/pricing`: pricing bundles and FAQ.
+- `/pricing`: pricing packages and FAQ.
 - `/how-it-works`: full process page.
 - `/teachers`: teacher page with four real teacher profiles and language filter.
 - `/about`: about page.

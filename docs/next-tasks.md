@@ -26,5 +26,5 @@
 
 ## Post-launch
 13. Record and add teacher intro videos.
-14. Add payment workflow. Manual payment links are acceptable for launch unless founder decides otherwise.
+14. Configure and test the intended on-site secure payment flow separately. Until that is complete, keep the approved journey: confirm the package after the free trial, share payment instructions or a secure payment link through WhatsApp, and schedule paid lessons after payment confirmation.
 15. Consider later backend/admin improvements only after the static launch is stable.
