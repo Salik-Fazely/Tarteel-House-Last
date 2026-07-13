@@ -44,7 +44,7 @@
         <p class="eyebrow">LEGAL</p>
         <h1 class="legal-hero__headline">Privacy Policy</h1>
         <p class="legal-hero__sub">How Tarteel House handles the personal data shared by families who contact us, book a trial, or use our one-to-one Qur&rsquo;an learning service for children.</p>
-        <p class="legal-hero__meta">Last updated: 21 April 2026</p>
+        <p class="legal-hero__meta">Last updated: 13 July 2026</p>
         <div class="legal-hero__ornament" aria-hidden="true">
           <span class="legal-hero__ornament-line"></span>
           <span class="legal-hero__ornament-dot"></span>
@@ -73,7 +73,7 @@
             <li><a class="legal-toc__link" href="#transfers">International transfers</a></li>
             <li><a class="legal-toc__link" href="#retention">Data retention</a></li>
             <li><a class="legal-toc__link" href="#your-rights">Your rights</a></li>
-            <li><a class="legal-toc__link" href="#cookies">Cookies and similar technologies</a></li>
+            <li><a class="legal-toc__link" href="#cookies">Analytics and cookie choices</a></li>
             <li><a class="legal-toc__link" href="#marketing">Marketing communications</a></li>
             <li><a class="legal-toc__link" href="#security">Data security</a></li>
             <li><a class="legal-toc__link" href="#third-party-links">Third-party links</a></li>
@@ -275,20 +275,78 @@
 
           <section class="legal-section" id="cookies">
             <span class="legal-section__number">Section 11</span>
-            <h2 class="legal-section__heading">Cookies and similar technologies</h2>
-            <p>We may use cookies and similar technologies on our website.</p>
+            <h2 class="legal-section__heading">Analytics and cookie choices</h2>
+            <p>Tarteel House uses Google Analytics 4 only to understand website usage and improve the website. Google Analytics is optional: it is not loaded or contacted until you explicitly select &ldquo;Accept analytics&rdquo;. The legal basis for optional analytics is your consent.</p>
+            <p>You may reject analytics without losing access to the website, lesson information, booking form, or any Tarteel House service.</p>
 
-            <h3 class="legal-section__subheading">Strictly necessary cookies</h3>
-            <p>These are used to make the site work properly, such as basic page functionality, security, and remembering essential settings.</p>
-
-            <h3 class="legal-section__subheading">Optional cookies</h3>
-            <p>If used, these may include:</p>
+            <h3 class="legal-section__subheading">What Google Analytics may collect</h3>
+            <p>When analytics is accepted, Google Analytics 4 may collect:</p>
             <ul>
-              <li>analytics cookies to understand how visitors use the website;</li>
-              <li>performance cookies;</li>
-              <li>marketing cookies, if ever introduced.</li>
+              <li>page visits and page paths;</li>
+              <li>user and session statistics;</li>
+              <li>approximate geographic location;</li>
+              <li>browser, operating-system, and device information;</li>
+              <li>referral information;</li>
+              <li>website interaction events.</li>
             </ul>
-            <p>Where required by law, we will ask for consent before setting non-essential cookies. You can manage your preferences through our cookie banner or browser settings.</p>
+            <p>Google is our analytics provider. Google may process analytics information on servers outside your country. Please see <a href="https://policies.google.com/privacy">Google&rsquo;s Privacy Policy</a> and <a href="https://policies.google.com/privacy/frameworks">Google&rsquo;s current information about data-transfer frameworks</a>. We do not independently claim that any particular transfer mechanism guarantees compliance.</p>
+
+            <h3 class="legal-section__subheading" id="analytics-events">Booking-funnel events</h3>
+            <p>When analytics is accepted, we use three custom events to understand how visitors move through the trial-booking funnel:</p>
+            <ul>
+              <li><code>trial_cta_click</code> records an internal click leading to the Book Trial page. Its parameters are <code>source_path</code>, <code>destination_path</code>, and <code>cta_text</code>.</li>
+              <li><code>trial_form_start</code> records that someone began interacting with the booking form. Its parameters are <code>source_path</code> and a fixed <code>form_id</code>.</li>
+              <li><code>trial_form_submit_attempt</code> records a valid client-side submission attempt. Its parameters are <code>source_path</code> and a fixed <code>form_id</code>. It does not prove that a booking was confirmed or received by our backend.</li>
+            </ul>
+            <p>We do not intentionally send Google Analytics parent or child names, email addresses, telephone or WhatsApp numbers, ages, city, selected lesson language, learning level, preferred schedule, notes, or any booking-form field value.</p>
+
+            <h3 class="legal-section__subheading">Your choice and withdrawal</h3>
+            <p>Your analytics choice is stored locally on your device for 12 months in browser local storage under <code>tarteelhouse.analyticsConsent</code>. This storage remembers whether you accepted or rejected analytics; it is not an advertising profile.</p>
+            <p>You can change or withdraw your choice at any time using the persistent &ldquo;Cookie settings&rdquo; control in the footer. Withdrawing consent applies going forward. When your choice changes from accepted to rejected, our consent implementation attempts to remove first-party Google Analytics cookies for the Tarteel House domain and reloads the page.</p>
+
+            <h3 class="legal-section__subheading">Cookies and local storage</h3>
+            <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+              <caption>Analytics cookies and local storage used by the current website configuration</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Provider</th>
+                  <th scope="col">Purpose</th>
+                  <th scope="col">Duration</th>
+                  <th scope="col">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>tarteelhouse.analyticsConsent</code></td>
+                  <td>Browser local storage</td>
+                  <td>Tarteel House</td>
+                  <td>Remembers whether analytics was accepted or rejected</td>
+                  <td>12 months</td>
+                  <td>When the visitor accepts or rejects analytics</td>
+                </tr>
+                <tr>
+                  <td><code>_ga</code></td>
+                  <td>First-party analytics cookie</td>
+                  <td>Google Analytics</td>
+                  <td>Distinguishes users</td>
+                  <td>Up to 2 years, subject to browser restrictions and Google Analytics configuration</td>
+                  <td>Only after analytics is accepted</td>
+                </tr>
+                <tr>
+                  <td><code>_ga_&lt;container-id&gt;</code></td>
+                  <td>First-party analytics cookie</td>
+                  <td>Google Analytics</td>
+                  <td>Persists session state</td>
+                  <td>Up to 2 years, subject to browser restrictions and Google Analytics configuration</td>
+                  <td>Only after analytics is accepted</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+            <p>This table describes the current configuration. Google could use additional cookies if the Google Analytics configuration changes in the future.</p>
           </section>
 
           <section class="legal-section" id="marketing">
