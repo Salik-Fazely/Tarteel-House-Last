@@ -29,7 +29,7 @@
     <div class="container">
       <nav class="nav" aria-label="Main navigation">
         <a href="/" class="nav__logo" aria-label="Tarteel House home">
-          <img src="/assets/logo/tarteel-house.svg" alt="Tarteel House" width="160" height="40" />
+          <img src="/assets/logo/tarteel-house.svg" alt="Tarteel House" width="276" height="175" />
         </a>
         <ul class="nav__links" id="nav-menu" role="list">
           <li><a href="/how-it-works/" class="nav__link">How It Works</a></li>
@@ -62,7 +62,10 @@
       <section class="blog-post-body">
         <div class="container container--text">
           <figure class="blog-post__figure">
-            <img src="/assets/blog/one-to-one-vs-group-quran-classes.png" alt="Adam receives focused one-to-one Qur'an guidance from Teacher Amina during an online lesson." width="1200" height="630" loading="eager" />
+            <picture>
+              <source type="image/webp" srcset="/assets/blog/one-to-one-vs-group-quran-classes-640.webp 640w, /assets/blog/one-to-one-vs-group-quran-classes-1200.webp 1200w" sizes="(max-width: 720px) calc(90vw - 2px), 638px" />
+              <img src="/assets/blog/one-to-one-vs-group-quran-classes.png" alt="Adam receives focused one-to-one Qur'an guidance from Teacher Amina during an online lesson." width="1200" height="630" loading="eager" decoding="async" fetchpriority="high" />
+            </picture>
           </figure>
 
           <div class="blog-article">
@@ -98,7 +101,7 @@
       <div class="footer__grid">
         <div class="footer__col footer__col--brand">
           <a href="/" aria-label="Tarteel House home">
-            <img src="/assets/logo/tarteel-house-reversed.svg" alt="Tarteel House" class="footer__logo" width="160" height="40" />
+            <img src="/assets/logo/tarteel-house-reversed.svg" alt="Tarteel House" class="footer__logo" width="276" height="175" loading="lazy" decoding="async" />
           </a>
           <p class="footer__tagline">One-to-one Qur&rsquo;an learning for children</p>
         </div>
