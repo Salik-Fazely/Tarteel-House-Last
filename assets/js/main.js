@@ -59,6 +59,33 @@ document.addEventListener('DOMContentLoaded', () => {
     resetNavState();
   }
 
+  /* ----- FAQ disclosures ----- */
+  const faqTriggers = Array.from(document.querySelectorAll('.faq-question'));
+
+  const setFaqState = (trigger, expanded) => {
+    const panelId = trigger.getAttribute('aria-controls');
+    const panel = panelId ? document.getElementById(panelId) : null;
+    const item = trigger.closest('.faq-item');
+    if (!panel || !item) return;
+
+    trigger.setAttribute('aria-expanded', String(expanded));
+    panel.hidden = !expanded;
+    item.classList.toggle('is-open', expanded);
+  };
+
+  faqTriggers.forEach(trigger => {
+    setFaqState(trigger, trigger.getAttribute('aria-expanded') === 'true');
+
+    trigger.addEventListener('click', () => {
+      const willExpand = trigger.getAttribute('aria-expanded') !== 'true';
+
+      faqTriggers.forEach(otherTrigger => {
+        if (otherTrigger !== trigger) setFaqState(otherTrigger, false);
+      });
+      setFaqState(trigger, willExpand);
+    });
+  });
+
   /* ----- Click-to-play YouTube videos ----- */
   document.querySelectorAll('[data-youtube-id]').forEach(trigger => {
     trigger.addEventListener('click', () => {

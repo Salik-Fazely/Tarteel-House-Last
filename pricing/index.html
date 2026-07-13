@@ -262,91 +262,91 @@
         <ul class="faq-list" role="list">
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-1">
               <span>When do I pay?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-1" role="region" hidden>
               <p>Only after the free trial, if you decide to continue. Tarteel House confirms the suitable package, then shares payment instructions or a secure payment link through WhatsApp. Paid lessons are scheduled after payment confirmation.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-2">
               <span>How does payment work?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-2" role="region" hidden>
               <p>The on-site payment system is not yet configured. For the current journey, payment instructions or a secure payment link are shared through WhatsApp after the free trial and package confirmation.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-3">
               <span>Is the trial really free?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-3" role="region" hidden>
               <p>Yes. The 40-minute trial is completely free, with no payment required in advance.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-4">
               <span>Do packages expire?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-4" role="region" hidden>
               <p>Every package is valid for one year from the purchase date.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-5">
               <span>What if my child needs to reschedule a session?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-5" role="region" hidden>
               <p>If a parent gives at least 24 hours&rsquo; notice, the lesson is rescheduled and this does not use a make-up allowance. If the teacher or Tarteel House cancels or changes a lesson, it is always rescheduled and never uses the family&rsquo;s allowance. Every new time is subject to teacher and family availability and may differ from the original time.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-6">
               <span>What if a different teacher would suit my child better?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-6" role="region" hidden>
               <p>If your family is not satisfied with the teaching approach, you may request a teacher change. Tarteel House will consider the request and propose another suitable teacher subject to availability; an immediate replacement or the same schedule cannot be guaranteed.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-7">
               <span>What if we need to stop the package?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-7" role="region" hidden>
               <p>Payments are generally non-refundable once a package has started. Lessons already delivered, missed without the required notice, or cancelled late are not refundable. This policy does not affect any mandatory consumer rights that apply under EU law.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-8">
               <span>When is a certificate issued?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-8" role="region" hidden>
               <p>A certificate is issued only when the child has completed at least 30 lessons, completed an identifiable learning stage, and the teacher has confirmed completion of that stage. Purchasing a package alone does not qualify for a certificate.</p>
             </div>
           </li>
 
           <li class="faq-item">
-            <button class="faq-question" aria-expanded="false">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="pricing-faq-panel-9">
               <span>Is this package for one child or can it be shared between siblings?</span>
               <span class="faq-icon" aria-hidden="true"></span>
             </button>
-            <div class="faq-answer" role="region">
+            <div class="faq-answer" id="pricing-faq-panel-9" role="region" hidden>
               <p>Each package is purchased per child, so that every lesson is built around one specific learner. If you have more than one child, we can arrange separate packages and matching teachers for each.</p>
             </div>
           </li>
@@ -440,33 +440,6 @@
   <script src="/assets/js/consent.js"></script>
   <script src="/assets/js/analytics-events.js"></script>
   <script src="/assets/js/main.js"></script>
-  <script>
-    /* ── FAQ accordion ── */
-    document.querySelectorAll('.faq-question').forEach(function(btn) {
-      var answer = btn.nextElementSibling;
-      answer.style.maxHeight = '0';
-      answer.style.overflow  = 'hidden';
-
-      btn.addEventListener('click', function() {
-        var item   = btn.closest('.faq-item');
-        var isOpen = item.classList.contains('is-open');
-
-        /* close all */
-        document.querySelectorAll('.faq-item.is-open').forEach(function(open) {
-          open.classList.remove('is-open');
-          open.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-          open.querySelector('.faq-answer').style.maxHeight = '0';
-        });
-
-        /* open clicked (unless it was already open) */
-        if (!isOpen) {
-          item.classList.add('is-open');
-          btn.setAttribute('aria-expanded', 'true');
-          answer.style.maxHeight = answer.scrollHeight + 'px';
-        }
-      });
-    });
-  </script>
 
 </body>
 </html>
