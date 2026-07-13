@@ -240,9 +240,9 @@ patient, professional, caring, and trustworthy.
 
 Scene E — Parent Progress Updates
 Use for:
-- monthly progress reports
+- progress reviews every two months
 - parent communication
-- WhatsApp updates
+- visual WhatsApp progress reports when a parent is unavailable or does not want a meeting
 - trust-building posts
 
 Elements:

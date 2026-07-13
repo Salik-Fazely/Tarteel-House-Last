@@ -4,13 +4,14 @@
 Tarteel House is a premium online Qur'an learning service for Muslim families. It offers one-to-one Qur'an sessions for children with a dedicated teacher, a calm matching process, and a free trial before any payment.
 
 ## Target audience
-The primary audience is Muslim parents and guardians of children, mainly in Europe and North America, who want careful online Qur'an teaching that feels personal, trustworthy, and easy to manage around family life.
+The primary audience is Muslim parents and guardians of girls and boys aged 5 to 16, mainly in Europe and North America. Tarteel House does not currently offer adult classes.
 
 ## Offer
-- Free trial session first.
+- Free 40-minute trial session first; every paid lesson is also 40 minutes.
 - One dedicated teacher per child.
-- Teacher matching handled personally, not algorithmically.
-- Session bundles after the trial: Starter, Steady, and Committed.
+- Teacher matching handled personally based on language, level, learning needs, and scheduling availability. Parents may express a preference but do not select or reserve a teacher.
+- Packages after the trial: EUR 120 / 6 lessons, EUR 220 / 12 lessons, and EUR 400 / 25 lessons, each valid for one year from the purchase date.
+- Every two months, we invite parents to a 15-minute progress review. If a parent is unavailable or does not want a meeting, we send a visual progress report through WhatsApp instead.
 - Parent-friendly communication, currently centered on WhatsApp.
 
 ## Positioning
@@ -21,8 +22,10 @@ Tarteel House should feel minimal, premium, warm, and parent-friendly. The site 
 2. Parents browse the process, teachers, pricing, and about pages.
 3. Parents book a free trial through `/book-trial`.
 4. The form posts to Google Apps Script, saves to Google Sheets, and sends a notification to `hello@tarteelhouse.com`.
-5. A colleague follows up with the parent on WhatsApp within one to two working days.
+5. Tarteel House contacts the parent on WhatsApp within two days; the team may also respond on weekends.
 6. Parent makes sure they can join on Zoom or Google Meet before the trial.
+7. If the family continues after the trial, Tarteel House confirms the suitable package and sends payment instructions or a secure payment link through WhatsApp.
+8. Paid lessons are scheduled after payment confirmation.
 
 ## Current stack
 - Frontend: static custom HTML, CSS, and JavaScript.
