@@ -20,6 +20,7 @@ PAGES = {
     "/blog/online-quran-classes-for-kids-parents-look-for/": "blog/online-quran-classes-for-kids-parents-look-for/index.html",
     "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
     "/blog/how-parents-can-track-their-childs-quran-progress/": "blog/how-parents-can-track-their-childs-quran-progress/index.html",
+    "/blog/free-online-quran-trial-lesson-parent-checklist/": "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
     "/book-trial/": "book-trial/index.html",
     "/how-it-works/": "how-it-works/index.html",
     "/pricing/": "pricing/index.html",
@@ -33,6 +34,10 @@ ARTICLES = {
     "/blog/online-quran-classes-for-kids-parents-look-for/": "/assets/blog/online-quran-classes-for-kids-parents-look-for.png",
     "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "/assets/blog/one-to-one-vs-group-quran-classes.png",
     "/blog/how-parents-can-track-their-childs-quran-progress/": "/assets/blog/track-child-quran-progress.png",
+    "/blog/free-online-quran-trial-lesson-parent-checklist/": "/assets/blog/free-online-quran-trial-lesson-cover.png",
+}
+ARTICLE_PUBLISHED_DATES = {
+    "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
 }
 SHIMS = {
     "about.html": "/about/",
@@ -204,8 +209,11 @@ class TechnicalSeoTests(unittest.TestCase):
             self.assertEqual(BASE_URL + image_path, posting["image"]["url"], path)
             self.assertEqual(BASE_URL + path, posting["mainEntityOfPage"]["@id"], path)
             self.assertEqual("Tarteel House", posting["publisher"]["name"], path)
-            self.assertNotIn("datePublished", posting, path)
-            self.assertNotIn("dateModified", posting, path)
+            if path in ARTICLE_PUBLISHED_DATES:
+                self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
+            else:
+                self.assertNotIn("datePublished", posting, path)
+            self.assertEqual("2026-07-14", posting["dateModified"], path)
             crumbs = breadcrumb["itemListElement"]
             self.assertEqual([1, 2, 3], [crumb["position"] for crumb in crumbs], path)
             self.assertEqual(["Home", "Blog", page.h1s[0]], [crumb["name"] for crumb in crumbs], path)
