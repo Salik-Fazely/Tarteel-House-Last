@@ -8,6 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 INDEX_IMAGES = [
     (
+        "free-online-quran-trial-lesson-cover",
+        "A child attending a one-to-one online Quran trial lesson with a female teacher",
+    ),
+    (
         "help-children-memorize-short-surahs",
         "Maryam reviews a short surah at a calm home desk with a Qur'an and practice notebook.",
     ),
@@ -26,10 +30,10 @@ INDEX_IMAGES = [
 ]
 
 ARTICLE_IMAGES = {
-    "blog/help-children-memorize-short-surahs/index.html": INDEX_IMAGES[0],
-    "blog/online-quran-classes-for-kids-parents-look-for/index.html": INDEX_IMAGES[1],
-    "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": INDEX_IMAGES[2],
-    "blog/how-parents-can-track-their-childs-quran-progress/index.html": INDEX_IMAGES[3],
+    "blog/help-children-memorize-short-surahs/index.html": INDEX_IMAGES[1],
+    "blog/online-quran-classes-for-kids-parents-look-for/index.html": INDEX_IMAGES[2],
+    "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": INDEX_IMAGES[3],
+    "blog/how-parents-can-track-their-childs-quran-progress/index.html": INDEX_IMAGES[4],
 }
 
 REQUIRED_PAGES = [
