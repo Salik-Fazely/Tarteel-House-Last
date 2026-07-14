@@ -1,33 +1,37 @@
 # Current Status
 
 ## Overall state
-Tarteel House is close to static-site launch. The main website pages are built, the booking form posts to Google Apps Script, submissions are stored in Google Sheets, and booking notifications go to `hello@tarteelhouse.com`.
+The static website, Blog, consent banner, booking form, and Apps Script source are present in the repository. The repository is configured for GitHub Pages and the `www.tarteelhouse.com` custom domain. The latest local commits are not assumed to be published, and booking reliability, backend hardening, and live end-to-end verification remain postponed/open.
 
 ## Completed pages
-- `/`: homepage with hero, trust stats band, how-it-works preview, teacher preview, why-us section, pricing preview, testimonials, final CTA, and footer.
+- `/`: homepage with hero, trust stats band, how-it-works preview, teacher preview, why-us section, pricing preview, student/family videos, final CTA, and footer.
 - `/book-trial`: booking form with required WhatsApp, country dropdown, City / Region, chip-based preferences, consent, and success redirect field.
 - `/success`: booking confirmation page with WhatsApp-first follow-up copy and WhatsApp CTA.
 - `/pricing`: pricing packages and FAQ.
 - `/how-it-works`: full process page.
 - `/teachers`: teacher page with four real teacher profiles and language filter.
 - `/about`: about page.
+- `/blog`: Blog index plus five article pages.
 - `/privacy-policy` and `/terms`: legal pages with current business identity, but still requiring founder/legal review.
+- Complete public pages load the shared consent module and provide persistent cookie settings.
 
 ## Core files
 - `assets/css/styles.css`: global brand tokens, typography, layout, components, responsive styles, and motion rules.
 - `assets/js/main.js`: mobile nav, active nav link, scroll reveals, page transitions, stats count-up, and shared progressive enhancement.
+- `assets/js/consent.js`: consent banner, analytics preference storage, and persistent cookie settings.
 - `/book-trial`: includes small inline JS for booking chips and success redirect.
 - `apps-script/Code.gs`: canonical Google Apps Script booking backend.
 - `apps-script/README.md`: backend deployment and sheet documentation.
 
-## Booking flow now
-1. Parent submits `/book-trial`.
-2. Form posts to deployed Google Apps Script Web App.
-3. Backend validates required fields and allowed values.
-4. Backend appends the booking to Google Sheets.
-5. Backend sends a plain-text notification to `hello@tarteelhouse.com`.
-6. Parent is redirected to `/success` only after the booking flow completes.
-7. If validation or backend completion fails, Apps Script returns an error page instead of falsely showing success.
+## Repository booking flow
+The current frontend and Apps Script source describe this flow, but the deployed version and full live behaviour have not been verified in this phase.
+
+1. The parent-facing form is available at `/book-trial`.
+2. The form is configured to post to a Google Apps Script Web App.
+3. The repository backend source is designed to validate required fields and allowed values.
+4. The repository source is designed to append the booking to Google Sheets and send a plain-text notification to `hello@tarteelhouse.com`.
+5. The intended completion path redirects the parent to `/success`.
+6. The repository source is designed to return an error page when validation or backend completion fails.
 
 ## Current required booking fields
 - `parent_name`
@@ -48,18 +52,14 @@ Tarteel House is close to static-site launch. The main website pages are built, 
 - Business location: Barcelona, Spain.
 - WhatsApp / phone: `+34 614 494 311`.
 
-## Recent QA result
-- JavaScript syntax passed for `assets/js/main.js`.
-- Apps Script syntax passed via Node check.
-- True 390px CSS viewport check found no horizontal overflow on homepage, booking page, or success page.
-- Local href/src check found no broken internal links in changed surfaces.
+## Verification status
+- Automated Python and JavaScript tests cover the current static site.
+- Local verification does not prove that the latest commits or Apps Script source are deployed.
 
 ## What remains
-- Redeploy latest `apps-script/Code.gs` to the live Google Apps Script project.
-- Manually test one real booking end to end: sheet row, notification email, success redirect.
+- Booking reliability and backend hardening remain postponed/open.
+- When booking work resumes, confirm the deployed Apps Script version and manually test one real booking end to end: sheet row, notification email, and success redirect.
 - Add the missing Open Graph image `assets/images/og-home.jpg` when provided.
 - Final legal review of privacy policy and terms.
 - Verify `hello@tarteelhouse.com` inbox and deliverability.
-- Record teacher intro videos.
-- Replace testimonials only if any are placeholders or not founder-approved.
-- Upload/publish the static site and test live domain/SSL.
+- Publish approved local changes through GitHub Pages when deployment is authorized, then test the live domain and SSL.

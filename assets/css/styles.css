@@ -537,6 +537,25 @@ em, i {
   line-height: var(--leading-normal);
 }
 
+.footer__contact {
+  max-width: 250px;
+  font-size: 0.8125rem;
+  color: var(--on-dark-muted);
+  line-height: var(--leading-normal);
+}
+
+.footer__contact-link {
+  color: rgba(245, 241, 232, 0.88);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--duration) var(--ease);
+}
+
+.footer__contact-link:hover {
+  color: var(--ivory);
+}
+
 /* Nav column headings */
 .footer__heading {
   font-family: var(--font-sans);
@@ -1954,6 +1973,24 @@ em, i {
   line-height: var(--leading-normal);
 }
 
+.final-cta__secondary {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.final-cta__secondary-link {
+  color: rgba(245, 241, 232, 0.78);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color var(--duration) var(--ease);
+}
+
+.final-cta__secondary-link:hover {
+  color: var(--ivory);
+}
+
 /* Ivory button — for use on dark backgrounds */
 .btn--ivory {
   background-color: var(--ivory);
@@ -3024,6 +3061,39 @@ em, i {
   margin-top: var(--space-4);
 }
 
+.safeguarding-section {
+  background-color: var(--ivory);
+  padding-block: clamp(3rem, 6vw, 4.5rem);
+}
+
+.safeguarding-note {
+  max-width: 760px;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  background-color: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 30px rgba(26, 24, 20, 0.04);
+}
+
+.safeguarding-note--compact {
+  margin-top: var(--space-8);
+}
+
+.safeguarding-note__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  color: var(--ink);
+}
+
+.safeguarding-note__body {
+  margin-top: var(--space-4);
+  color: var(--subtle);
+  line-height: var(--leading-relaxed);
+}
+
 /* ── S5: What Families Provide ── */
 .hiw-families-section {
   background-color: var(--ivory);
@@ -3343,6 +3413,12 @@ em, i {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.youtube-inline-player:focus,
+.youtube-inline-player.has-focus {
+  outline: 3px solid var(--bronze-2);
+  outline-offset: -3px;
 }
 
 /* Play button circle */

@@ -86,7 +86,7 @@ def normalized_text(parts):
 class MobileHeaderStaticTests(unittest.TestCase):
     def test_canonical_headers_reuse_one_booking_cta_contract(self):
         pages = header_pages()
-        self.assertEqual(14, len(pages))
+        self.assertEqual(15, len(pages))
 
         for page in pages:
             relative = page.relative_to(ROOT)

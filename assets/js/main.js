@@ -88,31 +88,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ----- Click-to-play YouTube videos ----- */
   document.querySelectorAll('[data-youtube-id]').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-      const videoId = trigger.dataset.youtubeId;
-      if (!videoId) return;
+    let isActivated = false;
 
-      const title = trigger.dataset.youtubeTitle || 'Video message';
+    trigger.addEventListener('click', () => {
+      if (isActivated) return;
+
+      const videoId = trigger.dataset.youtubeId;
+      const title = trigger.dataset.youtubeTitle?.trim();
+      if (!/^[A-Za-z0-9_-]{11}$/.test(videoId || '') || !title) return;
+
       const iframe = document.createElement('iframe');
       const origin = window.location.origin && window.location.origin !== 'null'
         ? `&origin=${encodeURIComponent(window.location.origin)}`
         : '';
 
       iframe.className = 'youtube-inline-player';
-      iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1${origin}`;
+      iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&playsinline=1${origin}`;
       iframe.title = title;
+      iframe.tabIndex = 0;
       iframe.loading = 'lazy';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
       iframe.referrerPolicy = 'strict-origin-when-cross-origin';
       iframe.allowFullscreen = true;
+      iframe.addEventListener('focus', () => iframe.classList.add('has-focus'));
+      iframe.addEventListener('blur', () => iframe.classList.remove('has-focus'));
 
       const player = document.createElement('div');
       player.className = `${trigger.className} is-playing`;
       player.setAttribute('aria-label', title);
       player.append(iframe);
 
+      isActivated = true;
       trigger.replaceWith(player);
-    }, { once: true });
+      requestAnimationFrame(() => {
+        iframe.focus({ preventScroll: true });
+      });
+    });
   });
 
   /* ----- Active nav link ----- */
@@ -297,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const STAGGER_SELECTORS = [
       '.teacher-card',
       '.feedback-video-card',
-      '.pricing-card',
+      '.price-card',
       '.trust-stats__item',
     ];
 

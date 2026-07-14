@@ -1,12 +1,15 @@
 # Apps Script — Booking handler
 
-The booking form at `/book-trial` posts to a Google Apps Script Web App.
-The Web App saves each booking to Google Sheets and emails hello@tarteelhouse.com.
+The booking form at `/book-trial` is configured to post to a Google Apps Script Web App. The repository source is designed to save each booking to Google Sheets and email hello@tarteelhouse.com.
+
+## Status and scope
+
+This file documents the repository implementation, not verified live behaviour. Booking reliability and backend hardening remain postponed/open. The deployed script version and a real end-to-end booking must be confirmed when that work resumes; do not assume repository changes are live.
 
 ## Files
 - `Code.gs` — the full Apps Script. Source of truth.
 
-## One-time setup (already done — reference only)
+## Setup reference (live deployment status must be confirmed)
 1. Open the booking Google Sheet.
 2. Extensions → Apps Script.
 3. Paste the contents of `Code.gs` into `Code.gs` in the editor.
@@ -33,7 +36,7 @@ At the top of `Code.gs`:
   automatically for local testing.
 - `SHEET_NAME` — tab name inside the spreadsheet. Defaults to `Bookings`.
 
-## What the script does on each submission
+## What the repository script is designed to do on each submission
 1. Ignores the submission silently if the `website_field` honeypot is filled
    (spam bot).
 2. Validates the required booking fields before writing to the sheet. Missing

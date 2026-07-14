@@ -7,14 +7,15 @@
 - Booking submissions are stored in Google Sheets.
 - Booking notifications are emailed to `hello@tarteelhouse.com`.
 - `apps-script/Code.gs` is the canonical Apps Script source. Paste it into the bound Apps Script project and redeploy to update the live backend.
-- Hostinger remains the likely hosting target for the static site and domain.
+- GitHub Pages is the current static-hosting configuration, with `www.tarteelhouse.com` recorded in `CNAME`.
+- Local commits are not assumed to be published to the live site.
 - PHP/MySQL may be revisited later, but it is not the launch backend.
 
 ## Business identity decisions
 - Public contact email: `hello@tarteelhouse.com`.
 - Business location: Barcelona, Spain.
 - Public WhatsApp / phone used in legal and success CTA: `+34 614 494 311`.
-- WhatsApp is the main follow-up method for trial requests.
+- WhatsApp is the preferred pre-booking question route.
 
 ## Booking flow decisions
 - Free trial before any payment.
@@ -25,14 +26,14 @@
 - City / Region replaced the older technical timezone field.
 - Preferred days, preferred time, current Qur'an level, and session language are required chip fields.
 - No separate teacher-preference field exists; parents can mention a preferred teacher in notes.
-- Tarteel House contacts the parent on WhatsApp within two days; the team may also respond on weekends.
+- Families are normally contacted within two days to arrange the next steps; this is not a guaranteed service-level deadline.
 - Success redirect should land on the site's `/success`; verify this near final publish/staging.
 - Launch lesson platform copy should say Zoom or Google Meet.
 
 ## Product and operations decisions
 - Teacher matching is handled personally, not algorithmically.
 - Founder-led, intentionally small team.
-- One dedicated teacher per child.
+- Lessons normally continue with the same dedicated teacher, subject to availability and unavoidable changes.
 - One package = one child.
 - Tarteel House currently serves girls and boys aged 5 to 16 and does not advertise adult classes.
 - The free trial and every paid lesson are 40 minutes.
@@ -41,7 +42,7 @@
 - Teacher matching considers language, level, learning needs, and scheduling availability. Parents may express a preference but do not select or reserve a teacher.
 - Families may request a teacher change; another suitable teacher is proposed subject to availability, without a promise of an immediate replacement or the same schedule.
 - Public homepage stats are approved:
-  4 Teachers, 21+ Students, 100% Trusted by Families.
+  4 Teachers, 1-to-1 Lessons, 4 Teaching languages.
 
 ## Pricing decisions
 - Starter: EUR 120 / 6 lessons (EUR 20 per lesson).
@@ -77,3 +78,4 @@
 
 ## Open decisions
 - The missing social preview image `assets/images/og-home.jpg` will be provided later.
+- Booking reliability, backend hardening, deployment confirmation, and a real end-to-end booking test remain postponed/open.
