@@ -101,8 +101,7 @@ class CommercialTruthTests(unittest.TestCase):
         self.assert_contains(
             "how-it-works/index.html",
             "girls and boys aged 5 to 16",
-            "within two days",
-            "may also respond on weekends",
+            "normally contact families within two days to arrange the next steps",
             "40-minute",
             "every two months",
             "15-minute progress review",
@@ -138,7 +137,7 @@ class CommercialTruthTests(unittest.TestCase):
             "this policy does not affect any mandatory consumer rights that apply under eu law",
         )
 
-    def test_progress_review_is_universal_and_initial_contact_sla_is_scoped(self):
+    def test_progress_review_is_universal_and_initial_contact_language_is_scoped(self):
         fallback = "if a parent is unavailable or does not want a meeting"
         for path in PUBLIC_PAGES:
             self.assert_contains(path, fallback)
@@ -171,8 +170,8 @@ class CommercialTruthTests(unittest.TestCase):
         self.assertIsNotNone(communication_block, "open communication block not found")
         matching_text = html.unescape(re.sub(r"<[^>]+>", " ", matching_step.group(1))).lower()
         communication_text = html.unescape(re.sub(r"<[^>]+>", " ", communication_block.group(1))).lower()
-        self.assertIn("within two days", matching_text)
-        self.assertIn("may also respond on weekends", matching_text)
+        self.assertIn("normally contact families within two days", matching_text)
+        self.assertNotIn("respond on weekends", matching_text)
         self.assertNotIn("within two days", communication_text)
         self.assertNotIn("respond on weekends", communication_text)
 
