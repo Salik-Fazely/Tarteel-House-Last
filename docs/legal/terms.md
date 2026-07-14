@@ -1,7 +1,7 @@
-# Terms of Service — Placeholder
+# Terms Markdown — Archived Placeholder
 
-This page is being finalized.
+This Markdown file is archived and non-authoritative. It is not used to generate the public Terms page.
 
-If you have any questions about our terms, services, or refund policy, please contact us at hello@tarteelhouse.com.
+The authoritative public-page source in this repository is [`terms/index.html`](../../terms/index.html).
 
-Complete terms of service will be published before our official launch.
+Do not treat this placeholder as the legal source of truth. Any substantive Terms change must be made to the public-page HTML source with appropriate founder and legal review.

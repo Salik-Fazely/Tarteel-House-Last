@@ -1,7 +1,7 @@
-# Privacy Policy — Placeholder
+# Privacy Policy Markdown — Archived Placeholder
 
-This page is being finalized.
+This Markdown file is archived and non-authoritative. It is not used to generate the public Privacy Policy page.
 
-If you have any questions about how Tarteel House handles your information, please contact us at hello@tarteelhouse.com.
+The authoritative public-page source in this repository is [`privacy-policy/index.html`](../../privacy-policy/index.html).
 
-A complete privacy policy will be published before our official launch and will comply with GDPR and applicable data protection laws.
+Do not treat this placeholder as the legal source of truth. Any substantive Privacy Policy change must be made to the public-page HTML source with appropriate founder and legal review.

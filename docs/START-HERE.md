@@ -11,16 +11,18 @@ The product is trust-first: parents should feel calm, respected, and confident b
 - Static HTML pages at the project root.
 - One main stylesheet: `assets/css/styles.css`.
 - Shared JavaScript: `assets/js/main.js`.
+- Shared consent banner and preferences: `assets/js/consent.js`.
 - Booking form page: `/book-trial`.
 - Booking backend: Google Apps Script.
 - Booking storage: Google Sheets.
 - Backend source in repo: `apps-script/Code.gs`.
 - Backend docs: `apps-script/README.md`.
+- Static hosting configuration: GitHub Pages with the custom domain in `CNAME`.
 
 ## Current status
-The site is mostly built and close to launch. The main pages exist, the booking form posts to Apps Script, Apps Script validates the booking, stores it in Google Sheets, and emails `hello@tarteelhouse.com`.
+The static site, Blog, consent banner, booking form, and Apps Script source exist in the repository. Booking reliability, backend hardening, and a real end-to-end booking check remain postponed/open; repository code must not be treated as proof of current production behaviour.
 
-The latest local code is not automatically live. Apps Script changes must be copied into the Apps Script editor and redeployed.
+The latest local code is not automatically live. Frontend changes must be pushed and published through the hosting workflow, and Apps Script changes require a separate manual deployment.
 
 ## Non-negotiable rules
 - Do not change fonts casually.
@@ -34,6 +36,8 @@ The latest local code is not automatically live. Apps Script changes must be cop
 - Do not invent business, legal, teacher, or operational facts.
 
 ## Confirmed facts
+`docs/commercial-facts.md` is the authoritative source for public commercial and service claims.
+
 - Public email: `hello@tarteelhouse.com`.
 - Business location: Barcelona, Spain.
 - Public WhatsApp / phone: `+34 614 494 311`.
@@ -41,9 +45,9 @@ The latest local code is not automatically live. Apps Script changes must be cop
 - WhatsApp is required in the booking form.
 - Country is a required dropdown shortlist.
 - City / Region is required and replaces the old timezone field.
-- Tarteel House contacts the parent on WhatsApp within two days; the team may also respond on weekends.
+- Families are normally contacted within two days to arrange the next steps. This is not a guaranteed service-level deadline.
 - Lesson platform copy should say Zoom or Google Meet.
-- Homepage stats are approved: 4 Teachers, 21+ Students, 100% Trusted by Families.
+- Homepage stats are approved: 4 Teachers, 1-to-1 Lessons, 4 Teaching languages.
 - Tarteel House serves girls and boys aged 5 to 16; adult classes are not currently offered.
 - The free trial and every paid lesson are 40 minutes.
 - Packages are EUR 120 / 6 lessons, EUR 220 / 12 lessons, and EUR 400 / 25 lessons. Every package is valid for one year from the purchase date.
@@ -58,10 +62,11 @@ The latest local code is not automatically live. Apps Script changes must be cop
 - `/pricing`: pricing.
 - `/how-it-works`: process.
 - `/about`: brand/about story.
+- `/blog`: Blog index and published articles.
 - `/privacy-policy`: legal privacy page.
 - `/terms`: legal terms page.
 
-## Booking flow
+## Repository booking flow (not production-verified)
 Required fields:
 - `parent_name`
 - `child_name`
@@ -77,33 +82,34 @@ Required fields:
 - `consent = yes`
 
 Flow:
-1. Parent submits `/book-trial`.
-2. Form posts to the deployed Google Apps Script Web App.
-3. Apps Script validates required fields and allowed chip/dropdown values.
-4. Apps Script writes a row to Google Sheets.
-5. Apps Script emails `hello@tarteelhouse.com`.
-6. Parent redirects to `/success`.
-7. If validation or backend completion fails, parent sees an error page instead of a false success.
+1. The parent-facing form is available at `/book-trial`.
+2. The form is configured to post to a Google Apps Script Web App.
+3. The repository Apps Script source is designed to validate required fields and allowed chip/dropdown values.
+4. The repository source is designed to write a row to Google Sheets and email `hello@tarteelhouse.com`.
+5. The intended completion path redirects the parent to `/success`.
+6. The repository source is designed to return an error page when validation or backend completion fails.
 
 ## What is done
 - Static site pages are built.
+- Blog index and article pages are built.
 - Visual brand system exists.
 - Homepage trust stats band exists.
 - Booking form has required WhatsApp, Country dropdown, City / Region, and chip validation.
-- Apps Script backend exists and has server-side validation.
+- Apps Script source exists and includes server-side validation; live reliability and deployment remain unverified.
+- Shared consent banner and persistent cookie settings control exist.
+- Four teacher lesson-sample videos are present in the repository HTML.
+- Unverified written testimonials were removed; the genuine student/family videos remain.
 - Success page uses WhatsApp-first follow-up copy.
 - Public email/location/WhatsApp are mostly consistent.
 - Docs have been refreshed for handoff.
 
 ## What is left
-- Redeploy `apps-script/Code.gs`.
-- Run a real booking test.
+- Booking reliability and backend hardening remain postponed/open.
+- When booking work resumes, confirm the deployed Apps Script version and run a real end-to-end booking test.
 - Verify `hello@tarteelhouse.com` inbox and deliverability.
 - Add missing `assets/images/og-home.jpg` when the founder provides the social preview image.
 - Final legal review of privacy/terms.
 - Final desktop/mobile QA on live hosting.
-- Record teacher intro videos.
-- Replace any unverified testimonials if needed.
 
 ## Important warnings
 - Existing Google Sheets may still contain an old `timezone` column. Do not reorder existing sheets casually. The script appends missing columns to avoid disturbing old data.

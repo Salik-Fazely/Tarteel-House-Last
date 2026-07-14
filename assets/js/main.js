@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const STAGGER_SELECTORS = [
       '.teacher-card',
       '.feedback-video-card',
-      '.pricing-card',
+      '.price-card',
       '.trust-stats__item',
     ];
 

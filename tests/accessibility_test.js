@@ -58,6 +58,7 @@ function element({ attrs = {}, classes = [], dataset = {} } = {}) {
     focused: false,
     focusOptions: null,
     replacement: null,
+    style: {},
     append(...children) { node.children.push(...children); },
     focus(options = {}) {
       node.focused = true;
@@ -98,6 +99,7 @@ function fixture({ reducedMotion = true, videos = [] } = {}) {
 
   const firstSection = element();
   const secondSection = element();
+  const priceCard = element({ classes: ['price-card'] });
   const observed = [];
   class Observer {
     constructor(callback) { this.callback = callback; }
@@ -118,7 +120,7 @@ function fixture({ reducedMotion = true, videos = [] } = {}) {
     ['main > section', [firstSection, secondSection]],
     ['.teacher-card', []],
     ['.feedback-video-card', []],
-    ['.pricing-card', []],
+    ['.price-card', [priceCard]],
     ['.trust-stats__item', []],
     ['.trust-stats__value[data-count-to]', []],
     ['.trust-stats', []],
@@ -181,6 +183,7 @@ function fixture({ reducedMotion = true, videos = [] } = {}) {
       while (animationFrames.length) animationFrames.shift()();
     },
     observed,
+    priceCard,
     secondItem,
     secondPanel,
     secondSection,
@@ -222,12 +225,13 @@ test('reduced motion leaves sections immediately visible and unobserved', () => 
 });
 
 
-test('normal motion retains the existing section reveal behavior', () => {
+test('normal motion reveals sections and current price cards', () => {
   const view = fixture({ reducedMotion: false });
 
   assert.equal(view.firstSection.classList.contains('is-revealed'), true);
   assert.equal(view.secondSection.classList.contains('reveal-section'), true);
-  assert.deepEqual(view.observed, [view.secondSection]);
+  assert.equal(view.priceCard.classList.contains('reveal-card'), true);
+  assert.deepEqual(view.observed, [view.secondSection, view.priceCard]);
 });
 
 
