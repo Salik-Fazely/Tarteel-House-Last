@@ -3415,6 +3415,12 @@ em, i {
   border: 0;
 }
 
+.youtube-inline-player:focus,
+.youtube-inline-player.has-focus {
+  outline: 3px solid var(--bronze-2);
+  outline-offset: -3px;
+}
+
 /* Play button circle */
 .teacher-card__play {
   width: 48px;
