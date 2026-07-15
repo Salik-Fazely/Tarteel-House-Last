@@ -162,9 +162,14 @@ class TechnicalSeoTests(unittest.TestCase):
         self.assertEqual(len(descriptions), len(set(descriptions)))
 
     def test_social_metadata_is_complete_without_invented_images(self):
+        default_image = "/assets/images/tarteel-house-social-card.png"
         expected_images = {
-            "/": "/assets/logo/tarteel-house@2x.png",
-            "/blog/": "/assets/blog/online-quran-classes-for-kids-parents-look-for.png",
+            "/": default_image,
+            "/about/": default_image,
+            "/blog/": default_image,
+            "/how-it-works/": default_image,
+            "/pricing/": default_image,
+            "/teachers/": default_image,
             **ARTICLES,
         }
         for path, relative in PAGES.items():
@@ -180,7 +185,7 @@ class TechnicalSeoTests(unittest.TestCase):
             self.assertEqual(1, len(page.meta["twitter:description"]), path)
 
             expected_image = expected_images.get(path)
-            expected_card = "summary_large_image" if path.startswith("/blog/") else "summary"
+            expected_card = "summary_large_image" if expected_image else "summary"
             self.assertEqual([expected_card], page.meta["twitter:card"], path)
             if expected_image:
                 absolute = BASE_URL + expected_image

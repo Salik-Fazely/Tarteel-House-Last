@@ -37,7 +37,7 @@ class LinkParser(HTMLParser):
 class ConsentStaticTests(unittest.TestCase):
     def test_all_public_pages_use_the_shared_consent_module(self):
         pages = public_pages()
-        self.assertEqual(15, len(pages))
+        self.assertEqual(16, len(pages))
 
         for page in pages:
             source = page.read_text(encoding="utf-8")
