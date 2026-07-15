@@ -73,46 +73,30 @@
   <!-- =====================================================================
        HEADER / NAV
   ====================================================================== -->
+  <!-- SHARED HEADER:START -->
   <header class="site-header" id="top">
     <div class="container">
       <nav class="nav" aria-label="Main navigation">
-
-        <!-- Logo -->
-        <a href="/" class="nav__logo" aria-label="Tarteel House — home">
-          <img src="/assets/logo/tarteel-house.svg"
-               alt="Tarteel House"
-               width="276"
-               height="175" />
+        <a href="/" class="nav__logo" aria-label="Tarteel House &mdash; home">
+          <img src="/assets/logo/tarteel-house.svg" alt="Tarteel House" width="276" height="175" />
         </a>
-
-        <!-- Desktop links -->
         <ul class="nav__links" id="nav-menu" role="list">
           <li><a href="/how-it-works/" class="nav__link">How It Works</a></li>
-          <li><a href="/teachers/"     class="nav__link">Teachers</a></li>
-          <li><a href="/pricing/"      class="nav__link">Pricing</a></li>
-          <li><a href="/about/"        class="nav__link">About</a></li>
+          <li><a href="/teachers/" class="nav__link">Teachers</a></li>
+          <li><a href="/pricing/" class="nav__link">Pricing</a></li>
+          <li><a href="/about/" class="nav__link">About</a></li>
         </ul>
-
-        <!-- CTA -->
         <a href="/book-trial/" class="btn btn--primary nav__cta" aria-label="Book a free trial">
           <span class="nav__cta-label--full" aria-hidden="true">Book a Free Trial</span>
           <span class="nav__cta-label--short" aria-hidden="true">Free trial</span>
         </a>
-
-        <!-- Mobile toggle -->
-        <button class="nav__toggle"
-                id="nav-toggle"
-                aria-controls="nav-menu"
-                aria-expanded="false"
-                aria-label="Open navigation menu">
-          <span></span>
-          <span></span>
-          <span></span>
+        <button class="nav__toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open navigation menu">
+          <span></span><span></span><span></span>
         </button>
-
       </nav>
     </div>
   </header>
+  <!-- SHARED HEADER:END -->
 
   <!-- =====================================================================
        MAIN CONTENT — homepage sections go here
@@ -585,69 +569,54 @@
   <!-- =====================================================================
        FOOTER
   ====================================================================== -->
+  <!-- SHARED FOOTER:START -->
   <footer class="site-footer">
     <div class="container">
-
-      <!-- Part 1: Main grid -->
       <div class="footer__grid">
-
-        <!-- Brand column -->
         <div class="footer__col footer__col--brand">
-          <a href="/" aria-label="Tarteel House — home">
-            <img src="/assets/logo/tarteel-house-reversed.svg"
-                 alt="Tarteel House"
-                 class="footer__logo"
-                 width="276"
-                 height="175"
-                 loading="lazy"
-                 decoding="async" />
+          <a href="/" aria-label="Tarteel House &mdash; home">
+            <img src="/assets/logo/tarteel-house-reversed.svg" alt="Tarteel House" class="footer__logo" width="276" height="175" loading="lazy" decoding="async" />
           </a>
           <p class="footer__tagline">One-to-one Qur&rsquo;an learning for children</p>
           <p class="footer__contact">Have a question before booking? <a href="https://wa.me/34614494311" class="footer__contact-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Tarteel House with a question before booking (opens in a new tab)">WhatsApp us</a>.</p>
         </div>
 
-        <!-- Learn -->
         <nav class="footer__col" aria-label="Learn">
           <h3 class="footer__heading">LEARN</h3>
           <ul role="list">
             <li><a href="/how-it-works/" class="footer__link">How it works</a></li>
-            <li><a href="/teachers/"     class="footer__link">Teachers</a></li>
-            <li><a href="/pricing/"      class="footer__link">Pricing</a></li>
-            <li><a href="/blog/"         class="footer__link">Blog</a></li>
-            <li><a href="/book-trial/"   class="footer__link">Book a trial</a></li>
+            <li><a href="/teachers/" class="footer__link">Teachers</a></li>
+            <li><a href="/pricing/" class="footer__link">Pricing</a></li>
+            <li><a href="/blog/" class="footer__link">Blog</a></li>
+            <li><a href="/book-trial/" class="footer__link">Book a trial</a></li>
           </ul>
         </nav>
 
-        <!-- About -->
         <nav class="footer__col" aria-label="About">
           <h3 class="footer__heading">ABOUT</h3>
           <ul role="list">
-            <li><a href="/about/"          class="footer__link">Our story</a></li>
+            <li><a href="/about/" class="footer__link">Our story</a></li>
             <li><a href="/about/#approach" class="footer__link">Our approach</a></li>
           </ul>
         </nav>
 
-        <!-- Support -->
         <nav class="footer__col" aria-label="Support">
           <h3 class="footer__heading">SUPPORT</h3>
           <ul role="list">
             <li><a href="/privacy-policy/" class="footer__link">Privacy</a></li>
-            <li><a href="/terms/"          class="footer__link">Terms</a></li>
+            <li><a href="/terms/" class="footer__link">Terms</a></li>
           </ul>
         </nav>
-
       </div>
 
-      <!-- Part 2: Divider -->
       <hr class="footer__divider" aria-hidden="true" />
 
-      <!-- Part 3: Bottom row -->
       <div class="footer__bottom">
         <p class="footer__copy">&copy; 2026 Tarteel House &middot; Barcelona, Spain</p>
       </div>
-
     </div>
   </footer>
+  <!-- SHARED FOOTER:END -->
 
   <!-- Scripts -->
   <script src="/assets/js/consent.js"></script>

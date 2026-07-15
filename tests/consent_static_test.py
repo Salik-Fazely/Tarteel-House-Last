@@ -19,7 +19,7 @@ def public_pages():
     return tuple(
         path
         for path in sorted(ROOT.rglob("*.html"))
-        if '<footer class="site-footer">' in path.read_text(encoding="utf-8")
+        if "<!-- SHARED FOOTER:START -->" in path.read_text(encoding="utf-8")
     )
 
 

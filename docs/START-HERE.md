@@ -118,6 +118,16 @@ Flow:
 - The `success_redirect` setup must be checked on local, staging, and production before launch.
 - Homepage OG image is currently referenced but missing; founder will provide it later.
 
+## Shared Header and Footer workflow
+The canonical Header is `partials/header.html`, and the standard Footer is `partials/footer.html`. `partials/footer-no-prebooking-contact.html` preserves the intentional Footer variant used by Blog articles and the post-booking Success page.
+
+This is build-time synchronization, not a runtime include. Complete generated HTML must remain committed so browsers receive the full Header and Footer without depending on Python or JavaScript.
+
+After editing a shared partial:
+1. Run `python scripts/sync_shared_layout.py --write`.
+2. Commit the generated public HTML together with the partial change.
+3. Run `python scripts/sync_shared_layout.py --check` and the test suites before handoff.
+
 ## How to continue safely
 1. Read this file.
 2. Read `docs/current-status.md`.

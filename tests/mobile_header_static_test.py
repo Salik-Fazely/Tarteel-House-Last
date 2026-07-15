@@ -11,7 +11,7 @@ def header_pages():
     return tuple(
         path
         for path in sorted(ROOT.rglob("*.html"))
-        if '<header class="site-header"' in path.read_text(encoding="utf-8")
+        if "<!-- SHARED HEADER:START -->" in path.read_text(encoding="utf-8")
     )
 
 
