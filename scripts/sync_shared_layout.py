@@ -50,6 +50,11 @@ PAGE_CONFIGS = (
     PageConfig("about/index.html", "about"),
     PageConfig("blog/index.html", None),
     PageConfig(
+        "blog/child-refuses-quran-practice/index.html",
+        None,
+        footer_variant="no_prebooking_contact",
+    ),
+    PageConfig(
         "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
         None,
         footer_variant="no_prebooking_contact",

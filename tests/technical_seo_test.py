@@ -16,6 +16,7 @@ PAGES = {
     "/": "index.html",
     "/about/": "about/index.html",
     "/blog/": "blog/index.html",
+    "/blog/child-refuses-quran-practice/": "blog/child-refuses-quran-practice/index.html",
     "/blog/help-children-memorize-short-surahs/": "blog/help-children-memorize-short-surahs/index.html",
     "/blog/online-quran-classes-for-kids-parents-look-for/": "blog/online-quran-classes-for-kids-parents-look-for/index.html",
     "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
@@ -31,6 +32,7 @@ PAGES = {
     "/terms/": "terms/index.html",
 }
 ARTICLES = {
+    "/blog/child-refuses-quran-practice/": "/assets/blog/child-refuses-quran-practice.png",
     "/blog/help-children-memorize-short-surahs/": "/assets/blog/help-children-memorize-short-surahs.png",
     "/blog/online-quran-classes-for-kids-parents-look-for/": "/assets/blog/online-quran-classes-for-kids-parents-look-for.png",
     "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "/assets/blog/one-to-one-vs-group-quran-classes.png",
@@ -42,6 +44,7 @@ ARTICLE_PUBLISHED_DATES = {
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
 }
 ARTICLE_MODIFIED_DATES = {
+    "/blog/child-refuses-quran-practice/": "2026-09-01",
     "/blog/how-children-learn-to-read-quran/": "2026-09-01",
 }
 SHIMS = {

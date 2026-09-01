@@ -19,6 +19,7 @@ EXPECTED_COMPLETE_PAGES = (
     "index.html",
     "about/index.html",
     "blog/index.html",
+    "blog/child-refuses-quran-practice/index.html",
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
     "blog/help-children-memorize-short-surahs/index.html",
     "blog/how-children-learn-to-read-quran/index.html",
@@ -48,6 +49,9 @@ REDIRECT_STUBS = (
 )
 
 ARTICLE_IMAGES = {
+    "blog/child-refuses-quran-practice/index.html": (
+        "https://www.tarteelhouse.com/assets/blog/child-refuses-quran-practice.png"
+    ),
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html": (
         "https://www.tarteelhouse.com/assets/blog/free-online-quran-trial-lesson-cover.png"
     ),

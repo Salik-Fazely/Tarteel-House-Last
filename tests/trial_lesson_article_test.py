@@ -520,11 +520,17 @@ class TrialLessonArticleTests(unittest.TestCase):
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)
         first_card = source[first_card_start:second_card_start]
         self.assertIn(
-            'href="/blog/how-children-learn-to-read-quran/"', first_card
+            'href="/blog/child-refuses-quran-practice/"', first_card
         )
 
         third_card_start = source.index('<article class="blog-card">', second_card_start + 1)
         trial_card = source[second_card_start:third_card_start]
+        self.assertIn(
+            'href="/blog/how-children-learn-to-read-quran/"', trial_card
+        )
+
+        fourth_card_start = source.index('<article class="blog-card">', third_card_start + 1)
+        trial_card = source[third_card_start:fourth_card_start]
         self.assertIn(
             'href="/blog/free-online-quran-trial-lesson-parent-checklist/"', trial_card
         )

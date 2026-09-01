@@ -19,6 +19,7 @@ PUBLIC_PAGES = (
     "book-trial/index.html",
     "success/index.html",
     "blog/index.html",
+    "blog/child-refuses-quran-practice/index.html",
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
     "blog/help-children-memorize-short-surahs/index.html",
     "blog/how-children-learn-to-read-quran/index.html",

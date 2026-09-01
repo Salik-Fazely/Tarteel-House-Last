@@ -424,25 +424,25 @@ class QuranReadingStagesArticleTests(unittest.TestCase):
         grid_start = source.index('<div class="blog-grid">')
         first_card_start = source.index('<article class="blog-card">', grid_start)
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)
-        first_card = source[first_card_start:second_card_start]
-        self.assertIn('href="/blog/how-children-learn-to-read-quran/"', first_card)
-        self.assertIn(HEADLINE, html.unescape(first_card))
+        third_card_start = source.index('<article class="blog-card">', second_card_start + 1)
+        second_card = source[second_card_start:third_card_start]
+        self.assertIn('href="/blog/how-children-learn-to-read-quran/"', second_card)
+        self.assertIn(HEADLINE, html.unescape(second_card))
         self.assertIn(
             "Understand the stages children move through from recognising Arabic letters to reading Quranic words, phrases and eventually the Mushaf with greater independence.",
-            first_card,
+            second_card,
         )
         self.assertIn(
-            "/assets/blog/how-children-learn-to-read-quran-640.webp 640w", first_card
+            "/assets/blog/how-children-learn-to-read-quran-640.webp 640w", second_card
         )
         self.assertIn(
-            "/assets/blog/how-children-learn-to-read-quran-1200.webp 1200w", first_card
+            "/assets/blog/how-children-learn-to-read-quran-1200.webp 1200w", second_card
         )
-        self.assertIn(f'alt="{IMAGE_ALT}"', first_card)
-        self.assertIn('loading="eager"', first_card)
-        self.assertIn('fetchpriority="high"', first_card)
+        self.assertIn(f'alt="{IMAGE_ALT}"', second_card)
+        self.assertIn('loading="lazy"', second_card)
+        self.assertNotIn('fetchpriority="high"', second_card)
 
-        third_card_start = source.index('<article class="blog-card">', second_card_start + 1)
-        previous_first_card = source[second_card_start:third_card_start]
+        previous_first_card = source[third_card_start:source.index('<article class="blog-card">', third_card_start + 1)]
         self.assertIn('/blog/free-online-quran-trial-lesson-parent-checklist/', previous_first_card)
         self.assertIn('loading="lazy"', previous_first_card)
         self.assertNotIn('fetchpriority="high"', previous_first_card)

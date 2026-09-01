@@ -25,6 +25,9 @@ DEFAULT_IMAGE_PAGES = (
 )
 
 ARTICLE_IMAGES = {
+    "blog/child-refuses-quran-practice/index.html": (
+        BASE_URL + "/assets/blog/child-refuses-quran-practice.png"
+    ),
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html": (
         BASE_URL + "/assets/blog/free-online-quran-trial-lesson-cover.png"
     ),
