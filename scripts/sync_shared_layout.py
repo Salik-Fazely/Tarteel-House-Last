@@ -60,6 +60,11 @@ PAGE_CONFIGS = (
         footer_variant="no_prebooking_contact",
     ),
     PageConfig(
+        "blog/how-children-learn-to-read-quran/index.html",
+        None,
+        footer_variant="no_prebooking_contact",
+    ),
+    PageConfig(
         "blog/how-parents-can-track-their-childs-quran-progress/index.html",
         None,
         footer_variant="no_prebooking_contact",

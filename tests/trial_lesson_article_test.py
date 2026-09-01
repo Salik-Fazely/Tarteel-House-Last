@@ -513,35 +513,35 @@ class TrialLessonArticleTests(unittest.TestCase):
             self.source,
         )
 
-    def test_blog_index_places_the_new_card_first(self):
+    def test_blog_index_keeps_the_trial_card_after_the_newest_article(self):
         source = BLOG_INDEX.read_text(encoding="utf-8")
         grid_start = source.index('<div class="blog-grid">')
         first_card_start = source.index('<article class="blog-card">', grid_start)
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)
         first_card = source[first_card_start:second_card_start]
         self.assertIn(
-            'href="/blog/free-online-quran-trial-lesson-parent-checklist/"', first_card
+            'href="/blog/how-children-learn-to-read-quran/"', first_card
         )
-        self.assertIn("What Happens in a Free Online Quran Trial Lesson?", first_card)
-        self.assertIn(
-            "Learn what your child can expect before, during and after a free online Quran trial lesson, with a practical checklist for parents.",
-            first_card,
-        )
-        self.assertIn(
-            "/assets/blog/free-online-quran-trial-lesson-cover-640.webp 640w", first_card
-        )
-        self.assertIn(
-            "/assets/blog/free-online-quran-trial-lesson-cover-1200.webp 1200w", first_card
-        )
-        self.assertIn(f'alt="{IMAGE_ALT}"', first_card)
-        self.assertIn('loading="eager"', first_card)
-        self.assertIn('fetchpriority="high"', first_card)
 
         third_card_start = source.index('<article class="blog-card">', second_card_start + 1)
-        previous_first_card = source[second_card_start:third_card_start]
-        self.assertIn('/blog/help-children-memorize-short-surahs/', previous_first_card)
-        self.assertIn('loading="lazy"', previous_first_card)
-        self.assertNotIn('fetchpriority="high"', previous_first_card)
+        trial_card = source[second_card_start:third_card_start]
+        self.assertIn(
+            'href="/blog/free-online-quran-trial-lesson-parent-checklist/"', trial_card
+        )
+        self.assertIn("What Happens in a Free Online Quran Trial Lesson?", trial_card)
+        self.assertIn(
+            "Learn what your child can expect before, during and after a free online Quran trial lesson, with a practical checklist for parents.",
+            trial_card,
+        )
+        self.assertIn(
+            "/assets/blog/free-online-quran-trial-lesson-cover-640.webp 640w", trial_card
+        )
+        self.assertIn(
+            "/assets/blog/free-online-quran-trial-lesson-cover-1200.webp 1200w", trial_card
+        )
+        self.assertIn(f'alt="{IMAGE_ALT}"', trial_card)
+        self.assertIn('loading="lazy"', trial_card)
+        self.assertNotIn('fetchpriority="high"', trial_card)
 
     def test_sitemap_and_scoped_related_link_include_the_canonical_once(self):
         tree = ET.parse(SITEMAP)

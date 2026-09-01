@@ -21,6 +21,7 @@ PAGES = {
     "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
     "/blog/how-parents-can-track-their-childs-quran-progress/": "blog/how-parents-can-track-their-childs-quran-progress/index.html",
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
+    "/blog/how-children-learn-to-read-quran/": "blog/how-children-learn-to-read-quran/index.html",
     "/book-trial/": "book-trial/index.html",
     "/how-it-works/": "how-it-works/index.html",
     "/pricing/": "pricing/index.html",
@@ -35,9 +36,13 @@ ARTICLES = {
     "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "/assets/blog/one-to-one-vs-group-quran-classes.png",
     "/blog/how-parents-can-track-their-childs-quran-progress/": "/assets/blog/track-child-quran-progress.png",
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "/assets/blog/free-online-quran-trial-lesson-cover.png",
+    "/blog/how-children-learn-to-read-quran/": "/assets/blog/how-children-learn-to-read-quran.png",
 }
 ARTICLE_PUBLISHED_DATES = {
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
+}
+ARTICLE_MODIFIED_DATES = {
+    "/blog/how-children-learn-to-read-quran/": "2026-09-01",
 }
 SHIMS = {
     "about.html": "/about/",
@@ -104,8 +109,10 @@ class SeoParser(HTMLParser):
 
 
 def parse(relative_path):
+    source = ROOT / relative_path
+    assert source.is_file(), f"Expected page is missing: {source}"
     parser = SeoParser()
-    parser.feed((ROOT / relative_path).read_text(encoding="utf-8"))
+    parser.feed(source.read_text(encoding="utf-8"))
     parser.close()
     return parser
 
@@ -218,7 +225,11 @@ class TechnicalSeoTests(unittest.TestCase):
                 self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
             else:
                 self.assertNotIn("datePublished", posting, path)
-            self.assertEqual("2026-07-14", posting["dateModified"], path)
+            self.assertEqual(
+                ARTICLE_MODIFIED_DATES.get(path, "2026-07-14"),
+                posting["dateModified"],
+                path,
+            )
             crumbs = breadcrumb["itemListElement"]
             self.assertEqual([1, 2, 3], [crumb["position"] for crumb in crumbs], path)
             self.assertEqual(["Home", "Blog", page.h1s[0]], [crumb["name"] for crumb in crumbs], path)
@@ -272,8 +283,10 @@ class TechnicalSeoTests(unittest.TestCase):
 
     def test_changed_html_remains_structurally_balanced(self):
         for relative in PAGES.values():
+            source = ROOT / relative
+            self.assertTrue(source.is_file(), f"Expected page is missing: {source}")
             parser = StructureParser()
-            parser.feed((ROOT / relative).read_text(encoding="utf-8"))
+            parser.feed(source.read_text(encoding="utf-8"))
             parser.close()
             self.assertEqual([], parser.errors, f"{relative}: {parser.errors}")
 

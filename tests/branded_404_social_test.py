@@ -31,6 +31,9 @@ ARTICLE_IMAGES = {
     "blog/help-children-memorize-short-surahs/index.html": (
         BASE_URL + "/assets/blog/help-children-memorize-short-surahs.png"
     ),
+    "blog/how-children-learn-to-read-quran/index.html": (
+        BASE_URL + "/assets/blog/how-children-learn-to-read-quran.png"
+    ),
     "blog/how-parents-can-track-their-childs-quran-progress/index.html": (
         BASE_URL + "/assets/blog/track-child-quran-progress.png"
     ),

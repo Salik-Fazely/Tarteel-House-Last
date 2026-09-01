@@ -21,6 +21,7 @@ EXPECTED_COMPLETE_PAGES = (
     "blog/index.html",
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
     "blog/help-children-memorize-short-surahs/index.html",
+    "blog/how-children-learn-to-read-quran/index.html",
     "blog/how-parents-can-track-their-childs-quran-progress/index.html",
     "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
     "blog/online-quran-classes-for-kids-parents-look-for/index.html",
@@ -52,6 +53,9 @@ ARTICLE_IMAGES = {
     ),
     "blog/help-children-memorize-short-surahs/index.html": (
         "https://www.tarteelhouse.com/assets/blog/help-children-memorize-short-surahs.png"
+    ),
+    "blog/how-children-learn-to-read-quran/index.html": (
+        "https://www.tarteelhouse.com/assets/blog/how-children-learn-to-read-quran.png"
     ),
     "blog/how-parents-can-track-their-childs-quran-progress/index.html": (
         "https://www.tarteelhouse.com/assets/blog/track-child-quran-progress.png"
