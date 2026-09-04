@@ -13,6 +13,11 @@ GA_PATTERNS = (
     "G-ZVLW7QGYR1",
     "gtag(",
 )
+OPENAI_PIXEL_PATTERNS = (
+    "bzrcdn.openai.com/sdk/oaiq.min.js",
+    "CyfMjLQ5sFcxkzzrRdDeDb",
+    "oaiq(",
+)
 
 
 def public_pages():
@@ -51,13 +56,23 @@ class ConsentStaticTests(unittest.TestCase):
             for pattern in GA_PATTERNS:
                 self.assertNotIn(pattern, source, f"{page.relative_to(ROOT)} contains {pattern}")
 
+    def test_openai_pixel_setup_is_centralized_outside_page_html(self):
+        for page in ROOT.rglob("*.html"):
+            source = page.read_text(encoding="utf-8")
+            for pattern in OPENAI_PIXEL_PATTERNS:
+                self.assertNotIn(pattern, source, f"{page.relative_to(ROOT)} contains {pattern}")
+
+        source = (ROOT / "assets/js/consent.js").read_text(encoding="utf-8")
+        self.assertEqual(1, source.count("https://bzrcdn.openai.com/sdk/oaiq.min.js"))
+        self.assertEqual(1, source.count("CyfMjLQ5sFcxkzzrRdDeDb"))
+
     def test_banner_copy_and_semantic_controls_are_centralized(self):
         source = (ROOT / "assets/js/consent.js").read_text(encoding="utf-8")
         for copy in (
             "Your privacy choices",
-            "We use optional analytics cookies to understand how visitors use our website and improve Tarteel House. You can accept or reject analytics. Your choice can be changed at any time.",
-            "Accept analytics",
-            "Reject analytics",
+            "We use optional measurement technologies to understand website use and attribute successful trial requests. You can accept or reject measurement. Your choice can be changed at any time.",
+            "Accept measurement",
+            "Reject measurement",
             "Privacy Policy",
             "Cookie settings",
         ):

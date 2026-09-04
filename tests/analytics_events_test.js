@@ -35,12 +35,25 @@ function createStorage() {
     getItem: key => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
     removeItem: key => values.delete(key),
+    entries: () => Array.from(values.entries()),
   };
 }
 
-function createEnvironment({ preference = 'missing', valid = true, withGtag = true } = {}) {
+function createEnvironment({
+  preference = 'missing',
+  valid = true,
+  withForm = true,
+  withGtag = true,
+  withOaiq = false,
+  oaiq,
+  pathname = '/pricing/',
+  href,
+  sessionStorage = createStorage(),
+} = {}) {
   const calls = [];
   const localStorage = createStorage();
+  const historyCalls = [];
+  const timeline = [];
 
   if (preference === 'granted' || preference === 'denied') {
     consent.savePreference(localStorage, preference);
@@ -48,18 +61,48 @@ function createEnvironment({ preference = 'missing', valid = true, withGtag = tr
     localStorage.setItem(consent.STORAGE_KEY, JSON.stringify({ status: 'granted', expiresAt: 1 }));
   }
 
-  const window = {
+  const locationHref = href || `https://www.tarteelhouse.com${pathname}`;
+  const location = new URL(locationHref);
+  let randomCalls = 0;
+  const window = createEventTarget({
     __tarteelHouseGa4Initialized: true,
     localStorage,
-    location: {
-      href: 'https://www.tarteelhouse.com/pricing/?email=visitor%40example.com#plans',
-      origin: 'https://www.tarteelhouse.com',
-      pathname: '/pricing/',
+    sessionStorage,
+    crypto: {
+      getRandomValues(values) {
+        randomCalls += 1;
+        for (let index = 0; index < values.length; index += 1) values[index] = index + 1;
+        return values;
+      },
+      randomUUID() {
+        randomCalls += 1;
+        return 'd5f44c60-bc21-48f6-8d66-6e0b1e0dc693';
+      },
     },
-  };
+    location: {
+      href: location.href,
+      origin: location.origin,
+      pathname: location.pathname,
+      search: location.search,
+    },
+    history: {
+      replaceState(...args) {
+        historyCalls.push(args);
+        timeline.push('replace');
+      },
+    },
+  });
   if (withGtag) window.gtag = (...args) => calls.push(args);
+  if (withOaiq || oaiq) {
+    window.oaiq = (...args) => {
+      timeline.push('oaiq');
+      if (oaiq) return oaiq(...args);
+      calls.push(args);
+    };
+  }
 
   let form;
+  const successRedirect = { name: 'success_redirect', value: '/success/' };
   form = createEventTarget({
     id: 'trial-form',
     valid,
@@ -69,16 +112,43 @@ function createEnvironment({ preference = 'missing', valid = true, withGtag = tr
     contains(control) {
       return control?.form === form;
     },
+    querySelector(selector) {
+      return selector === 'input[name="success_redirect"]' ? successRedirect : null;
+    },
   });
 
   const document = createEventTarget({
     getElementById(id) {
-      return id === 'trial-form' ? form : null;
+      return withForm && id === 'trial-form' ? form : null;
     },
   });
 
   analyticsEvents.init(window, document, consent);
-  return { calls, document, form, localStorage, window };
+  return {
+    calls,
+    document,
+    form,
+    historyCalls,
+    localStorage,
+    randomCalls: () => randomCalls,
+    sessionStorage,
+    successRedirect,
+    timeline,
+    window,
+  };
+}
+
+function submittedConversion() {
+  const environment = createEnvironment({ preference: 'granted' });
+  const event = environment.form.dispatch('submit');
+  const [[storageKey, token]] = environment.sessionStorage.entries();
+  return {
+    event,
+    redirect: new URL(environment.successRedirect.value),
+    storageKey,
+    token,
+    ...environment,
+  };
 }
 
 function createCta({
@@ -250,4 +320,185 @@ test('submit attempt fires only for a valid submit, at most once, without preven
     'trial_form_submit_attempt',
     { source_path: '/pricing/', form_id: 'trial-form' },
   ]]);
+});
+
+test('a valid form submit creates an opaque, session-bound same-origin success redirect without preventing native submission', () => {
+  const { event, redirect, randomCalls, sessionStorage, storageKey, token } = submittedConversion();
+
+  assert.equal(event.defaultPrevented, false);
+  assert.equal(randomCalls(), 1);
+  assert.equal(sessionStorage.entries().length, 1);
+  assert.equal(typeof storageKey, 'string');
+  assert.equal(typeof token, 'string');
+  assert.notEqual(token, '');
+  assert.equal(redirect.origin, 'https://www.tarteelhouse.com');
+  assert.equal(redirect.pathname, '/success/');
+  assert.equal(redirect.searchParams.size, 1);
+  assert.equal([...redirect.searchParams.values()][0], token);
+  assert.doesNotMatch(JSON.stringify({ storageKey, token, redirect: redirect.href }), /Private Child Name/);
+});
+
+test('validation failure creates no conversion marker and a repeated submit event cannot create a second marker', () => {
+  const invalid = createEnvironment({ preference: 'granted', valid: false });
+  invalid.form.dispatch('submit');
+
+  assert.deepEqual(invalid.sessionStorage.entries(), []);
+  assert.equal(invalid.successRedirect.value, '/success/');
+  assert.equal(invalid.randomCalls(), 0);
+
+  const valid = createEnvironment({ preference: 'granted' });
+  valid.form.dispatch('submit');
+  const firstRedirect = valid.successRedirect.value;
+  valid.form.dispatch('submit');
+
+  assert.equal(valid.randomCalls(), 1);
+  assert.equal(valid.sessionStorage.entries().length, 1);
+  assert.equal(valid.successRedirect.value, firstRedirect);
+});
+
+test('returning to a cached form after success prepares a new marker for a genuinely new submission', () => {
+  const submitted = submittedConversion();
+  submitted.sessionStorage.removeItem(submitted.storageKey);
+
+  submitted.window.dispatch('pageshow', { persisted: true });
+  submitted.form.dispatch('submit');
+
+  assert.equal(submitted.randomCalls(), 2);
+  assert.equal(submitted.sessionStorage.entries().length, 1);
+  assert.equal(
+    new URL(submitted.successRedirect.value).searchParams.get('booking'),
+    submitted.sessionStorage.entries()[0][1],
+  );
+});
+
+test('the success page measures a lead only when its URL token exactly matches the session marker', () => {
+  const submitted = submittedConversion();
+  const success = createEnvironment({
+    preference: 'granted',
+    withForm: false,
+    withOaiq: true,
+    pathname: '/success/',
+    href: submitted.redirect.href,
+    sessionStorage: submitted.sessionStorage,
+  });
+
+  assert.deepEqual(success.calls, [[
+    'measure',
+    'lead_created',
+    { type: 'customer_action' },
+  ]]);
+  assert.equal(success.sessionStorage.getItem(submitted.storageKey), null);
+  assert.equal(success.historyCalls.length, 1);
+  assert.equal(new URL(success.historyCalls[0][2], success.window.location.origin).pathname, '/success/');
+  assert.equal(new URL(success.historyCalls[0][2], success.window.location.origin).search, '');
+  assert.deepEqual(success.timeline, ['replace', 'oaiq']);
+});
+
+test('a direct success visit or a mismatched success token never measures a lead', () => {
+  const direct = createEnvironment({
+    preference: 'granted',
+    withForm: false,
+    withOaiq: true,
+    pathname: '/success/',
+  });
+  const submitted = submittedConversion();
+  const mismatchedRedirect = new URL(submitted.redirect.href);
+  mismatchedRedirect.searchParams.set([...mismatchedRedirect.searchParams.keys()][0], 'wrong-token');
+  const mismatched = createEnvironment({
+    preference: 'granted',
+    withForm: false,
+    withOaiq: true,
+    href: mismatchedRedirect.href,
+    sessionStorage: submitted.sessionStorage,
+  });
+
+  assert.deepEqual(direct.calls, []);
+  assert.deepEqual(mismatched.calls, []);
+});
+
+test('a denied consent decision consumes and cleans an otherwise valid success marker without measuring', () => {
+  const submitted = submittedConversion();
+  const success = createEnvironment({
+    preference: 'denied',
+    withForm: false,
+    withOaiq: true,
+    href: submitted.redirect.href,
+    sessionStorage: submitted.sessionStorage,
+  });
+
+  assert.deepEqual(success.calls, []);
+  assert.equal(success.sessionStorage.getItem(submitted.storageKey), null);
+  assert.equal(success.historyCalls.length, 1);
+  assert.equal(new URL(success.historyCalls[0][2], success.window.location.origin).search, '');
+});
+
+test('an unknown consent decision waits for a consent change, then measures once on grant or consumes on denial', () => {
+  const grantedSubmission = submittedConversion();
+  const granted = createEnvironment({
+    withForm: false,
+    withOaiq: true,
+    href: grantedSubmission.redirect.href,
+    sessionStorage: grantedSubmission.sessionStorage,
+  });
+
+  assert.deepEqual(granted.calls, []);
+  assert.equal(granted.sessionStorage.getItem(grantedSubmission.storageKey), grantedSubmission.token);
+  assert.deepEqual(granted.historyCalls, []);
+
+  consent.savePreference(granted.localStorage, 'granted');
+  granted.window.dispatch('tarteelhouse:measurement-consent-change', { detail: { status: 'granted' } });
+  granted.window.dispatch('tarteelhouse:measurement-consent-change', { detail: { status: 'granted' } });
+  analyticsEvents.init(granted.window, granted.document, consent);
+
+  assert.deepEqual(granted.calls, [[
+    'measure',
+    'lead_created',
+    { type: 'customer_action' },
+  ]]);
+  assert.equal(granted.sessionStorage.getItem(grantedSubmission.storageKey), null);
+  assert.equal(granted.historyCalls.length, 1);
+
+  const deniedSubmission = submittedConversion();
+  const denied = createEnvironment({
+    withForm: false,
+    withOaiq: true,
+    href: deniedSubmission.redirect.href,
+    sessionStorage: deniedSubmission.sessionStorage,
+  });
+  consent.savePreference(denied.localStorage, 'denied');
+  denied.window.dispatch('tarteelhouse:measurement-consent-change', { detail: { status: 'denied' } });
+
+  assert.deepEqual(denied.calls, []);
+  assert.equal(denied.sessionStorage.getItem(deniedSubmission.storageKey), null);
+  assert.equal(denied.historyCalls.length, 1);
+
+  const refreshed = createEnvironment({
+    preference: 'granted',
+    withForm: false,
+    withOaiq: true,
+    href: grantedSubmission.redirect.href,
+    sessionStorage: granted.sessionStorage,
+  });
+  assert.deepEqual(refreshed.calls, []);
+});
+
+test('a pixel error cannot interrupt success-marker consumption or URL cleanup', () => {
+  const submitted = submittedConversion();
+  let success;
+
+  assert.doesNotThrow(() => {
+    success = createEnvironment({
+      preference: 'granted',
+      withForm: false,
+      href: submitted.redirect.href,
+      oaiq() {
+        throw new Error('pixel unavailable');
+      },
+      sessionStorage: submitted.sessionStorage,
+    });
+  });
+
+  assert.equal(success.sessionStorage.getItem(submitted.storageKey), null);
+  assert.equal(success.historyCalls.length, 1);
+  assert.equal(new URL(success.historyCalls[0][2], success.window.location.origin).search, '');
 });

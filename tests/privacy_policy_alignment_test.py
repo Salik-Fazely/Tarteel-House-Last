@@ -63,12 +63,13 @@ class PrivacyPolicyAlignmentTests(unittest.TestCase):
 
     def test_date_and_optional_consent_behavior_are_disclosed(self):
         for wording in (
-            "Last updated: 14 July 2026",
-            "Analytics and cookie choices",
+            "Last updated: 4 September 2026",
+            "Analytics and advertising measurement choices",
             "Google Analytics 4",
-            "Accept analytics",
-            "not loaded or contacted",
-            "legal basis for optional analytics is your consent",
+            "OpenAI Ads Measurement Pixel",
+            "Accept measurement",
+            "measurement-event pings are not sent",
+            "legal basis for optional analytics and advertising measurement is your consent",
             "website, lesson information, booking form, or any Tarteel House service",
             "tarteelhouse.analyticsConsent",
             "browser local storage",
@@ -78,6 +79,23 @@ class PrivacyPolicyAlignmentTests(unittest.TestCase):
             "applies going forward",
             "attempts to remove first-party Google Analytics cookies",
             "reloads the page",
+        ):
+            self.assertIn(wording, self.text)
+
+    def test_openai_conversion_and_data_minimization_are_disclosed(self):
+        for wording in (
+            "lead_created",
+            "genuinely successful Free Trial request",
+            "customer_action",
+            "privacy-preserving OpenAI ad click reference",
+            "__oppref",
+            "current page origin",
+            "event timestamp",
+            "We do not manually send OpenAI",
+            "parent or child names",
+            "email addresses",
+            "telephone or WhatsApp numbers",
+            "booking-form field values",
         ):
             self.assertIn(wording, self.text)
 
@@ -134,17 +152,26 @@ class PrivacyPolicyAlignmentTests(unittest.TestCase):
         self.assertEqual(set(), self.parser.duplicate_ids)
         self.assertEqual(1, self.parser.table_captions)
         self.assertEqual(6, self.parser.column_headers)
-        for name in ("tarteelhouse.analyticsConsent", "_ga", "_ga_&lt;container-id&gt;"):
+        for name in (
+            "tarteelhouse.analyticsConsent",
+            "tarteelhouse.trialConversionToken",
+            "__oppref",
+            "_ga",
+            "_ga_&lt;container-id&gt;",
+        ):
             self.assertIn(name, self.source)
         for wording in (
             "Browser local storage",
             "First-party analytics cookie",
-            "Remembers whether analytics was accepted or rejected",
+            "Remembers whether measurement was accepted or rejected",
             "Distinguishes users",
             "Persists session state",
             "Up to 2 years, subject to browser restrictions and Google Analytics configuration",
             "Only after analytics is accepted",
             "Google Analytics configuration changes",
+            "Current browser tab session",
+            "successful form response to trigger at most one conversion event",
+            "OpenAI ad click reference",
         ):
             self.assertIn(wording, self.text)
 
@@ -152,6 +179,8 @@ class PrivacyPolicyAlignmentTests(unittest.TestCase):
         required_external = {
             "https://policies.google.com/privacy",
             "https://policies.google.com/privacy/frameworks",
+            "https://openai.com/policies/privacy-policy/",
+            "https://developers.openai.com/ads/measurement-pixel",
         }
         self.assertTrue(required_external.issubset(self.parser.links))
 

@@ -1,4 +1,4 @@
-/* Tarteel House analytics consent. Basic Consent: GA4 loads only after acceptance. */
+/* Tarteel House measurement consent. Optional measurement runs only after acceptance. */
 (function (factory) {
   const consent = factory();
 
@@ -11,6 +11,9 @@
     readSavedPreference: consent.readSavedPreference,
   });
 
+  // Queue consent-disabled Pixel setup as soon as this shared script is parsed.
+  consent.loadOpenAiPixel(window, document);
+
   const start = () => consent.init(window, document);
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
@@ -21,17 +24,22 @@
   'use strict';
 
   const STORAGE_KEY = 'tarteelhouse.analyticsConsent';
+  const CONSENT_VERSION = 2;
+  const CONSENT_EVENT = 'tarteelhouse:measurement-consent-change';
   const MEASUREMENT_ID = 'G-ZVLW7QGYR1';
+  const OPENAI_PIXEL_ID = 'CyfMjLQ5sFcxkzzrRdDeDb';
+  const OPENAI_PIXEL_SRC = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
   const VALID_STATUSES = new Set(['granted', 'denied']);
   const BANNER_ID = 'analytics-consent';
   const TITLE_ID = 'analytics-consent-title';
+  const OPENAI_INIT_FLAG = '__tarteelHouseOpenAiPixelInitialized';
 
   function createPreference(status, now = Date.now()) {
-    if (!VALID_STATUSES.has(status)) throw new TypeError('Invalid analytics consent status');
+    if (!VALID_STATUSES.has(status)) throw new TypeError('Invalid measurement consent status');
 
     const expiry = new Date(now);
     expiry.setFullYear(expiry.getFullYear() + 1);
-    return { status, expiresAt: expiry.getTime() };
+    return { status, expiresAt: expiry.getTime(), version: CONSENT_VERSION };
   }
 
   function parsePreference(raw, now = Date.now()) {
@@ -40,7 +48,11 @@
       const preference = JSON.parse(raw);
       if (!VALID_STATUSES.has(preference.status)) return null;
       if (!Number.isFinite(preference.expiresAt) || preference.expiresAt <= now) return null;
-      return { status: preference.status, expiresAt: preference.expiresAt };
+      if (preference.status === 'granted' && preference.version !== CONSENT_VERSION) return null;
+
+      const parsed = { status: preference.status, expiresAt: preference.expiresAt };
+      if (preference.version === CONSENT_VERSION) parsed.version = CONSENT_VERSION;
+      return parsed;
     } catch (error) {
       return null;
     }
@@ -87,6 +99,56 @@
       script.async = true;
       script.src = src;
       doc.head.appendChild(script);
+    }
+  }
+
+  function loadOpenAiPixel(win, doc) {
+    if (!win || !doc || win[OPENAI_INIT_FLAG]) return;
+    win[OPENAI_INIT_FLAG] = true;
+
+    if (typeof win.oaiq !== 'function') {
+      const queue = function () {
+        queue.q.push(arguments);
+      };
+      queue.q = [];
+      win.oaiq = queue;
+    }
+
+    try {
+      win.oaiq('consent', false);
+      win.oaiq('init', { pixelId: OPENAI_PIXEL_ID });
+    } catch (error) {
+      // Pixel failures must never interrupt the website or booking flow.
+    }
+
+    try {
+      if (!doc.querySelector(`script[src="${OPENAI_PIXEL_SRC}"]`)) {
+        const script = doc.createElement('script');
+        script.async = true;
+        script.src = OPENAI_PIXEL_SRC;
+        doc.head.appendChild(script);
+      }
+    } catch (error) {
+      // A blocked or unavailable loader leaves the rest of the site unaffected.
+    }
+  }
+
+  function setOpenAiConsent(win, granted) {
+    if (!win || typeof win.oaiq !== 'function') return false;
+    try {
+      win.oaiq('consent', Boolean(granted));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function notifyConsentChange(win, status) {
+    if (!win || typeof win.dispatchEvent !== 'function' || typeof win.CustomEvent !== 'function') return;
+    try {
+      win.dispatchEvent(new win.CustomEvent(CONSENT_EVENT, { detail: { status } }));
+    } catch (error) {
+      // Consent still applies even if another script cannot receive the update.
     }
   }
 
@@ -146,16 +208,16 @@
       doc,
       'p',
       'consent-banner__body',
-      'We use optional analytics cookies to understand how visitors use our website and improve Tarteel House. You can accept or reject analytics. Your choice can be changed at any time.',
+      'We use optional measurement technologies to understand website use and attribute successful trial requests. You can accept or reject measurement. Your choice can be changed at any time.',
     );
     const privacy = makeElement(doc, 'a', 'consent-banner__privacy', 'Privacy Policy');
     privacy.href = '/privacy-policy/';
 
     const actions = makeElement(doc, 'div', 'consent-banner__actions');
-    const accept = makeElement(doc, 'button', 'consent-banner__button', 'Accept analytics');
+    const accept = makeElement(doc, 'button', 'consent-banner__button', 'Accept measurement');
     accept.type = 'button';
     accept.dataset.consentChoice = 'granted';
-    const reject = makeElement(doc, 'button', 'consent-banner__button', 'Reject analytics');
+    const reject = makeElement(doc, 'button', 'consent-banner__button', 'Reject measurement');
     reject.type = 'button';
     reject.dataset.consentChoice = 'denied';
 
@@ -184,6 +246,7 @@
   }
 
   function init(win, doc) {
+    loadOpenAiPixel(win, doc);
     const storage = getStorage(win);
     let preference = readSavedPreference(storage);
     const ui = buildInterface(doc);
@@ -201,15 +264,19 @@
     ui.settings.addEventListener('click', () => show(true));
     ui.accept.addEventListener('click', () => {
       preference = savePreference(storage, 'granted');
+      setOpenAiConsent(win, true);
       loadAnalytics(win, doc);
       hide();
+      notifyConsentChange(win, 'granted');
       ui.settings.focus({ preventScroll: true });
     });
     ui.reject.addEventListener('click', () => {
       const analyticsWasActive = preference?.status === 'granted' || Boolean(win.__tarteelHouseGa4Initialized);
       preference = savePreference(storage, 'denied');
+      setOpenAiConsent(win, false);
       clearAnalyticsCookies(win, doc);
       hide();
+      notifyConsentChange(win, 'denied');
 
       if (analyticsWasActive) {
         win.location.reload();
@@ -221,20 +288,27 @@
     if (!preference) {
       show();
     } else if (preference.status === 'granted') {
+      setOpenAiConsent(win, true);
       loadAnalytics(win, doc);
     }
   }
 
   return {
     STORAGE_KEY,
+    CONSENT_VERSION,
+    CONSENT_EVENT,
     MEASUREMENT_ID,
+    OPENAI_PIXEL_ID,
+    OPENAI_PIXEL_SRC,
     analyticsCookieNames,
     clearAnalyticsCookies,
     createPreference,
     init,
     loadAnalytics,
+    loadOpenAiPixel,
     parsePreference,
     readSavedPreference,
     savePreference,
+    setOpenAiConsent,
   };
 }));

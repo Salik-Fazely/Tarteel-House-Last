@@ -314,19 +314,13 @@
   <script src="/assets/js/analytics-events.js"></script>
   <script src="/assets/js/main.js"></script>
   <script>
-    function normalizePreferredDaysPayload(formData, form) {
-      var selectedDays = Array.from(form.querySelectorAll('input[name="preferred_days"]:checked'))
-        .map(function(control) { return control.value; });
-      formData.delete('preferred_days');
-      formData.append('preferred_days', selectedDays.join(','));
-    }
-
     var trialForm = document.getElementById('trial-form');
     if (trialForm) {
       var formStatus = document.getElementById('trial-form-status');
       var submitBtn = trialForm.querySelector('button[type="submit"]');
       var initialSubmitText = submitBtn ? submitBtn.textContent.trim() : 'Request my free trial';
       var preferredDayInputs = Array.from(trialForm.querySelectorAll('input[name="preferred_days"]'));
+      var submissionStarted = false;
 
       function syncPreferredDaysValidity() {
         if (!preferredDayInputs.length) return;
@@ -347,48 +341,39 @@
         formStatus.hidden = !message;
       }
 
-      function resetSubmitButton() {
+      function resetSubmissionState() {
+        submissionStarted = false;
         if (!submitBtn) return;
         submitBtn.disabled = false;
         submitBtn.textContent = initialSubmitText;
       }
 
       trialForm.addEventListener('submit', function(event) {
-        // Always stop the browser from navigating to the Apps Script URL.
-        event.preventDefault();
         setFormStatus('');
         syncPreferredDaysValidity();
 
         if (typeof trialForm.checkValidity === 'function' && !trialForm.checkValidity()) {
+          event.preventDefault();
           if (typeof trialForm.reportValidity === 'function') {
             trialForm.reportValidity();
           }
           return;
         }
 
+        if (submissionStarted) {
+          event.preventDefault();
+          return;
+        }
+        submissionStarted = true;
+
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.textContent = 'Sending...';
         }
+      });
 
-        var formData = new FormData(trialForm);
-        normalizePreferredDaysPayload(formData, trialForm);
-
-        // Apps Script does not expose a readable CORS response here. With
-        // no-cors, a resolved fetch only means the browser sent the request;
-        // it cannot prove that Apps Script saved the booking successfully.
-        fetch(trialForm.action, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: formData
-        })
-          .then(function() {
-            window.location.href = '/success/';
-          })
-          .catch(function() {
-            setFormStatus('We could not send your request from this browser. Please check your connection and try again, or message us on WhatsApp.');
-            resetSubmitButton();
-          });
+      window.addEventListener('pageshow', function(event) {
+        if (event.persisted) resetSubmissionState();
       });
     }
 

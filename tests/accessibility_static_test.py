@@ -271,10 +271,12 @@ class BookingChoiceStaticTests(unittest.TestCase):
         self.assertIn("Choose at least one preferred day.", self.source)
         self.assertIn("setCustomValidity", self.source)
 
-    def test_preferred_days_are_collapsed_to_the_existing_comma_separated_payload(self):
-        self.assertIn("function normalizePreferredDaysPayload(formData, form)", self.source)
-        self.assertIn("formData.delete('preferred_days');", self.source)
-        self.assertIn("formData.append('preferred_days', selectedDays.join(','));", self.source)
+    def test_preferred_days_use_native_repeated_post_values_for_backend_normalization(self):
+        self.assertEqual(7, len(re.findall(r'<input[^>]+name="preferred_days"', self.source)))
+        self.assertIn('method="POST"', self.source)
+        self.assertNotIn("function normalizePreferredDaysPayload", self.source)
+        self.assertNotIn("new FormData", self.source)
+        self.assertNotIn("mode: 'no-cors'", self.source)
 
 
 class FocusContrastAndMotionTests(unittest.TestCase):

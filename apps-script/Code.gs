@@ -18,6 +18,7 @@ const CONFIG = {
   NOTIFICATION_EMAIL: 'hello@tarteelhouse.com',
   SUCCESS_REDIRECT: 'https://www.tarteelhouse.com/success/',
   ALLOWED_REDIRECT_HOSTS: [
+    'tarteelhouse.com',
     'www.tarteelhouse.com'
   ]
 };
@@ -101,11 +102,15 @@ const ALLOWED_VALUES = {
 // ---------------------------------------------------------------------------
 function doPost(e) {
   try {
-    const params = (e && e.parameter) || {};
+    const params = requestParams_(e);
 
     // Honeypot: real users never fill this field.
     if (params.website_field) {
-      return htmlRedirect_(params);
+      return htmlError_(
+        ['This submission could not be accepted.'],
+        'Booking request could not be completed',
+        'Please go back and submit the form again.'
+      );
     }
 
     const validation = validateBooking_(params);
@@ -128,6 +133,26 @@ function doPost(e) {
       'Please go back and submit the form again. If the problem continues, contact us directly on WhatsApp.'
     );
   }
+}
+
+// Native HTML forms submit checkbox values as repeated parameters. Apps
+// Script exposes the first value in e.parameter and every value in
+// e.parameters, so join the preferred days before validation and storage.
+function requestParams_(e) {
+  const source = (e && e.parameter) || {};
+  const params = {};
+  Object.keys(source).forEach(function (name) {
+    params[name] = source[name];
+  });
+
+  const repeatedDays = e && e.parameters && e.parameters.preferred_days;
+  if (Array.isArray(repeatedDays)) {
+    params.preferred_days = repeatedDays
+      .map(function (value) { return String(value).trim(); })
+      .filter(function (value) { return value !== ''; })
+      .join(',');
+  }
+  return params;
 }
 
 // Optional: also allow GET to the Web App URL to return a friendly page
@@ -353,16 +378,26 @@ function getSuccessRedirect_(params) {
 function isAllowedSuccessRedirect_(value) {
   if (!hasValue_(value)) return false;
 
-  const match = String(value).trim().match(/^(https?):\/\/([^/?#]+)(\/[^?#]*)/i);
+  const match = String(value).trim().match(/^(https?):\/\/([^/?#]+)(\/[^?#]*)(\?[^#]*)?$/i);
   if (!match) return false;
 
   const protocol = match[1].toLowerCase() + ':';
-  const host = match[2].toLowerCase().split(':')[0];
+  const authority = match[2].toLowerCase();
+  if (authority.indexOf('@') !== -1) return false;
+  const authorityParts = authority.split(':');
+  if (authorityParts.length > 2) return false;
+  const host = authorityParts[0];
+  const port = authorityParts[1] || '';
   const path = match[3].toLowerCase().replace(/\/+$/, '');
+  const query = match[4] || '';
 
   if (protocol !== 'https:' && protocol !== 'http:') return false;
   if (path !== '/success') return false;
-  if (host === 'localhost' || host === '127.0.0.1') return true;
+  if (query && !/^\?booking=[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(query)) {
+    return false;
+  }
+  if (protocol !== 'https:') return false;
+  if (port && port !== '443') return false;
 
   return CONFIG.ALLOWED_REDIRECT_HOSTS.indexOf(host) !== -1;
 }

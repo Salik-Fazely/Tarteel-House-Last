@@ -59,7 +59,7 @@
         <p class="eyebrow">LEGAL</p>
         <h1 class="legal-hero__headline">Privacy Policy</h1>
         <p class="legal-hero__sub">How Tarteel House handles the personal data shared by families who contact us, book a trial, or use our one-to-one Qur&rsquo;an learning service for children.</p>
-        <p class="legal-hero__meta">Last updated: 14 July 2026</p>
+        <p class="legal-hero__meta">Last updated: 4 September 2026</p>
         <div class="legal-hero__ornament" aria-hidden="true">
           <span class="legal-hero__ornament-line"></span>
           <span class="legal-hero__ornament-dot"></span>
@@ -88,7 +88,7 @@
             <li><a class="legal-toc__link" href="#transfers">International transfers</a></li>
             <li><a class="legal-toc__link" href="#retention">Data retention</a></li>
             <li><a class="legal-toc__link" href="#your-rights">Your rights</a></li>
-            <li><a class="legal-toc__link" href="#cookies">Analytics and cookie choices</a></li>
+            <li><a class="legal-toc__link" href="#cookies">Analytics and advertising measurement choices</a></li>
             <li><a class="legal-toc__link" href="#marketing">Marketing communications</a></li>
             <li><a class="legal-toc__link" href="#security">Data security</a></li>
             <li><a class="legal-toc__link" href="#third-party-links">Third-party links</a></li>
@@ -211,7 +211,7 @@
             <h3 class="legal-section__subheading">c. Consent</h3>
             <p>We may rely on consent for specific activities, such as:</p>
             <ul>
-              <li>non-essential cookies or analytics;</li>
+              <li>non-essential cookies, analytics, or advertising measurement;</li>
               <li>optional marketing communications, if offered;</li>
               <li>any other optional processing where consent is appropriate.</li>
             </ul>
@@ -241,7 +241,7 @@
               <li>payment processors;</li>
               <li>scheduling and calendar tools;</li>
               <li>video lesson platforms;</li>
-              <li>analytics providers, if enabled;</li>
+              <li>analytics or advertising measurement providers, if enabled;</li>
               <li>cloud storage or admin tools;</li>
               <li>professional advisers such as accountants, lawyers, or insurers;</li>
               <li>public authorities, regulators, courts, or law enforcement where required by law.</li>
@@ -292,12 +292,12 @@
 
           <section class="legal-section" id="cookies">
             <span class="legal-section__number">Section 11</span>
-            <h2 class="legal-section__heading">Analytics and cookie choices</h2>
-            <p>Tarteel House uses Google Analytics 4 only to understand website usage and improve the website. Google Analytics is optional: it is not loaded or contacted until you explicitly select &ldquo;Accept analytics&rdquo;. The legal basis for optional analytics is your consent.</p>
-            <p>You may reject analytics without losing access to the website, lesson information, booking form, or any Tarteel House service.</p>
+            <h2 class="legal-section__heading">Analytics and advertising measurement choices</h2>
+            <p>Tarteel House uses Google Analytics 4 to understand website usage and the OpenAI Ads Measurement Pixel to attribute genuinely successful Free Trial requests to ads. Both are optional. Google Analytics is not loaded until you explicitly select &ldquo;Accept measurement&rdquo;. The OpenAI Pixel is initialized with measurement disabled; while consent is missing or rejected, measurement-event pings are not sent. The legal basis for optional analytics and advertising measurement is your consent.</p>
+            <p>You may reject measurement without losing access to the website, lesson information, booking form, or any Tarteel House service.</p>
 
             <h3 class="legal-section__subheading">What Google Analytics may collect</h3>
-            <p>When analytics is accepted, Google Analytics 4 may collect:</p>
+            <p>When measurement is accepted, Google Analytics 4 may collect:</p>
             <ul>
               <li>page visits and page paths;</li>
               <li>user and session statistics;</li>
@@ -308,8 +308,12 @@
             </ul>
             <p>Google is our analytics provider. Google may process analytics information on servers outside your country. Please see <a href="https://policies.google.com/privacy">Google&rsquo;s Privacy Policy</a> and <a href="https://policies.google.com/privacy/frameworks">Google&rsquo;s current information about data-transfer frameworks</a>. We do not independently claim that any particular transfer mechanism guarantees compliance.</p>
 
+            <h3 class="legal-section__subheading">What the OpenAI Ads Measurement Pixel may collect</h3>
+            <p>When measurement is accepted, the OpenAI Ads Measurement Pixel can capture the privacy-preserving OpenAI ad click reference (<code>oppref</code>) from a landing-page URL and store it in the first-party <code>__oppref</code> cookie. OpenAI&rsquo;s Pixel also adds the current page origin and an event timestamp when it sends a conversion event. See the <a href="https://developers.openai.com/ads/measurement-pixel">OpenAI Measurement Pixel documentation</a> and <a href="https://openai.com/policies/privacy-policy/">OpenAI Privacy Policy</a>.</p>
+            <p>Only after the Free Trial request is genuinely successful, we send the standard <code>lead_created</code> event with the <code>customer_action</code> data type. We do not manually send OpenAI parent or child names, email addresses, telephone or WhatsApp numbers, ages, city, lesson preferences, notes, or other booking-form field values.</p>
+
             <h3 class="legal-section__subheading" id="analytics-events">Booking-funnel events</h3>
-            <p>When analytics is accepted, we use three custom events to understand how visitors move through the trial-booking funnel:</p>
+            <p>When measurement is accepted, we use three Google Analytics custom events to understand how visitors move through the trial-booking funnel:</p>
             <ul>
               <li><code>trial_cta_click</code> records an internal click leading to the Book Trial page. Its parameters are <code>source_path</code>, <code>destination_path</code>, and <code>cta_text</code>.</li>
               <li><code>trial_form_start</code> records that someone began interacting with the booking form. Its parameters are <code>source_path</code> and a fixed <code>form_id</code>.</li>
@@ -318,13 +322,13 @@
             <p>We do not intentionally send Google Analytics parent or child names, email addresses, telephone or WhatsApp numbers, ages, city, selected lesson language, learning level, preferred schedule, notes, or any booking-form field value.</p>
 
             <h3 class="legal-section__subheading">Your choice and withdrawal</h3>
-            <p>Your analytics choice is stored locally on your device for 12 months in browser local storage under <code>tarteelhouse.analyticsConsent</code>. This storage remembers whether you accepted or rejected analytics; it is not an advertising profile.</p>
-            <p>You can change or withdraw your choice at any time using the persistent &ldquo;Cookie settings&rdquo; control in the footer. Withdrawing consent applies going forward. When your choice changes from accepted to rejected, our consent implementation attempts to remove first-party Google Analytics cookies for the Tarteel House domain and reloads the page.</p>
+            <p>Your measurement choice is stored locally on your device for 12 months in browser local storage under <code>tarteelhouse.analyticsConsent</code>. This storage remembers whether you accepted or rejected measurement; it is not an advertising profile. Because this choice now covers advertising measurement as well as analytics, a previous analytics-only acceptance is not reused and you will be asked to choose again; a previous rejection remains respected.</p>
+            <p>You can change or withdraw your choice at any time using the persistent &ldquo;Cookie settings&rdquo; control in the footer. Withdrawing consent applies going forward. The site tells the OpenAI Pixel to stop future measurement events and attempts to remove first-party Google Analytics cookies for the Tarteel House domain, then reloads the page if analytics was active.</p>
 
-            <h3 class="legal-section__subheading">Cookies and local storage</h3>
+            <h3 class="legal-section__subheading">Cookies, local storage, and session storage</h3>
             <div class="comparison-table-wrapper">
             <table class="comparison-table">
-              <caption>Analytics cookies and local storage used by the current website configuration</caption>
+              <caption>Measurement cookies, local storage, and session storage used by the current website configuration</caption>
               <thead>
                 <tr>
                   <th scope="col">Name</th>
@@ -340,9 +344,25 @@
                   <td><code>tarteelhouse.analyticsConsent</code></td>
                   <td>Browser local storage</td>
                   <td>Tarteel House</td>
-                  <td>Remembers whether analytics was accepted or rejected</td>
+                  <td>Remembers whether measurement was accepted or rejected</td>
                   <td>12 months</td>
-                  <td>When the visitor accepts or rejects analytics</td>
+                  <td>When the visitor accepts or rejects measurement</td>
+                </tr>
+                <tr>
+                  <td><code>tarteelhouse.trialConversionToken</code></td>
+                  <td>Browser session storage</td>
+                  <td>Tarteel House</td>
+                  <td>Allows one successful form response to trigger at most one conversion event</td>
+                  <td>Current browser tab session, or until consumed after success</td>
+                  <td>When a valid Free Trial form submission begins</td>
+                </tr>
+                <tr>
+                  <td><code>__oppref</code></td>
+                  <td>First-party advertising attribution cookie</td>
+                  <td>OpenAI Ads Measurement Pixel</td>
+                  <td>Stores the privacy-preserving OpenAI ad click reference for later conversion attribution</td>
+                  <td>Controlled by the OpenAI Pixel and subject to browser restrictions</td>
+                  <td>For an eligible OpenAI ad click, subject to the Pixel&rsquo;s consent behavior</td>
                 </tr>
                 <tr>
                   <td><code>_ga</code></td>
@@ -363,7 +383,7 @@
               </tbody>
             </table>
             </div>
-            <p>This table describes the current configuration. Google could use additional cookies if the Google Analytics configuration changes in the future.</p>
+            <p>This table describes the current configuration. Google could use additional cookies if the Google Analytics configuration changes in the future, and OpenAI Pixel behavior may change if its configuration or service changes.</p>
           </section>
 
           <section class="legal-section" id="marketing">

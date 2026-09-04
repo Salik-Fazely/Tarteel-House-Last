@@ -202,7 +202,7 @@ class TrustSafeguardingPatchTests(unittest.TestCase):
             self.assertNotIn(unsupported, combined)
 
         self.assertIn("Last updated: 14 July 2026", terms)
-        self.assertIn("Last updated: 14 July 2026", privacy)
+        self.assertIn("Last updated: 4 September 2026", privacy)
 
     def test_prebooking_whatsapp_links_are_consistent_and_safe(self):
         footer_link_pattern = re.compile(

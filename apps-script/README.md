@@ -4,7 +4,7 @@ The booking form at `/book-trial` is configured to post to a Google Apps Script 
 
 ## Status and scope
 
-This file documents the repository implementation, not verified live behaviour. Booking reliability and backend hardening remain postponed/open. The deployed script version and a real end-to-end booking must be confirmed when that work resumes; do not assume repository changes are live.
+This file documents the repository implementation, not verified live behaviour. The deployed script version and a real end-to-end booking must be confirmed before the website change is released; repository changes do not update the Apps Script deployment automatically.
 
 ## Files
 - `Code.gs` — the full Apps Script. Source of truth.
@@ -31,29 +31,45 @@ At the top of `Code.gs`:
 - `NOTIFICATION_EMAIL` — where booking notifications are sent. Launch value:
   `hello@tarteelhouse.com`.
 - `SUCCESS_REDIRECT` — fallback absolute URL of `/success`.
-- `ALLOWED_REDIRECT_HOSTS` — production/staging hostnames allowed for the
-  form's `success_redirect` value. `localhost` and `127.0.0.1` are allowed
-  automatically for local testing.
+- `ALLOWED_REDIRECT_HOSTS` — exact production hostnames allowed for the form's
+  HTTPS `success_redirect` value. The launch values are `tarteelhouse.com` and
+  `www.tarteelhouse.com`; loopback and arbitrary staging hosts are rejected.
 - `SHEET_NAME` — tab name inside the spreadsheet. Defaults to `Bookings`.
 
 ## What the repository script is designed to do on each submission
-1. Ignores the submission silently if the `website_field` honeypot is filled
-   (spam bot).
+The browser performs a normal top-level form POST. It does not use an opaque
+`fetch(..., { mode: "no-cors" })`, because a resolved no-CORS request cannot
+prove that Apps Script accepted the booking. Apps Script therefore owns the
+success or error navigation.
+
+1. Returns a non-success error page if the `website_field` honeypot is filled
+   (spam bot), without writing or redirecting to `/success`.
 2. Validates the required booking fields before writing to the sheet. Missing
    or invalid required fields return a short error page and are not saved.
-3. Ensures the header row on the `Bookings` sheet contains all required
+3. Joins the native form's repeated `preferred_days` checkbox parameters into
+   the comma-separated value used by the existing sheet and email.
+4. Ensures the header row on the `Bookings` sheet contains all required
    columns — appends any missing ones to the right without disturbing
    existing data.
-4. Appends a new row with the submitted values. The `status` column is set
+5. Appends a new row with the submitted values. The `status` column is set
    to **New lead**; `assigned_teacher`, `follow_up_date`, and
    `internal_notes` are left empty for the founder to fill in.
-5. Sends a plain-text email to `NOTIFICATION_EMAIL` with all key booking
+6. Sends a plain-text email to `NOTIFICATION_EMAIL` with all key booking
    details. `Reply-To` is set to the parent's email, so hitting reply
    responds straight to the parent.
-6. Returns a short HTML page that immediately redirects to `/success`.
-   The form can pass a `success_redirect` URL for local/staging/production;
-   the script only uses it when the hostname is allowed and the path ends in
-   `/success`. Otherwise it falls back to `SUCCESS_REDIRECT`.
+7. Only after both the sheet write and email notification succeed, returns a
+   short HTML page that immediately redirects to `/success`.
+   The form can pass a production `success_redirect` URL; the script only uses
+   an HTTPS URL on an exact allowed hostname whose path ends in `/success`.
+   The only accepted query string is a browser-generated UUID in the `booking`
+   parameter. Otherwise it falls back to `SUCCESS_REDIRECT` without a
+   conversion marker.
+
+The frontend stores the same opaque UUID in session storage before posting.
+The shared analytics module measures `lead_created` only when Apps Script has
+returned the matching success URL, and consumes the marker before measuring so
+refreshing the success page cannot measure again. No booking-form values are
+included in that measurement event.
 
 ## Required booking fields
 The frontend and backend both require:

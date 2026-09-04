@@ -10,6 +10,7 @@ APPROVED_EVENTS = (
     "trial_cta_click",
     "trial_form_start",
     "trial_form_submit_attempt",
+    "lead_created",
 )
 
 
@@ -42,7 +43,6 @@ class AnalyticsEventsStaticTests(unittest.TestCase):
             "generate_lead",
             "confirmed_booking",
             "successful_booking",
-            "/success/",
             "googletagmanager.com",
             "google-analytics.com",
             "gtag('config'",
