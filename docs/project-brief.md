@@ -35,9 +35,9 @@ Tarteel House should feel minimal, premium, warm, and parent-friendly. The site 
 - Booking backend for launch: Google Apps Script.
 - Booking storage: Google Sheets.
 - Notification inbox: `hello@tarteelhouse.com`.
-- Static hosting configuration: GitHub Pages with `www.tarteelhouse.com` in `CNAME`.
+- Production hosting: Cloudflare Pages, serving static files from the repository root at `www.tarteelhouse.com`, as confirmed by the owner.
 
-Booking reliability, backend hardening, deployment confirmation, and a real end-to-end booking test remain postponed/open. Repository code must not be treated as proof that the latest version is live.
+The [conversion sprint report](../ASTRA_CONVERSION_SPRINT_REPORT.md) records local findings and corrections. Deployment confirmation and a real end-to-end booking test remain open. Repository code must not be treated as proof that the latest version is live.
 
 ## Decision priorities
 1. Trust

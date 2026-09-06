@@ -301,10 +301,11 @@ EXPECTED_ARTICLE_TEXT = normalise(
     a suitable learning focus;
     whether the teaching language and pace were appropriate;
     the recommended next step.
-    At Tarteel House, families are contacted within two days of the trial. There is no payment or commitment for attending the trial.
+    There is no payment or commitment for attending the Tarteel House trial.
     When the family is ready to continue, they can review the available lesson packages and decide whether one is suitable.
     How Tarteel House trial lessons work
     Tarteel House offers free, one-to-one trial lessons for children aged 5–16.
+    We normally contact families within two days of their request to arrange the free trial.
     The trial lasts 40 minutes. The teacher is matched according to the child’s level, language needs, learning needs and schedule. Parents may also express a teacher preference.
     During the lesson, the teacher listens to the child’s current level and introduces part of the teaching approach. If the match does not feel suitable, the parent can request a different teacher.
     You can learn more about how Tarteel House lessons work or meet the teachers before booking.

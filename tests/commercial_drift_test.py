@@ -59,6 +59,15 @@ def page_content(path):
 
 
 class CommercialDriftTests(unittest.TestCase):
+    def test_contact_timeframes_do_not_become_guarantees_or_post_trial_deadlines(self):
+        for page in PUBLIC_PAGES:
+            _, source = page_content(page)
+            # Include metadata: a search snippet must not promise more than the page.
+            for sentence in re.findall(r"[^.!?<>]*\bwithin two days\b[^.!?<>]*", source):
+                with self.subTest(page=page.relative_to(ROOT).as_posix(), sentence=sentence):
+                    self.assertIn("normally", sentence)
+                    self.assertNotRegex(sentence, r"(?:of|after) (?:the |your )?trial\b")
+
     def test_complete_public_pages_exclude_obsolete_commercial_claims(self):
         self.assertTrue(PUBLIC_PAGES, "No complete public pages were discovered")
 

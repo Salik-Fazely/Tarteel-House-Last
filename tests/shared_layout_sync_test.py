@@ -211,7 +211,9 @@ class SharedLayoutSyncTests(unittest.TestCase):
             for relative_path in paths_to_copy:
                 destination = isolated_root / relative_path
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(ROOT / relative_path, destination)
+                # Only content is needed: copied Windows Hidden metadata prevents
+                # the intentional fixture rewrite below from opening for writing.
+                shutil.copyfile(ROOT / relative_path, destination)
 
             drifted_page = isolated_root / "about/index.html"
             drifted_source = drifted_page.read_text(encoding="utf-8")

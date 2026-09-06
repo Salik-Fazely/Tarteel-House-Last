@@ -255,6 +255,7 @@ test('the real consent grant event releases one waiting success conversion after
   const token = 'd5f44c60-bc21-48f6-8d66-6e0b1e0dc693';
   const sessionStorage = createStorage();
   sessionStorage.setItem(analyticsEvents.CONVERSION_STORAGE_KEY, token);
+  sessionStorage.setItem(analyticsEvents.RECEIPT_STORAGE_KEY, token);
   const document = createConsentDocument();
   const historyCalls = [];
   const window = withWindowEvents({
@@ -344,4 +345,37 @@ test('targets only first-party GA cookie names for deletion', () => {
     consent.analyticsCookieNames('_ga=one; session=keep; _ga_ZVLW7QGYR1=two; _gid=keep'),
     ['_ga', '_ga_ZVLW7QGYR1'],
   );
+});
+
+test('a throwing analytics implementation cannot trap the consent interface or suppress its change event', () => {
+  const document = createConsentDocument();
+  const changes = [];
+  const window = withWindowEvents({
+    localStorage: createStorage(),
+    location: { hostname: 'tarteelhouse.com' },
+    gtag() { throw new Error('blocked analytics'); },
+  });
+  window.addEventListener(consent.CONSENT_EVENT, event => changes.push(event.detail.status));
+  consent.init(window, document);
+  assert.doesNotThrow(() => document.elements.find(element => element.dataset.consentChoice === 'granted').dispatch('click'));
+  assert.equal(document.elements.find(element => element.id === 'analytics-consent').hidden, true);
+  assert.deepEqual(changes, ['granted']);
+  assert.equal(window.__tarteelHouseGa4Initialized, false);
+});
+
+test('withdrawing consent disables active GA immediately without reloading or discarding form input', () => {
+  const document = createConsentDocument();
+  let reloads = 0;
+  const window = {
+    localStorage: createStorage(JSON.stringify(consent.createPreference('granted'))),
+    location: { hostname: 'tarteelhouse.com', reload() { reloads += 1; } },
+  };
+  consent.init(window, document);
+  document.elements.find(element => element.dataset.consentChoice === 'denied').dispatch('click');
+  assert.equal(reloads, 0);
+  assert.equal(window[`ga-disable-${consent.MEASUREMENT_ID}`], true);
+  assert.equal(queuedOpenAiCalls(window).at(-1)[1], false);
+  document.elements.find(element => element.dataset.consentChoice === 'granted').dispatch('click');
+  assert.equal(window[`ga-disable-${consent.MEASUREMENT_ID}`], false);
+  assert.equal(document.scripts.filter(script => script.src.includes('googletagmanager')).length, 1);
 });

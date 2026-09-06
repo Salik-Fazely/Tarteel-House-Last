@@ -14,6 +14,7 @@
 // Config — change the email below to wherever bookings should be sent.
 // ---------------------------------------------------------------------------
 const CONFIG = {
+  SPREADSHEET_ID: '1xLqKF1DGBGdknlGbTyulDxDYgiVm6vh0MkkXSaJ90Kc',
   SHEET_NAME: 'Bookings',
   NOTIFICATION_EMAIL: 'hello@tarteelhouse.com',
   SUCCESS_REDIRECT: 'https://www.tarteelhouse.com/success/',
@@ -46,8 +47,12 @@ const HEADERS = [
   'status',
   'assigned_teacher',
   'follow_up_date',
-  'internal_notes'
+  'internal_notes',
+  'submission_id',
+  'notification_status'
 ];
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const REQUIRED_FIELDS = [
   { name: 'parent_name',      label: 'parent name' },
@@ -101,37 +106,67 @@ const ALLOWED_VALUES = {
 // Entry point
 // ---------------------------------------------------------------------------
 function doPost(e) {
+  const params = requestParams_(e);
+  let lock;
   try {
-    const params = requestParams_(e);
 
     // Honeypot: real users never fill this field.
     if (params.website_field) {
       return htmlError_(
         ['This submission could not be accepted.'],
         'Booking request could not be completed',
-        'Please go back and submit the form again.'
+        'Please go back and submit the form again.', params
       );
     }
 
     const validation = validateBooking_(params);
     if (!validation.valid) {
-      return htmlError_(validation.errors);
+      return htmlError_(validation.errors, null, null, params);
     }
 
+    // Keep lookup, write and notification state under the same lock.
+    lock = LockService.getScriptLock();
+    lock.waitLock(10000);
     const sheet = getOrCreateSheet_();
     ensureHeaders_(sheet);
-    appendRow_(sheet, params);
-    sendNotification_(params);
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    let rowNumber = findSubmissionRow_(sheet, headers, params.submission_id);
+    if (!rowNumber) {
+      appendRow_(sheet, params);
+      SpreadsheetApp.flush();
+      rowNumber = sheet.getLastRow();
+    }
+    const saved = sheet.getRange(rowNumber, 1, 1, headers.length).getValues()[0];
+    const notificationColumn = headers.indexOf('notification_status') + 1;
+    if (saved[notificationColumn - 1] !== 'Sent') {
+      // Receipt means persisted in Sheets. Email is a separate operational step.
+      const savedParams = {};
+      headers.forEach(function (header, index) { savedParams[header] = saved[index]; });
+      let notificationStatus = 'Sent';
+      try {
+        sendNotification_(savedParams);
+      } catch (mailError) {
+        notificationStatus = 'Failed';
+        console.error('Booking notification failed; review the Bookings sheet.');
+      }
+      try {
+        sheet.getRange(rowNumber, notificationColumn).setValue(notificationStatus);
+        SpreadsheetApp.flush();
+      } catch (statusError) {
+        console.error('Booking notification status could not be updated; review Apps Script executions.');
+      }
+    }
 
     return htmlRedirect_(params);
   } catch (err) {
-    console.error('Booking submission error:', err);
-    // Do not show success unless the booking was saved and notification attempted.
+    console.error('Booking submission failed before acknowledgment; review Apps Script executions.');
     return htmlError_(
       ['We could not complete your booking request right now. Please try again, or message us on WhatsApp if the problem continues.'],
       'Booking request could not be completed',
-      'Please go back and submit the form again. If the problem continues, contact us directly on WhatsApp.'
+      'Please try again using the same form. If the problem continues, contact us directly on WhatsApp.', params
     );
+  } finally {
+    if (lock) lock.releaseLock();
   }
 }
 
@@ -166,7 +201,10 @@ function doGet() {
 // Sheet helpers
 // ---------------------------------------------------------------------------
 function getOrCreateSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  // Web-app executions do not have the bound editor's active spreadsheet.
+  const spreadsheetId = String(CONFIG.SPREADSHEET_ID || '').trim();
+  if (!spreadsheetId) throw new Error('Booking spreadsheet ID is not configured.');
+  const ss = SpreadsheetApp.openById(spreadsheetId);
   let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) sheet = ss.insertSheet(CONFIG.SHEET_NAME);
   return sheet;
@@ -202,9 +240,28 @@ function appendRow_(sheet, params) {
     if (h === 'assigned_teacher') return '';
     if (h === 'follow_up_date')   return '';
     if (h === 'internal_notes')   return '';
-    return params[h] != null ? params[h] : '';
+    if (h === 'notification_status') return 'Pending';
+    return literalSheetValue_(params[h] != null ? params[h] : '');
   });
   sheet.appendRow(row);
+}
+
+function findSubmissionRow_(sheet, headers, submissionId) {
+  if (!UUID_PATTERN.test(String(submissionId || ''))) return 0;
+  const count = sheet.getLastRow() - 1;
+  if (count < 1) return 0;
+  const column = headers.indexOf('submission_id') + 1;
+  const values = sheet.getRange(2, column, count, 1).getValues();
+  for (let index = 0; index < values.length; index++) {
+    if (values[index][0] === submissionId) return index + 2;
+  }
+  return 0;
+}
+
+function literalSheetValue_(value) {
+  const text = String(value);
+  // Preserve phone prefixes and prevent formula interpretation in Sheets/exports.
+  return /^\s*[=+\-@]/.test(text) ? "'" + text : text;
 }
 
 // ---------------------------------------------------------------------------
@@ -222,6 +279,12 @@ function validateBooking_(params) {
   if (params.consent !== 'yes') {
     errors.push('Privacy consent is required.');
   }
+
+  ['submission_id', 'response_token'].forEach(function (name) {
+    if (hasValue_(params[name]) && !UUID_PATTERN.test(String(params[name]))) {
+      errors.push('The request could not be verified. Please reload the booking form.');
+    }
+  });
 
   if (hasValue_(params.email) && !isValidEmail_(params.email)) {
     errors.push('Email address is not valid.');
@@ -326,17 +389,18 @@ function sendNotification_(p) {
 // ---------------------------------------------------------------------------
 function htmlRedirect_(params) {
   const url = getSuccessRedirect_(params);
-  const safe = JSON.stringify(url);
   const escaped = escapeHtml_(url);
   const html =
     '<!doctype html>' +
     '<meta charset="utf-8">' +
-    '<meta http-equiv="refresh" content="0;url=' + escaped + '">' +
-    '<title>Redirecting…</title>' +
-    '<script>window.location.replace(' + safe + ');</script>' +
-    '<p style="font-family:system-ui;padding:2rem;">' +
-      'Thank you. Redirecting to <a href="' + escaped + '">' + escaped + '</a>…' +
-    '</p>';
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Trial request received</title>' +
+    '<div style="font-family:system-ui;padding:2rem;line-height:1.6;max-width:42rem;">' +
+      '<h1>Your request has been received</h1>' +
+      '<p>Thank you. We normally contact families on WhatsApp within two days. There is no need to resubmit your request.</p>' +
+      '<p><a target="_top" href="' + escaped + '">Continue to Tarteel House</a></p>' +
+      '<p>If that link cannot open, <a target="_blank" rel="noopener noreferrer" href="' + escaped + '">view the next steps in a new tab</a>.</p>' +
+    '</div>' + bookingResponseScript_(params, 'success');
   return HtmlService
     .createHtmlOutput(html)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
@@ -345,7 +409,7 @@ function htmlRedirect_(params) {
 // ---------------------------------------------------------------------------
 // Error response and redirect helpers.
 // ---------------------------------------------------------------------------
-function htmlError_(errors, title, message) {
+function htmlError_(errors, title, message, params) {
   const pageTitle = title || 'Booking details missing';
   const heading = title || 'Some booking details are missing';
   const body = message || 'Please go back, complete the required details, and submit the form again.';
@@ -356,13 +420,15 @@ function htmlError_(errors, title, message) {
   const html =
     '<!doctype html>' +
     '<meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + escapeHtml_(pageTitle) + '</title>' +
     '<div style="font-family:system-ui;padding:2rem;line-height:1.6;max-width:42rem;">' +
       '<h1 style="font-size:1.25rem;">' + escapeHtml_(heading) + '</h1>' +
       '<p>' + escapeHtml_(body) + '</p>' +
       '<ul>' + items + '</ul>' +
-      '<p><button onclick="history.back()">Go back to the form</button></p>' +
-    '</div>';
+      '<p>Use your browser Back button to return to your form, or <a target="_blank" rel="noopener noreferrer" href="https://www.tarteelhouse.com/book-trial/">open a new booking form</a>.</p>' +
+      '<p><a target="_blank" rel="noopener noreferrer" href="https://wa.me/34614494311">Message Tarteel House on WhatsApp</a></p>' +
+    '</div>' + bookingResponseScript_(params, 'error', errors.join(' '));
 
   return HtmlService
     .createHtmlOutput(html)
@@ -400,6 +466,23 @@ function isAllowedSuccessRedirect_(value) {
   if (port && port !== '443') return false;
 
   return CONFIG.ALLOWED_REDIRECT_HOSTS.indexOf(host) !== -1;
+}
+
+function bookingResponseScript_(params, status, message) {
+  if (!params || !isAllowedSuccessRedirect_(params.success_redirect) ||
+      !UUID_PATTERN.test(String(params.response_token || '')) ||
+      !UUID_PATTERN.test(String(params.submission_id || ''))) return '';
+  const origin = String(params.success_redirect).trim().match(/^https:\/\/[^/]+/i)[0];
+  const payload = JSON.stringify({
+    type: 'tarteelhouse:booking-result',
+    submission_id: params.submission_id,
+    response_token: params.response_token,
+    status: status,
+    message: message || ''
+  }).replace(/</g, '\\u003c');
+  // HtmlService lives inside Google's sandbox wrapper. The website remains
+  // top-level and validates the Google origin and per-attempt random token.
+  return '<script>window.top.postMessage(' + payload + ',' + JSON.stringify(origin) + ');</script>';
 }
 
 function escapeHtml_(value) {

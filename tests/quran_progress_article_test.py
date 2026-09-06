@@ -76,7 +76,7 @@ class QuranProgressArticleTests(unittest.TestCase):
         )
         for heading in required_headings:
             self.assertIn(heading, self.text)
-        self.assertIn("Reviewed by Forouhar Rahmani, Tarteel House Quran Teacher", self.text)
+        self.assertIn("Reviewed by Foruhar Rahmani, Tarteel House Quran Teacher", self.text)
         self.assertIn("Reviewed: July 2026", self.text)
         for question in (
             "What is my child’s main learning goal right now?",
@@ -153,10 +153,10 @@ class QuranProgressArticleTests(unittest.TestCase):
         reviewer = posting.get("reviewedBy")
         if reviewer is not None:
             self.assertEqual(
-                {"@type": "Person", "name": "Forouhar Rahmani", "jobTitle": "Tarteel House Quran Teacher"},
+                {"@type": "Person", "name": "Foruhar Rahmani", "jobTitle": "Tarteel House Quran Teacher"},
                 reviewer,
             )
-        self.assertNotRegex(self.source, r"Forouhar Rahmani.{0,100}(?:https?://|credential|qualification|biograph)")
+        self.assertNotRegex(self.source, r"Foruhar Rahmani.{0,100}(?:https?://|credential|qualification|biograph)")
 
     def test_blog_card_description_matches_the_expanded_article(self):
         blog_index = BLOG_INDEX.read_text(encoding="utf-8")

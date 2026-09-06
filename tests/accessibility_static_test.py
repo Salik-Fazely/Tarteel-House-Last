@@ -45,6 +45,8 @@ CHOICE_VALUES = {
 EXPECTED_FORM_NAMES = {
     "source",
     "success_redirect",
+    "submission_id",
+    "response_token",
     "website_field",
     "child_name",
     "child_age",

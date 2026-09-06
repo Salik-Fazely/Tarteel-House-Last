@@ -27,7 +27,7 @@ function listenerTarget() {
 }
 
 
-function bookingFixture({ valid = true } = {}) {
+function bookingFixture({ valid = true, enhanced = false } = {}) {
   const formEvents = listenerTarget();
   const selectedDays = [
     {
@@ -49,7 +49,16 @@ function bookingFixture({ valid = true } = {}) {
   let reportValidityCalls = 0;
   let fetchCalls = 0;
   let formDataCalls = 0;
-  const location = { href: 'https://www.tarteelhouse.com/book-trial/' };
+  const location = { href: 'https://www.tarteelhouse.com/book-trial/', origin: 'https://www.tarteelhouse.com', assign(url) { this.href = url; } };
+  const fields = {
+    'submission-id': { value: '' },
+    'response-token': { value: '' },
+    'success-redirect': { value: '/success/' },
+  };
+  const responseFrame = { name: 'trial-booking-response', contentWindow: {} };
+  const timers = new Map();
+  let nextTimer = 0;
+  let randomCalls = 0;
   const form = {
     ...formEvents,
     action: 'https://script.google.com/macros/s/example/exec',
@@ -78,7 +87,8 @@ function bookingFixture({ valid = true } = {}) {
       return {
         'trial-form': form,
         'trial-form-status': status,
-        'success-redirect': null,
+        'trial-booking-response': enhanced ? responseFrame : null,
+        ...fields,
       }[id] || null;
     },
     querySelectorAll() { return []; },
@@ -96,7 +106,11 @@ function bookingFixture({ valid = true } = {}) {
     },
     FormData: FormDataMock,
     URL,
-    window: { ...windowEvents, location },
+    window: { ...windowEvents, location,
+      crypto: enhanced ? { randomUUID() { randomCalls += 1; return `d5f44c60-bc21-48f6-8d66-${String(randomCalls).padStart(12, '0')}`; } } : null,
+      setTimeout(callback) { nextTimer += 1; timers.set(nextTimer, callback); return nextTimer; },
+      clearTimeout(timer) { timers.delete(timer); },
+    },
   };
   vm.runInNewContext(source, context);
 
@@ -112,6 +126,18 @@ function bookingFixture({ valid = true } = {}) {
     dispatchPageShow(event = {}) {
       windowEvents.dispatch('pageshow', event);
     },
+    dispatchResponse(overrides = {}) {
+      windowEvents.dispatch('message', {
+        origin: 'https://abc-script.googleusercontent.com',
+        source: { postMessage() {} },
+        data: { type: 'tarteelhouse:booking-result', status: 'success',
+          submission_id: fields['submission-id'].value, response_token: fields['response-token'].value },
+        ...overrides,
+      });
+    },
+    timeout() { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()); },
+    fields,
+    form,
     get fetchCalls() { return fetchCalls; },
     get formDataCalls() { return formDataCalls; },
     get reportValidityCalls() { return reportValidityCalls; },
@@ -140,6 +166,63 @@ test('a valid booking submit retains native repeated checkbox values and uses th
     ['mon', 'wed'],
     'native preferred_days entries remain separate for the server to normalize'
   );
+});
+
+test('the enhanced form posts to its named frame and waits for a matching Google acknowledgment', () => {
+  const view = bookingFixture({ enhanced: true });
+  view.dispatchSubmit();
+  assert.equal(view.form.target, 'trial-booking-response');
+  assert.notEqual(view.fields['submission-id'].value, view.fields['response-token'].value);
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/book-trial/');
+  view.dispatchResponse();
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/success/');
+});
+
+test('unknown origins, incorrect tokens, missing sources and unsolicited callbacks never confirm a booking', () => {
+  const view = bookingFixture({ enhanced: true });
+  view.dispatchResponse();
+  view.dispatchSubmit();
+  for (const origin of ['null', 'https://attacker.example', 'https://script.googleusercontent.com.attacker.example', 'http://script.googleusercontent.com']) {
+    view.dispatchResponse({ origin });
+  }
+  view.dispatchResponse({ source: null });
+  view.dispatchResponse({ data: { type: 'tarteelhouse:booking-result', status: 'success',
+    submission_id: view.fields['submission-id'].value, response_token: 'wrong' } });
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/book-trial/');
+  assert.equal(view.submitButton.disabled, true);
+});
+
+test('an acknowledged failure preserves the form and can be retried with the same submission id and a new response token', () => {
+  const view = bookingFixture({ enhanced: true });
+  view.dispatchSubmit();
+  const submissionId = view.fields['submission-id'].value;
+  const responseToken = view.fields['response-token'].value;
+  view.dispatchResponse({ data: { type: 'tarteelhouse:booking-result', status: 'error',
+    submission_id: submissionId, response_token: responseToken, message: 'Missing preferred days.' } });
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/book-trial/');
+  assert.equal(view.submitButton.disabled, false);
+  assert.match(view.status.textContent, /Missing preferred days/);
+  view.dispatchSubmit();
+  assert.equal(view.fields['submission-id'].value, submissionId);
+  assert.notEqual(view.fields['response-token'].value, responseToken);
+});
+
+test('a timeout preserves input, enables retry, and a late callback from the old attempt cannot settle the retry', () => {
+  const view = bookingFixture({ enhanced: true });
+  view.dispatchSubmit();
+  const stale = { type: 'tarteelhouse:booking-result', status: 'success',
+    submission_id: view.fields['submission-id'].value, response_token: view.fields['response-token'].value };
+  view.timeout();
+  assert.equal(view.submitButton.disabled, false);
+  assert.match(view.status.textContent, /confirm/i);
+  view.dispatchSubmit();
+  view.dispatchResponse({ data: stale });
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/book-trial/');
+  view.dispatchResponse();
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/success/');
+  view.location.href = 'https://www.tarteelhouse.com/book-trial/';
+  view.dispatchResponse();
+  assert.equal(view.location.href, 'https://www.tarteelhouse.com/book-trial/', 'response is consumed once');
 });
 
 

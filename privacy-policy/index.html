@@ -323,10 +323,10 @@
 
             <h3 class="legal-section__subheading">Your choice and withdrawal</h3>
             <p>Your measurement choice is stored locally on your device for 12 months in browser local storage under <code>tarteelhouse.analyticsConsent</code>. This storage remembers whether you accepted or rejected measurement; it is not an advertising profile. Because this choice now covers advertising measurement as well as analytics, a previous analytics-only acceptance is not reused and you will be asked to choose again; a previous rejection remains respected.</p>
-            <p>You can change or withdraw your choice at any time using the persistent &ldquo;Cookie settings&rdquo; control in the footer. Withdrawing consent applies going forward. The site tells the OpenAI Pixel to stop future measurement events and attempts to remove first-party Google Analytics cookies for the Tarteel House domain, then reloads the page if analytics was active.</p>
+            <p>You can change or withdraw your choice at any time using the persistent &ldquo;Cookie settings&rdquo; control in the footer. Withdrawing consent applies going forward. The site disables future Google Analytics collection, tells the OpenAI Pixel to stop future measurement events, and attempts to remove first-party Google Analytics cookies for the Tarteel House domain. Your page and any in-progress booking details stay open.</p>
 
             <h3 class="legal-section__subheading">Cookies, local storage, and session storage</h3>
-            <div class="comparison-table-wrapper">
+            <div class="comparison-table-wrapper" role="region" aria-label="Measurement storage details (scroll horizontally on small screens)" tabindex="0">
             <table class="comparison-table">
               <caption>Measurement cookies, local storage, and session storage used by the current website configuration</caption>
               <thead>
@@ -349,12 +349,12 @@
                   <td>When the visitor accepts or rejects measurement</td>
                 </tr>
                 <tr>
-                  <td><code>tarteelhouse.trialConversionToken</code></td>
+                  <td><code>tarteelhouse.trialConversionToken</code> and <code>tarteelhouse.trialReceivedToken</code></td>
                   <td>Browser session storage</td>
                   <td>Tarteel House</td>
                   <td>Allows one successful form response to trigger at most one conversion event</td>
                   <td>Current browser tab session, or until consumed after success</td>
-                  <td>When a valid Free Trial form submission begins</td>
+                  <td>The first marker is created when a valid Free Trial form submission begins; the receipt marker is created only after a verified successful response</td>
                 </tr>
                 <tr>
                   <td><code>__oppref</code></td>
@@ -383,6 +383,7 @@
               </tbody>
             </table>
             </div>
+            <p>The booking form also sends an opaque request ID to prevent duplicate entries when the same form is retried, and a fresh response token to verify each reply. The request ID is stored with the booking in Google Sheets; the response token is used only to return the outcome to the form. These values contain no booking details and are not sent as measurement-event fields. If browser storage is unavailable, booking still works but conversion measurement may be unavailable.</p>
             <p>This table describes the current configuration. Google could use additional cookies if the Google Analytics configuration changes in the future, and OpenAI Pixel behavior may change if its configuration or service changes.</p>
           </section>
 

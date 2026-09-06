@@ -7,8 +7,9 @@
 - Booking submissions are stored in Google Sheets.
 - Booking notifications are emailed to `hello@tarteelhouse.com`.
 - `apps-script/Code.gs` is the canonical Apps Script source. Paste it into the bound Apps Script project and redeploy to update the live backend.
-- GitHub Pages is the current static-hosting configuration, with `www.tarteelhouse.com` recorded in `CNAME`.
+- The owner confirms Cloudflare Pages as the production host, serving static files from the repository root at `www.tarteelhouse.com`. The legacy `CNAME` file does not establish the hosting configuration.
 - Local commits are not assumed to be published to the live site.
+- Local conversion and consistency findings are recorded in the [conversion sprint report](../ASTRA_CONVERSION_SPRINT_REPORT.md).
 - PHP/MySQL may be revisited later, but it is not the launch backend.
 
 ## Business identity decisions
@@ -77,5 +78,5 @@
 - Do not invent legal facts. Use confirmed business details only.
 
 ## Open decisions
-- The missing social preview image `assets/images/og-home.jpg` will be provided later.
-- Booking reliability, backend hardening, deployment confirmation, and a real end-to-end booking test remain postponed/open.
+- The existing `assets/images/tarteel-house-social-card.png` is the current shared social preview asset; verify its published delivery after deployment.
+- Deployed Apps Script confirmation and a real end-to-end booking test remain open. Local verification is not proof of production behaviour.

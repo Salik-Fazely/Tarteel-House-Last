@@ -83,22 +83,27 @@
   }
 
   function loadAnalytics(win, doc) {
+    win[`ga-disable-${MEASUREMENT_ID}`] = false;
     if (win.__tarteelHouseGa4Initialized) return;
-    win.__tarteelHouseGa4Initialized = true;
+    try {
+      win.dataLayer = win.dataLayer || [];
+      win.gtag = win.gtag || function () {
+        win.dataLayer.push(arguments);
+      };
+      win.gtag('js', new Date());
+      win.gtag('config', MEASUREMENT_ID);
 
-    win.dataLayer = win.dataLayer || [];
-    win.gtag = win.gtag || function () {
-      win.dataLayer.push(arguments);
-    };
-    win.gtag('js', new Date());
-    win.gtag('config', MEASUREMENT_ID);
-
-    const src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-    if (!doc.querySelector(`script[src="${src}"]`)) {
-      const script = doc.createElement('script');
-      script.async = true;
-      script.src = src;
-      doc.head.appendChild(script);
+      const src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+      if (!doc.querySelector(`script[src="${src}"]`)) {
+        const script = doc.createElement('script');
+        script.async = true;
+        script.src = src;
+        doc.head.appendChild(script);
+      }
+      win.__tarteelHouseGa4Initialized = true;
+    } catch (error) {
+      win.__tarteelHouseGa4Initialized = false;
+      // Optional measurement must never trap the consent UI or booking form.
     }
   }
 
@@ -271,18 +276,15 @@
       ui.settings.focus({ preventScroll: true });
     });
     ui.reject.addEventListener('click', () => {
-      const analyticsWasActive = preference?.status === 'granted' || Boolean(win.__tarteelHouseGa4Initialized);
       preference = savePreference(storage, 'denied');
+      // Stop future GA collection while preserving the in-progress booking form.
+      win[`ga-disable-${MEASUREMENT_ID}`] = true;
       setOpenAiConsent(win, false);
       clearAnalyticsCookies(win, doc);
       hide();
       notifyConsentChange(win, 'denied');
 
-      if (analyticsWasActive) {
-        win.location.reload();
-      } else {
-        ui.settings.focus({ preventScroll: true });
-      }
+      ui.settings.focus({ preventScroll: true });
     });
 
     if (!preference) {

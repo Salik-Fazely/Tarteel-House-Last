@@ -17,10 +17,10 @@ The product is trust-first: parents should feel calm, respected, and confident b
 - Booking storage: Google Sheets.
 - Backend source in repo: `apps-script/Code.gs`.
 - Backend docs: `apps-script/README.md`.
-- Static hosting configuration: GitHub Pages with the custom domain in `CNAME`.
+- Production hosting: Cloudflare Pages, serving the static site from the repository root at `www.tarteelhouse.com`, as confirmed by the owner. `CNAME` is a legacy file, not the hosting source of truth.
 
 ## Current status
-The static site, Blog, consent banner, booking form, and Apps Script source exist in the repository. Booking reliability, backend hardening, and a real end-to-end booking check remain postponed/open; repository code must not be treated as proof of current production behaviour.
+The static site, Blog, consent banner, booking form, and Apps Script source exist in the repository. Local review and corrections are recorded in the [conversion sprint report](../ASTRA_CONVERSION_SPRINT_REPORT.md). The deployed Apps Script version and a real end-to-end booking check remain unverified; repository code must not be treated as proof of current production behaviour.
 
 The latest local code is not automatically live. Frontend changes must be pushed and published through the hosting workflow, and Apps Script changes require a separate manual deployment.
 
@@ -104,10 +104,10 @@ Flow:
 - Docs have been refreshed for handoff.
 
 ## What is left
-- Booking reliability and backend hardening remain postponed/open.
+- Confirm the local booking changes and outstanding production checks in the sprint report.
 - When booking work resumes, confirm the deployed Apps Script version and run a real end-to-end booking test.
 - Verify `hello@tarteelhouse.com` inbox and deliverability.
-- Add missing `assets/images/og-home.jpg` when the founder provides the social preview image.
+- Verify the existing `assets/images/tarteel-house-social-card.png` on the published pages.
 - Final legal review of privacy/terms.
 - Final desktop/mobile QA on live hosting.
 
@@ -116,7 +116,7 @@ Flow:
 - The public site is English-only for now. Do not add or imply other live site language versions unless they actually exist.
 - Legal pages are not a substitute for professional legal review.
 - The `success_redirect` setup must be checked on local, staging, and production before launch.
-- Homepage OG image is currently referenced but missing; founder will provide it later.
+- The homepage uses the existing `assets/images/tarteel-house-social-card.png` for Open Graph and Twitter previews.
 
 ## Shared Header and Footer workflow
 The canonical Header is `partials/header.html`, and the standard Footer is `partials/footer.html`. `partials/footer-no-prebooking-contact.html` preserves the intentional Footer variant used by Blog articles and the post-booking Success page.

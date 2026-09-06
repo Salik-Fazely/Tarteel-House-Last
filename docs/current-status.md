@@ -1,7 +1,9 @@
 # Current Status
 
 ## Overall state
-The static website, Blog, consent banner, booking form, and Apps Script source are present in the repository. The repository is configured for GitHub Pages and the `www.tarteelhouse.com` custom domain. The latest local commits are not assumed to be published, and booking reliability, backend hardening, and live end-to-end verification remain postponed/open.
+The static website, Blog, consent banner, booking form, and Apps Script source are present in the repository. The owner confirms that production is hosted on Cloudflare Pages from the repository root at `www.tarteelhouse.com`. The latest local commits are not assumed to be published, and deployed Apps Script confirmation and live end-to-end booking verification remain open.
+
+The [conversion sprint report](../ASTRA_CONVERSION_SPRINT_REPORT.md) records the 5–6 September 2026 audit, local changes, verification evidence, and remaining owner decisions. Public contact expectations now say families are normally contacted within two days of their request; the blog distinguishes teacher review from authorship and uses the confirmed teacher-name spelling. No deployments or production form submissions were made during the audit.
 
 ## Completed pages
 - `/`: homepage with hero, trust stats band, how-it-works preview, teacher preview, why-us section, pricing preview, student/family videos, final CTA, and footer.
@@ -18,20 +20,21 @@ The static website, Blog, consent banner, booking form, and Apps Script source a
 ## Core files
 - `assets/css/styles.css`: global brand tokens, typography, layout, components, responsive styles, and motion rules.
 - `assets/js/main.js`: mobile nav, active nav link, scroll reveals, page transitions, stats count-up, and shared progressive enhancement.
-- `assets/js/consent.js`: consent banner, analytics preference storage, and persistent cookie settings.
-- `/book-trial`: includes small inline JS for booking chips and success redirect.
+- `assets/js/consent.js`: measurement consent, preference storage, and persistent cookie settings; revoking measurement does not reload the page.
+- `assets/js/analytics-events.js`: consent-gated funnel events and successful-request conversion handling.
+- `/book-trial`: inline form validation, stable request ID, hidden-iframe submission, and authenticated response handling.
 - `apps-script/Code.gs`: canonical Google Apps Script booking backend.
 - `apps-script/README.md`: backend deployment and sheet documentation.
 
 ## Repository booking flow
-The current frontend and Apps Script source describe this flow, but the deployed version and full live behaviour have not been verified in this phase.
+Local browser and VM harness verification covers the flow below. It does not verify the deployed Apps Script, production sheet writes, or email delivery.
 
 1. The parent-facing form is available at `/book-trial`.
-2. The form is configured to post to a Google Apps Script Web App.
-3. The repository backend source is designed to validate required fields and allowed values.
-4. The repository source is designed to append the booking to Google Sheets and send a plain-text notification to `hello@tarteelhouse.com`.
-5. The intended completion path redirects the parent to `/success`.
-6. The repository source is designed to return an error page when validation or backend completion fails.
+2. The form posts to the Google Apps Script Web App through a named hidden iframe, retaining the first-party page until an authenticated `postMessage` response arrives.
+3. The backend validates the request and uses a stable request ID to avoid duplicate Google Sheets rows on retry. Notification status is tracked separately.
+4. A saved booking row establishes receipt; a notification failure does not turn that saved request into a failed booking.
+5. An authenticated receipt permits navigation to the first-party `/success` page. A prepared submission marker, receipt marker, and measurement consent are required before `lead_created` can be sent.
+6. Validation or save failures retain a recoverable form state. Revoking measurement does not reload the page or discard an unfinished request.
 
 ## Current required booking fields
 - `parent_name`
@@ -54,12 +57,15 @@ The current frontend and Apps Script source describe this flow, but the deployed
 
 ## Verification status
 - Automated Python and JavaScript tests cover the current static site.
+- Local browser and VM harness checks verified the iframe response, first-party success navigation, and conversion prerequisites.
 - Local verification does not prove that the latest commits or Apps Script source are deployed.
+- Read-only production inspection found older tracking assets: `consent.js` had 7,686 characters and no OpenAI/`oaiq` implementation; `analytics-events.js` had 4,372 characters and no `lead_created`. The live banner still said “Accept analytics.” The local measurement changes were absent from those fetched assets.
+- A read-only GET to the public Apps Script endpoint reported a missing `doGet`, which exists in the local source. This establishes a version difference, not a failure of the deployed POST booking flow.
 
 ## What remains
-- Booking reliability and backend hardening remain postponed/open.
-- When booking work resumes, confirm the deployed Apps Script version and manually test one real booking end to end: sheet row, notification email, and success redirect.
-- Add the missing Open Graph image `assets/images/og-home.jpg` when provided.
+- Review the sprint report for local booking changes and remaining production checks.
+- Coordinate an authorized release: deploy the matching Apps Script version first, then publish the frontend through Cloudflare Pages. Afterward, run an authorized real booking check for the sheet row, notification email, receipt, and success navigation.
+- Verify the existing Open Graph image `assets/images/tarteel-house-social-card.png` after publication.
 - Final legal review of privacy policy and terms.
 - Verify `hello@tarteelhouse.com` inbox and deliverability.
-- Publish approved local changes through GitHub Pages when deployment is authorized, then test the live domain and SSL.
+- After the coordinated release, test the live domain, SSL, and measurement assets. No release has been performed in this audit.

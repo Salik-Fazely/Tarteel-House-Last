@@ -55,7 +55,7 @@
       <div class="container">
         <p class="eyebrow">BOOK A FREE TRIAL</p>
         <h1 class="trial-hero__headline">Book a free Qur&rsquo;an trial class</h1>
-        <p class="trial-hero__sub">Tell us a little about your child, and we’ll come back with the best next steps for your family.</p>
+        <p class="trial-hero__sub">A free, 40-minute, one-to-one Qur&rsquo;an lesson for children aged 5&ndash;16. Tell us a little about your child; we normally contact families on WhatsApp within two days to arrange the next steps.</p>
         <span class="trial-hero__pill">No payment required</span>
       </div>
     </section>
@@ -71,6 +71,8 @@
         >
           <input type="hidden" name="source" value="website">
           <input type="hidden" name="success_redirect" id="success-redirect" value="/success/">
+          <input type="hidden" name="submission_id" id="submission-id" value="">
+          <input type="hidden" name="response_token" id="response-token" value="">
           <input type="text" name="website_field" style="display:none" tabindex="-1" autocomplete="off">
 
           <div class="form-group-section">
@@ -78,7 +80,7 @@
 
             <div class="form-field">
               <label class="form-label" for="child-name">Child’s first name</label>
-              <input type="text" id="child-name" name="child_name" class="form-input" required autocomplete="given-name" />
+              <input type="text" id="child-name" name="child_name" class="form-input" required autocomplete="section-child given-name" />
             </div>
 
             <div class="form-field">
@@ -134,12 +136,12 @@
 
             <div class="form-field">
               <label class="form-label" for="parent-name">Your name</label>
-              <input type="text" id="parent-name" name="parent_name" class="form-input" required autocomplete="name" />
+              <input type="text" id="parent-name" name="parent_name" class="form-input" required autocomplete="section-parent name" />
             </div>
 
             <div class="form-field">
               <label class="form-label" for="country">Country</label>
-              <select id="country" name="country" class="form-input form-select" required autocomplete="country-name">
+              <select id="country" name="country" class="form-input form-select" required autocomplete="section-parent country-name">
                 <option value="" disabled selected>Select country</option>
                 <option value="Germany">Germany</option>
                 <option value="France">France</option>
@@ -162,12 +164,12 @@
 
             <div class="form-field">
               <label class="form-label" for="email">Email address</label>
-              <input type="email" id="email" name="email" class="form-input" required autocomplete="email" />
+              <input type="email" id="email" name="email" class="form-input" required autocomplete="section-parent email" />
             </div>
 
             <div class="form-field">
               <label class="form-label" for="whatsapp">WhatsApp number</label>
-              <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required autocomplete="tel" />
+              <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required autocomplete="section-parent tel" />
             </div>
           </div>
 
@@ -209,7 +211,7 @@
 
             <div class="form-field">
               <label class="form-label" for="city-region">City / Region</label>
-              <input type="text" id="city-region" name="city_region" class="form-input" required autocomplete="address-level2" placeholder="e.g. Barcelona, Berlin, Toronto" />
+              <input type="text" id="city-region" name="city_region" class="form-input" required autocomplete="section-parent address-level2" placeholder="e.g. Barcelona, Berlin, Toronto" />
             </div>
           </div>
 
@@ -221,13 +223,13 @@
                 Anything we should know
                 <span class="form-label-note">(optional)</span>
               </label>
-              <span class="form-hint">If you have a preferred teacher, mention their name here.</span>
+              <span class="form-hint">You can mention a preferred teacher or a practical lesson preference. Please avoid medical details or other sensitive information.</span>
               <textarea
                 id="notes"
                 name="notes"
                 class="form-input form-textarea"
                 rows="4"
-                placeholder="e.g. my child is shy at first, has tried Qur’an classes before, has a learning difference, etc."
+                placeholder="e.g. my child is shy at first, has tried Qur’an classes before, or prefers a particular teacher"
               ></textarea>
             </div>
           </div>
@@ -241,18 +243,20 @@
           </div>
 
           <p class="form-status" id="trial-form-status" role="status" aria-live="polite" hidden></p>
+          <p class="form-hint" id="trial-form-help" hidden>Having trouble? <a href="https://wa.me/34614494311" target="_blank" rel="noopener noreferrer">Message us on WhatsApp</a>.</p>
 
           <button type="submit" class="btn btn--primary trial-form__submit">
             Request my free trial
           </button>
         </form>
+        <iframe id="trial-booking-response" name="trial-booking-response" title="Booking request response" hidden></iframe>
       </div>
     </section>
 
     <section class="trial-reassurance">
       <div class="container">
         <div class="trial-reassurance__lines">
-          <p class="trial-reassurance__line">Your details are handled with care and only used for your trial request.</p>
+          <p class="trial-reassurance__line">Your details are handled with care to arrange your trial and provide our service, as explained in our <a href="/privacy-policy/">privacy policy</a>.</p>
           <p class="trial-reassurance__line">Every booking is read personally.</p>
           <p class="trial-reassurance__line">You’ll hear back on WhatsApp after we review your request.</p>
         </div>
@@ -321,6 +325,72 @@
       var initialSubmitText = submitBtn ? submitBtn.textContent.trim() : 'Request my free trial';
       var preferredDayInputs = Array.from(trialForm.querySelectorAll('input[name="preferred_days"]'));
       var submissionStarted = false;
+      var responseFrame = document.getElementById('trial-booking-response');
+      var submissionId = document.getElementById('submission-id');
+      var responseToken = document.getElementById('response-token');
+      var formHelp = document.getElementById('trial-form-help');
+      var responsePending = false;
+      var responseTimer;
+      var uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+      function randomRequestId() {
+        try {
+          if (!window.crypto) return '';
+          if (typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+          if (typeof window.crypto.getRandomValues !== 'function') return '';
+          var bytes = new Uint8Array(16);
+          window.crypto.getRandomValues(bytes);
+          bytes[6] = (bytes[6] & 15) | 64;
+          bytes[8] = (bytes[8] & 63) | 128;
+          var hex = Array.from(bytes, function(byte) { return byte.toString(16).padStart(2, '0'); }).join('');
+          return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+        } catch (error) { return ''; }
+      }
+
+      function prepareBookingResponse() {
+        if (!responseFrame || !submissionId || !responseToken) return false;
+        var id = submissionId.value || randomRequestId();
+        var nonce = randomRequestId();
+        if (!uuidPattern.test(id) || !uuidPattern.test(nonce)) return false;
+        submissionId.value = id;
+        responseToken.value = nonce;
+        trialForm.target = responseFrame.name;
+        responsePending = true;
+        setFormStatus('Sending your request. Please keep this page open.');
+        responseTimer = window.setTimeout(function() {
+          resetSubmissionState();
+          setFormStatus('We could not confirm receipt yet. Your details are still here. You can try again, or message us on WhatsApp to check your request.');
+          if (formHelp) formHelp.hidden = false;
+        }, 30000);
+        return true;
+      }
+
+      window.addEventListener('message', function(event) {
+        // Google adds its own sandbox iframe, so the sender is not necessarily
+        // responseFrame.contentWindow. Authenticate the origin and fresh nonce.
+        if (!responsePending || !event.source || event.source === window) return;
+        if (!/^https:\/\/(?:[a-z0-9-]+-)?script\.googleusercontent\.com$/.test(event.origin)) return;
+        var result = event.data;
+        if (!result || result.type !== 'tarteelhouse:booking-result' ||
+            result.submission_id !== submissionId.value || result.response_token !== responseToken.value ||
+            (result.status !== 'success' && result.status !== 'error')) return;
+        resetSubmissionState();
+        if (result.status === 'error') {
+          setFormStatus(typeof result.message === 'string' && result.message ? result.message : 'Your request could not be completed. Please try again.');
+          if (formHelp) formHelp.hidden = false;
+          return;
+        }
+        // Navigate only to our own success page, using the locally prepared
+        // conversion marker. No URL or booking fields are trusted from a message.
+        var redirect = document.getElementById('success-redirect');
+        var destination = new URL(redirect ? redirect.value : '/success/', window.location.href);
+        if (destination.origin !== window.location.origin || destination.pathname !== '/success/') return;
+        if (window.TarteelHouseAnalytics) {
+          try { window.TarteelHouseAnalytics.recordSuccessfulBooking(destination.href); } catch (error) {}
+        }
+        setFormStatus('Your request has been received. Opening the next steps…');
+        window.location.assign(destination.href);
+      });
 
       function syncPreferredDaysValidity() {
         if (!preferredDayInputs.length) return;
@@ -343,6 +413,8 @@
 
       function resetSubmissionState() {
         submissionStarted = false;
+        responsePending = false;
+        if (responseTimer) window.clearTimeout(responseTimer);
         if (!submitBtn) return;
         submitBtn.disabled = false;
         submitBtn.textContent = initialSubmitText;
@@ -350,6 +422,7 @@
 
       trialForm.addEventListener('submit', function(event) {
         setFormStatus('');
+        if (formHelp) formHelp.hidden = true;
         syncPreferredDaysValidity();
 
         if (typeof trialForm.checkValidity === 'function' && !trialForm.checkValidity()) {
@@ -370,10 +443,16 @@
           submitBtn.disabled = true;
           submitBtn.textContent = 'Sending...';
         }
+        prepareBookingResponse();
       });
 
       window.addEventListener('pageshow', function(event) {
-        if (event.persisted) resetSubmissionState();
+        if (event.persisted) {
+          resetSubmissionState();
+          if (submissionId) submissionId.value = '';
+          if (responseToken) responseToken.value = '';
+          setFormStatus('');
+        }
       });
     }
 

@@ -373,6 +373,7 @@ test('returning to a cached form after success prepares a new marker for a genui
 
 test('the success page measures a lead only when its URL token exactly matches the session marker', () => {
   const submitted = submittedConversion();
+  analyticsEvents.recordSuccessfulBooking(submitted.window, submitted.redirect.href);
   const success = createEnvironment({
     preference: 'granted',
     withForm: false,
@@ -418,6 +419,7 @@ test('a direct success visit or a mismatched success token never measures a lead
 
 test('a denied consent decision consumes and cleans an otherwise valid success marker without measuring', () => {
   const submitted = submittedConversion();
+  analyticsEvents.recordSuccessfulBooking(submitted.window, submitted.redirect.href);
   const success = createEnvironment({
     preference: 'denied',
     withForm: false,
@@ -434,6 +436,7 @@ test('a denied consent decision consumes and cleans an otherwise valid success m
 
 test('an unknown consent decision waits for a consent change, then measures once on grant or consumes on denial', () => {
   const grantedSubmission = submittedConversion();
+  analyticsEvents.recordSuccessfulBooking(grantedSubmission.window, grantedSubmission.redirect.href);
   const granted = createEnvironment({
     withForm: false,
     withOaiq: true,
@@ -459,6 +462,7 @@ test('an unknown consent decision waits for a consent change, then measures once
   assert.equal(granted.historyCalls.length, 1);
 
   const deniedSubmission = submittedConversion();
+  analyticsEvents.recordSuccessfulBooking(deniedSubmission.window, deniedSubmission.redirect.href);
   const denied = createEnvironment({
     withForm: false,
     withOaiq: true,
@@ -484,6 +488,7 @@ test('an unknown consent decision waits for a consent change, then measures once
 
 test('a pixel error cannot interrupt success-marker consumption or URL cleanup', () => {
   const submitted = submittedConversion();
+  analyticsEvents.recordSuccessfulBooking(submitted.window, submitted.redirect.href);
   let success;
 
   assert.doesNotThrow(() => {
@@ -501,4 +506,74 @@ test('a pixel error cannot interrupt success-marker consumption or URL cleanup',
   assert.equal(success.sessionStorage.getItem(submitted.storageKey), null);
   assert.equal(success.historyCalls.length, 1);
   assert.equal(new URL(success.historyCalls[0][2], success.window.location.origin).search, '');
+});
+
+test('a matching success URL after an unacknowledged or failed submit cannot create a conversion', () => {
+  const submitted = submittedConversion();
+  const success = createEnvironment({ preference: 'granted', withForm: false, withOaiq: true,
+    href: submitted.redirect.href, sessionStorage: submitted.sessionStorage });
+  assert.deepEqual(success.calls, []);
+});
+
+test('receipt recording accepts only our prepared token and success origin, and refresh cannot remeasure', () => {
+  const submitted = submittedConversion();
+  assert.equal(analyticsEvents.recordSuccessfulBooking(submitted.window, 'https://attacker.example/success/'), false);
+  assert.equal(analyticsEvents.recordSuccessfulBooking(submitted.window, 'https://www.tarteelhouse.com/success/?booking=wrong'), false);
+  assert.equal(analyticsEvents.recordSuccessfulBooking(submitted.window, submitted.redirect.href), true);
+  const options = { preference: 'granted', withForm: false, withOaiq: true,
+    href: submitted.redirect.href, sessionStorage: submitted.sessionStorage };
+  assert.equal(createEnvironment(options).calls.length, 1);
+  assert.equal(createEnvironment(options).calls.length, 0);
+  assert.equal(submitted.sessionStorage.entries().length, 0);
+});
+
+test('inaccessible session storage and failed writes do not prevent submission or create receipt markers', () => {
+  for (const failure of ['getter', 'write']) {
+    const view = createEnvironment({ preference: 'granted' });
+    if (failure === 'getter') {
+      Object.defineProperty(view.window, 'sessionStorage', {
+        get() { throw new Error('storage access denied'); },
+      });
+    } else {
+      view.sessionStorage.setItem = () => { throw new Error('storage quota exceeded'); };
+    }
+
+    let event;
+    assert.doesNotThrow(() => { event = view.form.dispatch('submit'); }, failure);
+    assert.equal(event.defaultPrevented, false, failure);
+    assert.equal(view.successRedirect.value, '/success/', failure);
+    assert.deepEqual(view.sessionStorage.entries(), [], failure);
+    assert.equal(analyticsEvents.recordSuccessfulBooking(view.window, view.successRedirect.value), false, failure);
+    assert.equal(view.calls.some(call => call[0] === 'measure'), false, failure);
+  }
+});
+
+test('failed marker removal suppresses measurement without interrupting the success page', () => {
+  const submitted = submittedConversion();
+  assert.equal(analyticsEvents.recordSuccessfulBooking(submitted.window, submitted.redirect.href), true);
+  submitted.sessionStorage.removeItem = () => { throw new Error('storage removal denied'); };
+
+  let success;
+  assert.doesNotThrow(() => {
+    success = createEnvironment({ preference: 'granted', withForm: false, withOaiq: true,
+      href: submitted.redirect.href, sessionStorage: submitted.sessionStorage });
+  });
+  assert.deepEqual(success.calls, []);
+  assert.equal(success.historyCalls.length, 1);
+  assert.equal(success.sessionStorage.getItem(analyticsEvents.RECEIPT_STORAGE_KEY), submitted.token);
+  assert.equal(success.sessionStorage.getItem(analyticsEvents.CONVERSION_STORAGE_KEY), submitted.token);
+});
+
+test('an unavailable Pixel does not interrupt receipt cleanup or defer a duplicate conversion to refresh', () => {
+  const submitted = submittedConversion();
+  assert.equal(analyticsEvents.recordSuccessfulBooking(submitted.window, submitted.redirect.href), true);
+  const options = { preference: 'granted', withForm: false,
+    href: submitted.redirect.href, sessionStorage: submitted.sessionStorage };
+
+  let success;
+  assert.doesNotThrow(() => { success = createEnvironment(options); });
+  assert.deepEqual(success.calls, []);
+  assert.equal(success.historyCalls.length, 1);
+  assert.deepEqual(submitted.sessionStorage.entries(), []);
+  assert.deepEqual(createEnvironment({ ...options, withOaiq: true }).calls, []);
 });

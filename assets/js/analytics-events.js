@@ -7,6 +7,10 @@
     return;
   }
 
+  window.TarteelHouseAnalytics = Object.freeze({
+    recordSuccessfulBooking: destination => analyticsEvents.recordSuccessfulBooking(window, destination),
+  });
+
   const start = () => analyticsEvents.init(window, document, window.TarteelHouseConsent);
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
@@ -21,6 +25,7 @@
   const FORM_ID = 'trial-form';
   const INIT_FLAG = '__tarteelHouseAnalyticsEventsInitialized';
   const CONVERSION_STORAGE_KEY = 'tarteelhouse.trialConversionToken';
+  const RECEIPT_STORAGE_KEY = 'tarteelhouse.trialReceivedToken';
   const CONVERSION_QUERY_PARAM = 'booking';
   const CONSENT_EVENT = 'tarteelhouse:measurement-consent-change';
   const TOKEN_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -144,12 +149,14 @@
     try {
       const destination = new URL(SUCCESS_PATH, win.location.origin);
       destination.searchParams.set(CONVERSION_QUERY_PARAM, token);
+      storage.removeItem(RECEIPT_STORAGE_KEY);
       storage.setItem(CONVERSION_STORAGE_KEY, token);
       redirect.value = destination.href;
       return true;
     } catch (error) {
       try {
         storage.removeItem(CONVERSION_STORAGE_KEY);
+        storage.removeItem(RECEIPT_STORAGE_KEY);
       } catch (storageError) {
         // A stale marker cannot be trusted without the matching redirect URL.
       }
@@ -162,6 +169,7 @@
     if (storage) {
       try {
         storage.removeItem(CONVERSION_STORAGE_KEY);
+        storage.removeItem(RECEIPT_STORAGE_KEY);
       } catch (error) {
         // A new submission will overwrite the marker if storage is available.
       }
@@ -188,6 +196,7 @@
       const token = destination.searchParams.get(CONVERSION_QUERY_PARAM);
       if (!token || !TOKEN_PATTERN.test(token)) return null;
       if (storage.getItem(CONVERSION_STORAGE_KEY) !== token) return null;
+      if (storage.getItem(RECEIPT_STORAGE_KEY) !== token) return null;
       return { storage, token };
     } catch (error) {
       return null;
@@ -196,8 +205,26 @@
 
   function consumeMarker(marker) {
     try {
+      marker.storage.removeItem(RECEIPT_STORAGE_KEY);
       marker.storage.removeItem(CONVERSION_STORAGE_KEY);
       return marker.storage.getItem(CONVERSION_STORAGE_KEY) === null;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  // Called only after the booking form authenticates a successful response.
+  // A prepared redirect alone does not prove a saved booking.
+  function recordSuccessfulBooking(win, value) {
+    const storage = sessionStorageFor(win);
+    if (!storage) return false;
+    try {
+      const destination = new URL(value, win.location.href);
+      const token = destination.searchParams.get(CONVERSION_QUERY_PARAM);
+      if (destination.origin !== win.location.origin || destination.pathname !== SUCCESS_PATH ||
+          !TOKEN_PATTERN.test(token || '') || storage.getItem(CONVERSION_STORAGE_KEY) !== token) return false;
+      storage.setItem(RECEIPT_STORAGE_KEY, token);
+      return true;
     } catch (error) {
       return false;
     }
@@ -302,8 +329,10 @@
     BOOKING_PATH,
     CONVERSION_QUERY_PARAM,
     CONVERSION_STORAGE_KEY,
+    RECEIPT_STORAGE_KEY,
     FORM_ID,
     SUCCESS_PATH,
     init,
+    recordSuccessfulBooking,
   };
 }));

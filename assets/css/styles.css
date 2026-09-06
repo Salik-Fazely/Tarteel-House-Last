@@ -2704,7 +2704,8 @@ em, i {
   vertical-align: middle;
 }
 
-.comparison-table tbody tr:last-child td {
+.comparison-table tbody tr:last-child td,
+.comparison-table tbody tr:last-child th {
   border-bottom: none;
 }
 

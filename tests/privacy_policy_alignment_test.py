@@ -78,7 +78,8 @@ class PrivacyPolicyAlignmentTests(unittest.TestCase):
             "Cookie settings",
             "applies going forward",
             "attempts to remove first-party Google Analytics cookies",
-            "reloads the page",
+            "disables future Google Analytics collection",
+            "in-progress booking details stay open",
         ):
             self.assertIn(wording, self.text)
 
