@@ -270,3 +270,23 @@ All 13 checked public Cloudflare artifacts match the published sprint content (1
 The fix versions only styles.css, consent.js and analytics-events.js as `?v=20260907-1` on all 18 public pages. An exact diff comparison verifies no other HTML content changed. main.js and all backend/source logic remain unchanged. The new asset_versioning regression failed on the old URLs before the correction and now passes; eight existing static assertions were aligned with the valid versioned URLs.
 
 Final executed verification after this correction: **73 JavaScript tests, 135 Python tests, 18 shared layouts, 11 JS/GS files and 12 inline scripts pass; git diff --check passes**. A fresh local browser booking loaded the versioned URLs, reached the receipt page, consumed its pending marker and recorded exactly one lead_created. It used in-memory Sheets/Mail and local SDK recorders. No valid production booking has been submitted. The follow-up commit will publish only this confirmed release fix, tests and updated release evidence.
+
+
+### Final release checkpoint - awaiting synthetic-booking approval
+
+**GO WITH FIXES: production backend and frontend are released; complete end-to-end acceptance remains pending.** Backend version 7 is live at the existing endpoint. The sprint commit is `7d7e7b4`; the necessary follow-up cache fix is `50ab25b387424b101b4c00e0135a6524e64e1cf7`. Both were pushed normally in backend-first order. No published history was rewritten.
+
+Final public verification found 18/18 pages HTTP 200 with all three versioned references, 16 byte-exact HTML matches and two explained Cloudflare email-obfuscation transformations. All three versioned assets exactly match Git. The browser now shows the new measurement controls and loads the versioned scripts. Public parent journeys passed: homepage/direct CTA, homepage/teachers/trial, pricing/trial, mobile menu/how-it-works/trial, empty-form validation and consent grant/withdraw. Screenshots at 1440x900 and 390x844 showed no horizontal overflow; mobile labels, controls and focus were inspected. Final console check captured no errors. Viewport override was reset.
+
+Final full verification is 73 JavaScript tests and 135 Python tests passed, 18 layouts synchronized, 11 JS/GS files and 12 inline scripts parsed, and diff checks clean. The final local versioned-asset booking produced exactly one recorder conversion using fake Sheets/Mail.
+
+The private Sheet and correct OpenAI Ads pixel/event configuration were verified read-only. No valid synthetic production booking has been submitted; no test row, notification receipt, production conversion delivery, Ads receipt or attribution is claimed. The exact proposed synthetic data and effects are ready in ASTRA_PRODUCTION_RELEASE_REPORT.md for the owner's separate approval. Current local diff consists only of the two final report updates; the original untracked ad image remains untouched. Earlier statements above describe their historical checkpoints.
+
+
+### Owner handoff - release work complete
+
+The owner chose to perform the final production booking test later and report any failure. The agent will not submit a synthetic booking, wait for booking approval or schedule follow-up. All authorized release implementation and verification work is complete. Backend version 7 and frontend revision 50ab25b remain the verified production release; the final handoff changes documentation only.
+
+The verdict remains **GO WITH FIXES**, with final live booking/Sheet/notification and conversion delivery evidence explicitly unverified until the owner-run test. The owner should check the received screen, one Bookings row and the staff notification. Optional measurement consent is needed for an Ads measurement test; booking does not require it. Ads receipt and attribution must not be inferred merely from a successful booking screen.
+
+Both reports now record this decision. The original unrelated untracked image is preserved. No application changes, new deployments or booking submissions were needed to finalize the handoff; documentation publication may trigger Cloudflare's normal repository build with identical application content.
