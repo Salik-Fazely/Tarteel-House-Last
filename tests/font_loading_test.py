@@ -1,5 +1,6 @@
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urlsplit
 import re
 import unittest
 
@@ -85,7 +86,7 @@ class FontLoadingTest(unittest.TestCase):
                     index
                     for index, link in enumerate(links)
                     if link.get("rel") == "stylesheet"
-                    and link.get("href") == "/assets/css/styles.css"
+                    and urlsplit(link.get("href", "")).path == "/assets/css/styles.css"
                 ]
 
                 self.assertEqual(1, len(font_links))

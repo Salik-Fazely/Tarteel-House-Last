@@ -251,3 +251,22 @@ A genuine final release blocker was found in the prepared source: bound active-s
 Fresh verification after this correction: **73 JavaScript tests, 134 Python tests, 18 shared layouts, 11 JS/GS files and 12 inline scripts all pass; git diff --check passes**. The initial Python sandbox permission issue resolved through the authorized full rerun. Fresh browser QA on port 8786 confirms invalid input/no conversion, successful receipt/one conversion, refresh deduplication, failed-save/no conversion, retained entries/retry with duplicate callbacks, and successful denied-consent booking with a blocked Pixel. Four fake requests yielded three fake rows and three fake Sent notifications. No real external booking or measurement occurred.
 
 The updated draft was saved in the verified Apps Script editor and copied back after reload; its complete normalized source matches reviewed Code.gs. The production form's existing city_region/contact consent fields and unchanged endpoint were rechecked read-only. Deployment, frontend publication and production booking evidence are still pending at this checkpoint. See ASTRA_PRODUCTION_RELEASE_REPORT.md for the latest release-stage results; earlier no-commit/no-deployment statements above describe their historical audit checkpoints.
+
+
+### Backend deployment and frontend push
+
+Apps Script version 7 is now deployed to the verified existing endpoint, preserving version 6 for rollback and existing execution/access settings. The live GET returns the expected health text. A deliberately incomplete protocol probe with only two synthetic UUIDs and the public redirect URL returned the expected validation-error acknowledgment before any Sheet/mail operation. Google's generated sandbox host matches the frontend origin allowlist. This is not a valid production booking or proof of successful browser delivery.
+
+The single sprint commit is now `7d7e7b482e18cc37a685bf15f32f9074e2c9b21d` (30 files including the added production report). It and the preserved tracking commit were pushed normally to main after backend verification, using the owner's approval. Cloudflare/public artifact verification is in progress. No valid synthetic booking has been submitted; the separate test gate remains pending. The unrelated image remains untouched and excluded. Post-push report updates are local documentation changes, without rewriting published history.
+
+
+### Production cache defect found during release verification
+
+All 13 checked public Cloudflare artifacts match the published sprint content (11 byte-exact; privacy/terms after observed email obfuscation). However, the existing browser reproduced new booking HTML with old consent UI because changed scripts use unversioned URLs and four-hour browser caching. This P1 release blocker can suppress conversion measurement for returning visitors. A minimal versioned-asset URL correction and regression coverage are being prepared; no backend/business changes are needed. The already-published commit will not be rewritten. Detailed evidence and the eventual follow-up revision are in the production release report.
+
+
+### Cache correction ready for publication
+
+The fix versions only styles.css, consent.js and analytics-events.js as `?v=20260907-1` on all 18 public pages. An exact diff comparison verifies no other HTML content changed. main.js and all backend/source logic remain unchanged. The new asset_versioning regression failed on the old URLs before the correction and now passes; eight existing static assertions were aligned with the valid versioned URLs.
+
+Final executed verification after this correction: **73 JavaScript tests, 135 Python tests, 18 shared layouts, 11 JS/GS files and 12 inline scripts pass; git diff --check passes**. A fresh local browser booking loaded the versioned URLs, reached the receipt page, consumed its pending marker and recorded exactly one lead_created. It used in-memory Sheets/Mail and local SDK recorders. No valid production booking has been submitted. The follow-up commit will publish only this confirmed release fix, tests and updated release evidence.

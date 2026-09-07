@@ -199,8 +199,8 @@ class MemorizeShortSurahsArticleTest(unittest.TestCase):
     def test_global_shell_and_scripts_remain_present(self):
         self.assertIn('<header class="site-header" id="top">', self.source)
         self.assertIn('<footer class="site-footer">', self.source)
-        self.assertIn('<script src="/assets/js/consent.js"></script>', self.source)
-        self.assertIn('<script src="/assets/js/analytics-events.js"></script>', self.source)
+        self.assertIn('<script src="/assets/js/consent.js?v=20260907-1"></script>', self.source)
+        self.assertIn('<script src="/assets/js/analytics-events.js?v=20260907-1"></script>', self.source)
         self.assertIn('<script src="/assets/js/main.js"></script>', self.source)
 
 

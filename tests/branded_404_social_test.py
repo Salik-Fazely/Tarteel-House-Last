@@ -202,9 +202,9 @@ class Branded404SocialTests(unittest.TestCase):
         page = parse_page("404.html")
 
         self.assertEqual(1, page.stylesheets.count(FONT_STYLESHEET))
-        self.assertEqual(1, page.stylesheets.count("/assets/css/styles.css"))
+        self.assertEqual(1, page.stylesheets.count("/assets/css/styles.css?v=20260907-1"))
         self.assertIn("/assets/logo/favicon.ico", page.icons)
-        self.assertEqual(1, source.count('<script src="/assets/js/consent.js"></script>'))
+        self.assertEqual(1, source.count('<script src="/assets/js/consent.js?v=20260907-1"></script>'))
         self.assertEqual(1, source.count('<script src="/assets/js/main.js"></script>'))
 
     def test_404_is_not_listed_in_sitemap(self):

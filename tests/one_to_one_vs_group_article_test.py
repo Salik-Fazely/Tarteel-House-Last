@@ -315,7 +315,7 @@ class OneToOneVsGroupArticleTests(unittest.TestCase):
         )
         scripts = [attrs.get("src") for tag, attrs in attributes if tag == "script" and attrs.get("src")]
         self.assertEqual(
-            ["/assets/js/consent.js", "/assets/js/analytics-events.js", "/assets/js/main.js"],
+            ["/assets/js/consent.js?v=20260907-1", "/assets/js/analytics-events.js?v=20260907-1", "/assets/js/main.js"],
             scripts,
         )
 
