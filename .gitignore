@@ -1,0 +1,22 @@
+# Local secrets and deployment credentials (never place customer records here).
+.env
+.env.*
+!.env.example
+!.env.sample
+/.clasp.json
+/.clasprc.json
+/credentials.json
+/token.json
+*.key
+*.pem
+
+# Local runtime artifacts.
+__pycache__/
+*.py[cod]
+node_modules/
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+
+# Ignore rules do not remove tracked files or protect Git history.

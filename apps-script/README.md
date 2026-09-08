@@ -4,7 +4,7 @@ The booking form at `/book-trial` is configured to post to a Google Apps Script 
 
 ## Status and scope
 
-This file documents the repository implementation, not verified live behaviour. The deployed script version and a real end-to-end booking must be confirmed before the website change is released; repository changes do not update the Apps Script deployment automatically.
+This file documents the repository implementation, not current production health. Repository changes do not update the Apps Script deployment automatically. Use independent resources for a fork and the local QA harness for tests. A public web-app endpoint does not require making its backing Sheet public: keep the Sheet restricted to authorized staff. Verify backend compatibility before releasing a dependent frontend change.
 
 ## Files
 - `Code.gs` — the full Apps Script. Source of truth.
@@ -28,9 +28,8 @@ This file documents the repository implementation, not verified live behaviour. 
 
 ## Config to confirm before deploying
 At the top of `Code.gs`:
-- `SPREADSHEET_ID` — the owner-confirmed booking spreadsheet:
-  `1xLqKF1DGBGdknlGbTyulDxDYgiVm6vh0MkkXSaJ90Kc`. The backend opens this
-  explicit ID; it never falls back to an active spreadsheet. A missing ID or
+- `SPREADSHEET_ID` - the explicitly configured booking spreadsheet. For a fork,
+  configure a separate spreadsheet you own. The backend opens this explicit ID; it never falls back to an active spreadsheet. A missing ID or
   access failure returns an error without accepting the booking. The deploying
   account must have access to this file and authorize the Sheets scope required
   by `SpreadsheetApp.openById`.

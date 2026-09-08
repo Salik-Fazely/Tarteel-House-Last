@@ -37,7 +37,7 @@ Tarteel House should feel minimal, premium, warm, and parent-friendly. The site 
 - Notification inbox: `hello@tarteelhouse.com`.
 - Production hosting: Cloudflare Pages, serving static files from the repository root at `www.tarteelhouse.com`, as confirmed by the owner.
 
-The [conversion sprint report](../ASTRA_CONVERSION_SPRINT_REPORT.md) records local findings and corrections. Deployment confirmation and a real end-to-end booking test remain open. Repository code must not be treated as proof that the latest version is live.
+See [README](../README.md) for setup, verification and the recorded release status. Repository code must not be treated as proof of current production health.
 
 ## Decision priorities
 1. Trust
