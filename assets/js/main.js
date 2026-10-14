@@ -285,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* -- Section-level reveal -- */
     const sections = document.querySelectorAll('main > section');
 
+    // A percentage of a tall section may never fit in a short/zoomed viewport.
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -292,11 +293,11 @@ document.addEventListener('DOMContentLoaded', () => {
           sectionObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0 });
 
     sections.forEach((section, i) => {
-      /* First section is always visible — skip it */
-      if (i === 0) {
+      /* Keep the first section and essential form controls visible immediately. */
+      if (i === 0 || section.querySelector('form')) {
         section.classList.add('is-revealed');
         return;
       }

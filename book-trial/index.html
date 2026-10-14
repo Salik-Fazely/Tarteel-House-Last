@@ -80,7 +80,7 @@
 
             <div class="form-field">
               <label class="form-label" for="child-name">Child’s first name</label>
-              <input type="text" id="child-name" name="child_name" class="form-input" required autocomplete="section-child given-name" />
+              <input type="text" id="child-name" name="child_name" class="form-input" required maxlength="100" autocomplete="section-child given-name" />
             </div>
 
             <div class="form-field">
@@ -136,7 +136,7 @@
 
             <div class="form-field">
               <label class="form-label" for="parent-name">Your name</label>
-              <input type="text" id="parent-name" name="parent_name" class="form-input" required autocomplete="section-parent name" />
+              <input type="text" id="parent-name" name="parent_name" class="form-input" required maxlength="100" autocomplete="section-parent name" />
             </div>
 
             <div class="form-field">
@@ -164,12 +164,13 @@
 
             <div class="form-field">
               <label class="form-label" for="email">Email address</label>
-              <input type="email" id="email" name="email" class="form-input" required autocomplete="section-parent email" />
+              <input type="email" id="email" name="email" class="form-input" required maxlength="254" autocomplete="section-parent email" />
             </div>
 
             <div class="form-field">
               <label class="form-label" for="whatsapp">WhatsApp number</label>
-              <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required autocomplete="section-parent tel" />
+              <input type="tel" id="whatsapp" name="whatsapp" class="form-input" required maxlength="40" autocomplete="section-parent tel" aria-describedby="whatsapp-help" placeholder="+34 600 000 000" />
+              <span class="form-hint" id="whatsapp-help">Include your country code, for example +34 600 000 000. You can also use 0034; spaces, brackets and hyphens are fine.</span>
             </div>
           </div>
 
@@ -211,7 +212,7 @@
 
             <div class="form-field">
               <label class="form-label" for="city-region">City / Region</label>
-              <input type="text" id="city-region" name="city_region" class="form-input" required autocomplete="section-parent address-level2" placeholder="e.g. Barcelona, Berlin, Toronto" />
+              <input type="text" id="city-region" name="city_region" class="form-input" required maxlength="120" autocomplete="section-parent address-level2" placeholder="e.g. Barcelona, Berlin, Toronto" />
             </div>
           </div>
 
@@ -223,12 +224,14 @@
                 Anything we should know
                 <span class="form-label-note">(optional)</span>
               </label>
-              <span class="form-hint">You can mention a preferred teacher or a practical lesson preference. Please avoid medical details or other sensitive information.</span>
+              <span class="form-hint" id="notes-help">You can mention a preferred teacher or a practical lesson preference. Please avoid medical details or other sensitive information. Up to 2,000 characters.</span>
               <textarea
                 id="notes"
                 name="notes"
                 class="form-input form-textarea"
                 rows="4"
+                maxlength="2000"
+                aria-describedby="notes-help"
                 placeholder="e.g. my child is shy at first, has tried Qur’an classes before, or prefers a particular teacher"
               ></textarea>
             </div>
@@ -316,7 +319,7 @@
 
   <script src="/assets/js/consent.js?v=20260907-1"></script>
   <script src="/assets/js/analytics-events.js?v=20260907-1"></script>
-  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/main.js?v=20261014-1"></script>
   <script>
     var trialForm = document.getElementById('trial-form');
     if (trialForm) {
@@ -324,6 +327,9 @@
       var submitBtn = trialForm.querySelector('button[type="submit"]');
       var initialSubmitText = submitBtn ? submitBtn.textContent.trim() : 'Request my free trial';
       var preferredDayInputs = Array.from(trialForm.querySelectorAll('input[name="preferred_days"]'));
+      var whatsappInput = document.getElementById('whatsapp');
+      var pendingFieldGroups = Array.from(trialForm.querySelectorAll('.form-group-section, .form-consent'));
+      var initialInertStates = pendingFieldGroups.map(function(group) { return Boolean(group.inert); });
       var submissionStarted = false;
       var responseFrame = document.getElementById('trial-booking-response');
       var submissionId = document.getElementById('submission-id');
@@ -356,6 +362,7 @@
         responseToken.value = nonce;
         trialForm.target = responseFrame.name;
         responsePending = true;
+        setFieldsPending(true);
         setFormStatus('Sending your request. Please keep this page open.');
         responseTimer = window.setTimeout(function() {
           resetSubmissionState();
@@ -400,10 +407,34 @@
         );
       }
 
+      function syncWhatsappValidity() {
+        if (!whatsappInput) return;
+        var raw = whatsappInput.value;
+        var value = raw.trim();
+        var normalized = value.replace(/[ ()-]/g, '').replace(/^00/, '+');
+        var valid = raw.length <= 40 && !/[\u0000-\u001f\u007f]/.test(raw) &&
+          /^(?:\+|00)[0-9 ()-]+$/.test(value) && /^\+[1-9][0-9]{6,14}$/.test(normalized);
+        whatsappInput.setCustomValidity(raw === '' || valid ? '' :
+          'Enter a WhatsApp number with its country code, for example +34 600 000 000.');
+      }
+
+      function setFieldsPending(pending) {
+        // Inert blocks editing without excluding controls from the native POST.
+        // The live status and help route remain outside these field groups.
+        pendingFieldGroups.forEach(function(group, index) {
+          group.inert = pending ? true : initialInertStates[index];
+        });
+      }
+
       preferredDayInputs.forEach(function(control) {
         control.addEventListener('change', syncPreferredDaysValidity);
       });
       syncPreferredDaysValidity();
+      if (whatsappInput) {
+        whatsappInput.addEventListener('input', syncWhatsappValidity);
+        whatsappInput.addEventListener('change', syncWhatsappValidity);
+        syncWhatsappValidity();
+      }
 
       function setFormStatus(message) {
         if (!formStatus) return;
@@ -414,6 +445,7 @@
       function resetSubmissionState() {
         submissionStarted = false;
         responsePending = false;
+        setFieldsPending(false);
         if (responseTimer) window.clearTimeout(responseTimer);
         if (!submitBtn) return;
         submitBtn.disabled = false;
@@ -424,6 +456,7 @@
         setFormStatus('');
         if (formHelp) formHelp.hidden = true;
         syncPreferredDaysValidity();
+        syncWhatsappValidity();
 
         if (typeof trialForm.checkValidity === 'function' && !trialForm.checkValidity()) {
           event.preventDefault();

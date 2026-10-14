@@ -10,7 +10,9 @@ VERSIONED_ASSETS = {
     "/assets/css/styles.css",
     "/assets/js/consent.js",
     "/assets/js/analytics-events.js",
+    "/assets/js/main.js",
 }
+MAIN_VERSION = "20261014-1"
 
 
 class AssetParser(HTMLParser):
@@ -27,7 +29,7 @@ class AssetParser(HTMLParser):
 
 
 class AssetVersioningTests(unittest.TestCase):
-    def test_every_public_page_bypasses_pre_release_asset_cache_with_the_same_version(self):
+    def test_every_public_page_uses_the_current_version_for_each_shared_asset(self):
         pages = [path for path in ROOT.rglob("*.html")
                  if "<!-- SHARED FOOTER:START -->" in path.read_text(encoding="utf-8")]
         self.assertEqual(18, len(pages))
@@ -39,7 +41,8 @@ class AssetVersioningTests(unittest.TestCase):
                               if urlsplit(url).path in VERSIONED_ASSETS]
                 self.assertCountEqual(VERSIONED_ASSETS, [url.path for url in references])
                 for url in references:
-                    self.assertEqual({"v": [RELEASE_VERSION]}, parse_qs(url.query), url.path)
+                    version = MAIN_VERSION if url.path == "/assets/js/main.js" else RELEASE_VERSION
+                    self.assertEqual({"v": [version]}, parse_qs(url.query), url.path)
                     self.assertEqual("", url.fragment)
                     self.assertEqual("", url.netloc)
                     self.assertTrue((ROOT / url.path.lstrip("/")).is_file())

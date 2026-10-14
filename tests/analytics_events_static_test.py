@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20260907-1"></script>'
 EVENT_SCRIPT = '<script src="/assets/js/analytics-events.js?v=20260907-1"></script>'
-MAIN_SCRIPT = '<script src="/assets/js/main.js"></script>'
+MAIN_SCRIPT = '<script src="/assets/js/main.js?v=20261014-1"></script>'
 APPROVED_EVENTS = (
     "trial_cta_click",
     "trial_form_start",

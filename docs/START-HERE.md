@@ -9,6 +9,7 @@ Start with [README](../README.md) for architecture, local setup, tests, licensin
 - [Project brief](project-brief.md) explains the parent journey.
 - [Decisions](decisions.md) records established business and technical rules.
 - [Backend documentation](../apps-script/README.md) describes booking behavior.
+- [Release procedure](release-procedure.md) covers CI gates, backend-first publication, read-only checks and rollback.
 
 Preserve service facts. Every two months, we invite parents to a 15-minute progress review. If a parent is unavailable or does not want a meeting, we send a visual progress report through WhatsApp instead.
 

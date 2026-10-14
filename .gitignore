@@ -20,3 +20,7 @@ venv/
 Thumbs.db
 
 # Ignore rules do not remove tracked files or protect Git history.
+
+# Local browser regression artifacts.
+/tests/browser/test-results/
+/tests/browser/playwright-report/
