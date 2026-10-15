@@ -149,7 +149,7 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
 
 **Interfaces:** Consume Tasks 1–2 pure modules. Produce the six RPC functions, `onOpen()` menu, `ledgerInitialize()` safe empty-template setup and `ledgerHealth()` count-only result. `Schema.json` owns the spec's nine tab names and all column definitions; the packager turns it into a private Apps Script namespace.
 
-- [ ] **Step 1: Write failing adapter tests** with real source in a VM and in-memory Sheet/Session/Lock/Properties fakes. Assert:
+- [x] **Step 1: Write failing adapter tests** with real source in a VM and in-memory Sheet/Session/Lock/Properties fakes. Assert:
 
   ```js
   assert.equal(duplicateDespiteStaleSequence.eventId, first.eventId);
@@ -161,10 +161,10 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
   ```
 
   Separately exercise lock contention, failure before append, append-then-throw, readback failure, edited retry, corrupt/missing headers, unsupported event schema, stale projection marker and literal `=`, `+`, `-`, `@` values. A copied container must not inherit permission to write into the original file.
-- [ ] **Step 2: Run** `node --test tests/staff_ledger_storage_test.js`; confirm adapter tests fail without the storage module.
-- [ ] **Step 3: Implement** independent lock, actual authorized user-email identity and a container ID pinned during explicit initialization in document properties. Reject a changed/missing pin on normal commands. Under lock, replay and deduplicate before checking sequence, then decide/append/flush/read back. Do not reappend after uncertain acknowledgement; status lookup resolves the same request. Refresh writes a stale marker first, complete derived matrices next and applied sequence/time last. Pin Madrid in both manifest and workbook. Scopes are exactly current spreadsheet, container UI and user email; no web app or installable trigger.
-- [ ] **Step 4: Run** `node --test tests/staff_ledger_*_test.js`; all adapter/domain tests pass. Verify initialization refuses unknown populated sheets and never resets Events. Current user must authorize RPC calls; simple `onOpen` only adds the menu.
-- [ ] **Step 5: Commit** as `feat: persist staff ledger commands in a private bound workbook`.
+- [x] **Step 2: Run** `node --test tests/staff_ledger_storage_test.js`; confirm adapter tests fail without the storage module.
+- [x] **Step 3: Implement** independent lock, actual authorized user-email identity and a container ID pinned during explicit initialization in document properties. Reject a changed/missing pin on normal commands. Under lock, replay and deduplicate before checking sequence, then decide/append/flush/read back. Do not reappend after uncertain acknowledgement; status lookup resolves the same request. Refresh writes a stale marker first, complete derived matrices next and applied sequence/time last. Pin Madrid in both manifest and workbook. Scopes are exactly current spreadsheet, container UI and user email; no web app or installable trigger.
+- [x] **Step 4: Run** `node --test tests/staff_ledger_*_test.js`; all adapter/domain tests pass. Verify initialization refuses unknown populated sheets and never resets Events. Current user must authorize RPC calls; simple `onOpen` only adds the menu.
+- [x] **Step 5: Commit** as `feat: persist staff ledger commands in a private bound workbook`.
 
 ### Task 4: Guided staff forms and isolated browser regressions
 

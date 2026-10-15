@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "maxEvents": 10000,
+  "headerRow": 5,
+  "timeZone": "Europe/Madrid",
+  "sheets": [
+    {"name":"Overview","columns":[{"key":"type","label":"Type"},{"key":"recordId","label":"Record ID"},{"key":"action","label":"Action"},{"key":"details","label":"Details"}]},
+    {"name":"Parent Summary","columns":[{"key":"summary","label":"Summary"}]},
+    {"name":"Students","columns":[{"key":"learnerId","label":"Learner ID"},{"key":"firstName","label":"Child"},{"key":"language","label":"Language"},{"key":"guardianId","label":"Guardian ID"},{"key":"guardianName","label":"Guardian"},{"key":"email","label":"Guardian email"},{"key":"whatsapp","label":"Guardian WhatsApp"},{"key":"bookingReference","label":"Booking reference"}]},
+    {"name":"Packages","columns":[{"key":"purchaseId","label":"Purchase ID"},{"key":"child","label":"Child"},{"key":"name","label":"Package"},{"key":"purchasedOn","label":"Purchased","type":"date"},{"key":"lastUsableOn","label":"Last usable date","type":"date"},{"key":"priceEUR","label":"Price (EUR)","type":"money"},{"key":"matchedEUR","label":"Matched (EUR)","type":"money"},{"key":"unpaidEUR","label":"Unpaid (EUR)","type":"money"},{"key":"completed","label":"Completed","type":"count"},{"key":"forfeited","label":"Charged absences","type":"count"},{"key":"remaining","label":"Remaining","type":"count"},{"key":"reserved","label":"Reserved","type":"count"},{"key":"available","label":"Available","type":"count"},{"key":"makeupsAvailable","label":"Make-ups available","type":"count"},{"key":"status","label":"Status"}]},
+    {"name":"Lessons","columns":[{"key":"lessonId","label":"Lesson ID"},{"key":"child","label":"Child"},{"key":"purchaseId","label":"Purchase ID"},{"key":"kind","label":"Type"},{"key":"teacher","label":"Teacher"},{"key":"startsAt","label":"Start (Madrid)","type":"instant"},{"key":"status","label":"Status"},{"key":"isReplacement","label":"Replacement"},{"key":"entitlementId","label":"Reservation ID"}]},
+    {"name":"Payments","columns":[{"key":"paymentId","label":"Payment ID"},{"key":"guardian","label":"Guardian"},{"key":"kind","label":"Type"},{"key":"source","label":"Source"},{"key":"reference","label":"Verified reference"},{"key":"receivedOn","label":"Received","type":"date"},{"key":"verifiedOn","label":"Verified","type":"date"},{"key":"amountEUR","label":"Amount (EUR)","type":"money"},{"key":"netEUR","label":"Net (EUR)","type":"money"},{"key":"matchedEUR","label":"Matched (EUR)","type":"money"},{"key":"unallocatedEUR","label":"Unmatched (EUR)","type":"money"},{"key":"shortfallEUR","label":"Shortfall (EUR)","type":"money"}]},
+    {"name":"Matches","columns":[{"key":"matchId","label":"Match ID"},{"key":"paymentId","label":"Payment ID"},{"key":"purchaseId","label":"Purchase ID"},{"key":"child","label":"Child"},{"key":"amountEUR","label":"Amount (EUR)","type":"money"}]},
+    {"name":"Events","columns":[{"key":"sequence","label":"sequence","type":"count"},{"key":"schemaVersion","label":"schema_version","type":"count"},{"key":"eventId","label":"event_id"},{"key":"requestId","label":"request_id"},{"key":"fingerprint","label":"payload_fingerprint"},{"key":"recordedAt","label":"recorded_at"},{"key":"actorEmail","label":"actor_email"},{"key":"type","label":"type"},{"key":"targetId","label":"target_id"},{"key":"reason","label":"reason"},{"key":"payloadJson","label":"payload_json"}]},
+    {"name":"Start","columns":[{"key":"setting","label":"Setting"},{"key":"value","label":"Value"},{"key":"notes","label":"Notes"}]}
+  ]
+}
