@@ -15,11 +15,14 @@ Thank you for helping maintain the website. Keep changes small, reproducible and
 2. Start the local mock environment with `node scripts/qa_server.js`, as described in [README.md](README.md#run-locally). Use fictional data and `qa.parent@example.invalid` only.
 3. Make the smallest complete change. Keep the static-site architecture and existing conventions. Avoid new dependencies without a concrete need.
 4. Add or update relevant behavioral tests. For visual or interaction changes, inspect the actual page at desktop and mobile sizes, including keyboard focus and form errors.
-5. Run the full commands in [README.md](README.md#run-tests), the shared-layout check and `git diff --check`. Report failures or environment limitations honestly.
+5. Run `make check-release` after installing the optional browser test package, or the full commands in [README.md](README.md#run-tests). Report failures or environment limitations honestly. Both `standard-checks` and `browser-checks` must pass in GitHub Actions before release.
 6. Review your diff and staged files. Exclude credentials, data exports, private operational notes, screenshots with personal information and unrelated changes. Do not use a blanket add operation without reviewing its contents.
 7. Open a pull request against `main` with the problem, resulting behavior, tests executed and any remaining limits. Do not claim real booking delivery or Ads attribution from local mocks.
 
 ## Shared layout and asset changes
+
+For booking visibility or interaction changes, also run the optional
+[browser regression checks](docs/local-development.md#browser-regression-checks).
 
 Edit canonical fragments under `partials/` when changing shared navigation or footers, then synchronize:
 
@@ -34,10 +37,15 @@ Review all generated page changes. For a new page, update the page inventory and
 
 Test validation, successful persistence, failed persistence, retry, duplicate callbacks and consent choices with local mocks. Analytics or storage failures must not break booking. Do not log or attach form values, and do not relax origin, token or consent checks to make a test pass.
 
-The local harness cannot prove Google's live sandbox behavior, backend permissions, mail delivery or advertising-platform receipt. Its missing-measurement-file scenario has a documented versioned-URL limitation; do not report that scenario as passing until corrected.
+The local harness cannot prove Google's live sandbox behavior, backend permissions, mail delivery or advertising-platform receipt. Its missing-measurement-file scenario omits the consent and analytics script tags from the selected booking-page response, including the versioned URLs used by the site.
 
 ## Review and release
 
 The maintainer decides whether to merge and release. Frontend pushes can trigger Cloudflare Pages; Apps Script uses a separate deployment. Changes requiring a new backend protocol must be released backend-first. Do not deploy, alter production settings or submit a live test booking as part of an ordinary contribution.
+
+Use the [release and rollback procedure](docs/release-procedure.md). CI checks
+run against local fakes and do not deploy or guarantee a production release.
+Cloudflare previews retain the configured live form target; use read-only
+preview checks and the local harness for test submissions.
 
 There is no promised review or release deadline. Small, well-explained contributions with evidence are easier to assess. Do not submit generated issues, trivial commits or misleading metrics to inflate project activity.

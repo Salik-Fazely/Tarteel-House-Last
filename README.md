@@ -27,7 +27,7 @@ Confirmed receipt + optional consent -> browser measurement
 | `assets/js/main.js` | Navigation, disclosures and media interactions |
 | `assets/js/consent.js` | Optional measurement choices and SDK initialization |
 | `assets/js/analytics-events.js` | Interaction events and consent-gated trial conversion |
-| `apps-script/Code.gs` | Validation, booking persistence, deduplication and staff notification |
+| `apps-script/*.gs` | Validation, abuse protection, booking persistence and notification recovery |
 | `partials/` | Canonical header and footer fragments copied into public pages |
 | `scripts/sync_shared_layout.py` | Shared-layout synchronization and drift checking |
 | `scripts/qa_server.js` | Loopback-only browser QA with in-memory Sheets/Mail and measurement recorders |
@@ -35,11 +35,14 @@ Confirmed receipt + optional consent -> browser measurement
 | `assets/blog/`, `assets/Characters/`, `assets/logo/` | Reserved service artwork and brand materials; excluded from MIT |
 | `docs/` | Authoritative product rules, brand guidance and contributor context |
 
-There is no application build step or package installation step. Tests and helper scripts use the Node.js and Python standard libraries. The production page may contact Google Fonts, YouTube and measurement providers; the booking backend uses Google's hosted services.
+There is no application build step or package installation step to run the site. Standard tests and helper scripts use the Node.js and Python standard libraries. Optional real-browser regression tests use a separate development package under `tests/browser`; see [local development](docs/local-development.md#browser-regression-checks). The production page may contact Google Fonts, YouTube and measurement providers; the booking backend uses Google's hosted services.
 
 ## Run locally
 
 Use Node.js 24 and Python 3.13 for the verified setup. Run commands from the repository root. Git is needed for normal contribution work; no Google account or API key is needed for local QA.
+
+On macOS, see [local development](docs/local-development.md) for runtime setup,
+`make dev`, `make check`, VS Code tasks and local configuration.
 
 ```sh
 node scripts/qa_server.js
@@ -49,7 +52,7 @@ Open **http://127.0.0.1:8766/__qa/**, choose `success`, and expand the local QA 
 
 This is the preferred development entry point: it replaces the live booking action and measurement scripts with local fakes. It may still load public fonts or image thumbnails, and following external links leaves the QA environment. Use only fictional details. Never send test requests to the production booking endpoint.
 
-Known QA limitation: the menu's **Missing measurement files on booking page** scenario currently fails to remove the versioned script tags. Do not use that scenario as proof that files were blocked. Other outcomes, such as failed saves and denied consent, can be selected separately. The harness is a local development tool and must not be exposed on a public server.
+The menu's **Missing measurement files on booking page** scenario omits the consent and analytics script tags, including versioned URLs, from that booking-page response. Other outcomes, such as failed saves and denied consent, can be selected separately. The harness is a local development tool and must not be exposed on a public server.
 
 For static layout inspection only, an optional server is:
 
@@ -79,13 +82,35 @@ On a POSIX shell, replace the first two lines with:
 node --test tests/*_test.js
 ```
 
-Latest verification: **73 JavaScript tests and 138 Python tests passed**, and shared layouts matched across **18 public pages**. These are test counts, not coverage percentages or evidence of adoption. The executed Windows environment used Node.js 24.19.0 and Python 3.13.9; other environments have not been certified by this check.
+Optional browser regressions: `npm ci --prefix tests/browser`, then `make check-browser`. They use installed Chrome, loopback fakes and blocked external requests. See [browser regression checks](docs/local-development.md#browser-regression-checks) for details and the Chromium alternative.
+
+GitHub Actions runs `standard-checks` and `browser-checks` on PRs to `main`,
+pushes to `main`/`codex/**`, and manual dispatch. Browser CI uses the locked
+Playwright Chromium and local fakes; failed runs retain diagnostic artifacts
+for seven days. The workflow performs no deployment. Required checks must be
+configured by the maintainer before relying on them as a merge gate.
+
+Latest local verification (2026-10-14): **141 JavaScript tests, 158 Python tests and 18 browser regressions passed**, and shared layouts matched across **18 public pages**, using Node.js 24.21.0 and Python 3.13.16 on Apple Silicon macOS. Browser checks used locked Playwright Chromium in CI mode with local fakes; the hosted Ubuntu workflow remains to be run after an authorized push. The earlier Windows run used Node.js 24.19.0 and Python 3.13.9 with 73 JavaScript tests. These are test counts, not coverage percentages, platform certification or evidence of production delivery.
 
 ## Deployment
 
 Production hosting is **Cloudflare Pages**, publishing the static site from the repository root and `main`. The root `CNAME` is a legacy file; Cloudflare Pages is the hosting source of truth.
 
 Apps Script is deployed separately. A backend protocol change must be deployed and checked before its dependent frontend release. Pushes to production `main` can publish the website. Contributors should submit pull requests and leave deployment to the maintainer.
+
+The booking backend now requires all three files under `apps-script`. Failed
+notifications use bounded retries, quota deferral and manual-review states.
+Scheduled recovery needs explicit owner activation after release; see the
+[Apps Script operating procedure](apps-script/README.md#notification-recovery-and-ownership).
+
+Follow the [release and rollback procedure](docs/release-procedure.md) to record
+both provider revisions, check a candidate with `make check-release`, release
+the backend first, and restore a compatible pair if needed. The read-only
+`make verify-release RELEASE_URL=https://www.tarteelhouse.com` checks published
+routes and asset versions/bytes against the current checkout without submitting
+a booking. Select the intended preview/production origin explicitly and use a
+checkout matching its deployed revision. Hosted CI and provider acceptance still
+need evidence; local checks alone do not establish them.
 
 Browser assets use versioned URLs to prevent old cached scripts from mixing with new pages. Changes to these assets require a consistent version update and tests. The raw repository contains service-specific configuration: reusing it requires independently owned backend resources, contact destinations, allowed origins and measurement configuration. Do not point a fork at Tarteel House's live integrations.
 

@@ -6,6 +6,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const port = Number(process.env.TARTEEL_QA_PORT || 8766);
@@ -14,6 +15,11 @@ const frameOrigin = `http://localhost:${port}`;
 const responseOrigin = `http://localhost:${port + 1}`;
 const responses = new Map();
 const rows = [];
+// Apps Script properties and time survive the separate request VM contexts.
+// This deterministic clock advances only through the local recovery action.
+const properties = new Map();
+let qaNow = Date.parse('2026-10-14T09:00:00Z');
+let locked = false;
 let headers = ['timestamp','source','parent_name','child_name','child_age','quran_level','session_language','country','email','whatsapp','preferred_days','preferred_time','city_region','notes','consent','status','assigned_teacher','follow_up_date','internal_notes'];
 let mails = 0;
 let requests = 0;
@@ -61,7 +67,7 @@ function harness() {
           }
         };panel.prepend(fill);
         const select=document.createElement('select');select.setAttribute('aria-label','Local QA response mode');
-        for(const mode of ['success','sheet-failure','mail-failure','timeout','wrong-token','wrong-origin','duplicate']) {const option=document.createElement('option');option.value=option.textContent=mode;select.append(option);}
+        for(const mode of ['success','sheet-failure','mail-failure','quota-zero','rate-limit','timeout','wrong-token','wrong-origin','duplicate']) {const option=document.createElement('option');option.value=option.textContent=mode;select.append(option);}
         select.value=sessionStorage.getItem('qa.mode')||'success';
         select.onchange=()=>{sessionStorage.setItem('qa.mode',select.value);form.action='${frameOrigin}/__qa/booking?mode='+select.value;};panel.prepend(select);
       }
@@ -70,23 +76,27 @@ function harness() {
     });
   })();</script>`;
 }
-function backend(parameters, mode) {
+function runtime(mode = 'success') {
   const sheet = {
     getLastColumn: () => headers.length,
     getLastRow: () => rows.length + 1,
     getFrozenRows: () => 1,
     setFrozenRows() {},
     appendRow(row) { if(mode==='sheet-failure') throw Error('Local QA sheet failure'); rows.push(row); },
-    getRange(row=1,col=1,count=1,columns=headers.length) { return {
-      getValues: () => row===1 ? [headers.slice(col-1,col-1+columns)] : rows.slice(row-2,row-2+count).map(r=>r.slice(col-1,col-1+columns)),
+    getRange(row=1,col=1,count=1,columns=1) { return {
+      getValues: () => [headers,...rows].slice(row-1,row-1+count)
+        .map(values=>Array.from({length:columns},(_,index)=>values[col-1+index]??'')),
       setValues(value) { if(row===1) value[0].forEach((v,i)=>{headers[col-1+i]=v;}); else value.forEach((r,i)=>r.forEach((v,j)=>{rows[row-2+i][col-1+j]=v;})); return this; },
       setValue(value) { return this.setValues([[value]]); },
       setFontWeight() {return this;}, setNumberFormat(){return this;},
     }; },
   };
-  const properties = new Map();
   const context = {
     console: {error() {},warn() {},log() {}},
+    Date: class extends Date {
+      constructor(...args){super(...(args.length?args:[qaNow]));}
+      static now(){return qaNow;}
+    },
     HtmlService: {XFrameOptionsMode:{ALLOWALL:'ALLOWALL'},createHtmlOutput(html){return {html,setXFrameOptionsMode(){return this;},addMetaTag(){return this;}};}},
     SpreadsheetApp: {
       getActiveSpreadsheet(){
@@ -99,27 +109,90 @@ function backend(parameters, mode) {
       },
       flush(){},
     },
-    MailApp: {sendEmail(){if(mode==='mail-failure')throw Error('Local QA mail failure'); mails++;}},
-    LockService: {getScriptLock:()=>({waitLock(){},tryLock(){return true;},releaseLock(){}})},
-    PropertiesService: {getScriptProperties:()=>({getProperty:k=>properties.get(k)||null,setProperty(k,v){properties.set(k,v);},deleteProperty(k){properties.delete(k);}})},
-    Utilities: {getUuid:()=>require('node:crypto').randomUUID()},
+    MailApp: {
+      getRemainingDailyQuota(){return mode==='quota-zero'?0:1000;},
+      sendEmail(){if(mode==='mail-failure')throw Error('Local QA mail failure'); mails++;},
+    },
+    LockService: {getScriptLock:()=>({
+      waitLock(){if(locked)throw Error('Local QA script lock is held');locked=true;},
+      tryLock(){if(locked)return false;locked=true;return true;},
+      releaseLock(){locked=false;},
+    })},
+    PropertiesService: {getScriptProperties:()=>({
+      getProperty:k=>properties.get(k)??null,
+      getProperties:()=>Object.fromEntries(properties),
+      setProperty(k,v){properties.set(k,String(v));return this;},
+      setProperties(values){Object.entries(values).forEach(([k,v])=>properties.set(k,String(v)));return this;},
+      deleteProperty(k){properties.delete(k);return this;},
+    })},
+    Utilities: {
+      getUuid:()=>crypto.randomUUID(),
+      DigestAlgorithm:{SHA_256:'SHA_256'},
+      Charset:{UTF_8:'UTF_8'},
+      computeDigest(algorithm,value,charset){
+        if(algorithm!=='SHA_256'||charset!=='UTF_8')throw Error('Unexpected local QA digest configuration');
+        return Array.from(crypto.createHash('sha256').update(value,'utf8').digest(),byte=>byte>127?byte-256:byte);
+      },
+      computeHmacSha256Signature(value,key,charset){
+        if(charset!=='UTF_8')throw Error('Unexpected local QA HMAC configuration');
+        return Array.from(crypto.createHmac('sha256',key).update(value,'utf8').digest(),byte=>byte>127?byte-256:byte);
+      },
+    },
   };
-  const source = baseline ? execFileSync('git',['show','a1eb76c:apps-script/Code.gs'],{cwd:root,encoding:'utf8'}) : fs.readFileSync(path.join(root,'apps-script/Code.gs'),'utf8');
+  const scriptDir = path.join(root,'apps-script');
+  const source = baseline ? execFileSync('git',['show','a1eb76c:apps-script/Code.gs'],{cwd:root,encoding:'utf8'}) :
+    ['Code.gs',...fs.readdirSync(scriptDir).filter(name=>name.endsWith('.gs')&&name!=='Code.gs').sort()]
+      .map(name=>fs.readFileSync(path.join(scriptDir,name),'utf8')).join('\n');
   vm.runInNewContext(source,context);
+  // Existing browser cases deliberately reuse one synthetic identity. Only
+  // this fake runtime raises limits; the production policy stays unchanged.
+  if(!baseline) vm.runInNewContext(`
+    ABUSE_POLICY.CONTACT_HOURLY=1000; ABUSE_POLICY.CONTACT_DAILY=1000;
+    ABUSE_POLICY.GLOBAL_HOURLY=1000; ABUSE_POLICY.GLOBAL_DAILY=1000;
+    ${mode==='rate-limit'?'ABUSE_POLICY.GLOBAL_HOURLY=1;':''}
+  `,context);
+  return context;
+}
+function backend(parameters, mode, body) {
+  const context = runtime(mode);
   // Only the local harness substitutes the allowed return origin; production validation is untouched.
   const requested = parameters.get('success_redirect') || '';
   const safe = new URL(requested || '/success/',origin);
   safe.protocol='https:'; safe.host='www.tarteelhouse.com'; safe.port='';
   parameters.set('success_redirect',safe.href);
-  const e={parameter:{},parameters:{}};
+  const contentLength = Buffer.byteLength(body,'utf8');
+  const e={parameter:{},parameters:{},contentLength,
+    postData:{contents:body,length:contentLength,type:'application/x-www-form-urlencoded',name:'postData'}};
   for(const [k,v] of parameters){if(!(k in e.parameter))e.parameter[k]=v;(e.parameters[k] ||= []).push(v);}
+  if(!baseline&&mode==='rate-limit') {
+    // Fill the strict local budget through the real reservation helper, then
+    // let doPost deny a new row. Saved identical retries bypass that gate.
+    const lock=context.LockService.getScriptLock();lock.waitLock();
+    try {context.reserveBookingCapacity_(e.parameter,qaNow);} finally {lock.releaseLock();}
+  }
   return context.doPost(e).html.replaceAll('https://www.tarteelhouse.com',origin).replaceAll('https://tarteelhouse.com',origin);
+}
+function stats(context = runtime()) {
+  const column=name=>rows.map(row=>row[headers.indexOf(name)]??'');
+  return {requests,rows:rows.length,mails,baseline,now:new Date(qaNow).toISOString(),
+    notifications:column('notification_status'),notificationAttempts:column('notification_attempts'),
+    notificationNextAttemptAt:column('notification_next_attempt_at'),
+    notificationErrorCodes:column('notification_error_code'),
+    recoveryHealth:typeof context.getNotificationRecoveryHealth==='function'?context.getNotificationRecoveryHealth():null};
 }
 const handler = async(req,res)=>{
   try {
     const url=new URL(req.url,origin);
-    if(url.pathname==='/__qa/') return send(res,`<!doctype html><meta name="viewport" content="width=device-width"><h1>Local booking QA</h1><p>All bookings use in-memory fakes; no external writes. Use qa.parent@example.invalid and synthetic names only.</p><ul>${['success','sheet-failure','mail-failure'].map(mode=>`<li><a href="/book-trial/?qa_reset=1&qa_mode=${mode}&qa_pixel=stub">${mode}</a></li>`).join('')}<li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=blocked">Blocked Pixel</a></li><li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=throw">Throwing Pixel</a></li><li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=ga-throw">Throwing GA</a></li><li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=missing">Missing measurement files on booking page</a></li><li><a href="/?qa_reset=1&qa_pixel=stub">Homepage with fresh consent</a></li></ul><a href="/__qa/stats">Counts</a>`);
-    if(url.pathname==='/__qa/stats') return send(res,JSON.stringify({requests,rows:rows.length,mails,baseline,notifications:rows.map(r=>r[headers.indexOf('notification_status')])}),'application/json');
+    if(url.pathname==='/__qa/') return send(res,`<!doctype html><meta name="viewport" content="width=device-width"><h1>Local booking QA</h1><p>All bookings use in-memory fakes; no external writes. Use qa.parent@example.invalid and synthetic names only.</p><ul>${['success','sheet-failure','mail-failure','quota-zero','rate-limit'].map(mode=>`<li><a href="/book-trial/?qa_reset=1&qa_mode=${mode}&qa_pixel=stub">${mode}</a></li>`).join('')}<li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=blocked">Blocked Pixel</a></li><li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=throw">Throwing Pixel</a></li><li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=ga-throw">Throwing GA</a></li><li><a href="/book-trial/?qa_reset=1&qa_mode=success&qa_pixel=missing">Missing measurement files on booking page</a></li><li><a href="/?qa_reset=1&qa_pixel=stub">Homepage with fresh consent</a></li></ul><a href="/__qa/stats">Counts</a><form action="/__qa/recover" method="post"><button>Advance local clock 15 minutes and recover notifications</button></form>`);
+    if(url.pathname==='/__qa/stats') return send(res,JSON.stringify(stats()),'application/json');
+    if(url.pathname==='/__qa/recover') {
+      if(req.method!=='POST')return send(res,'Use POST for local notification recovery.','text/plain',405);
+      if(baseline)return send(res,'Recovery is unavailable in the baseline fixture.','text/plain',501);
+      qaNow+=15*60000;
+      const context=runtime();
+      const summary=context.retryFailedNotifications();
+      return send(res,JSON.stringify({...stats(context),summary}),'application/json');
+    }
     if(url.pathname==='/__qa/pixel.js'||url.pathname==='/__qa/gtag.js') return send(res,'/* SDK intentionally replaced by local QA recorder. */','text/javascript');
     if(url.pathname==='/__qa/booking'&&req.method==='POST'){
       let body='';for await(const chunk of req){body+=chunk;if(body.length>32000)return send(res,'Request too large','text/plain',413);}
@@ -128,7 +201,7 @@ const handler = async(req,res)=>{
       requests++;
       const mode=url.searchParams.get('mode');
       if(mode==='timeout')return send(res,'<!doctype html><title>Local QA timeout: no acknowledgment</title>');
-      let html=backend(parameters,mode);
+      let html=backend(parameters,mode,body);
       if(mode==='wrong-token')html=html.replace(/"response_token":"[^"]+"/,'"response_token":"00000000-0000-4000-8000-000000000000"');
       if(mode==='duplicate')html=html.replace(/(<script>window.top.postMessage[^]*?<\/script>)/,'$1$1');
       const id=String(requests);responses.set(id,html);
@@ -146,7 +219,7 @@ const handler = async(req,res)=>{
       body=body.toString().replace('</head>',harness()+'</head>').replace(/action="https:\/\/script.google.com[^\"]+"/,`action="${frameOrigin}/__qa/booking"`);
       // Test-only origin substitution: preserve the production trust check in source.
       body=body.replace(String.raw`/^https:\/\/(?:[a-z0-9-]+-)?script\.googleusercontent\.com$/.test(event.origin)`, `(${JSON.stringify(responseOrigin)} === event.origin)`);
-      if(url.searchParams.get('qa_pixel')==='missing') body=body.replace(/<script src="\/assets\/js\/(?:consent|analytics-events)\.js"><\/script>/g,'<!-- Measurement file unavailable in this local fixture. -->');
+      if(url.searchParams.get('qa_pixel')==='missing') body=body.replace(/<script src="\/assets\/js\/(?:consent|analytics-events)\.js(?:\?[^"]*)?"><\/script>/g,'<!-- Measurement file unavailable in this local fixture. -->');
     }
     if(filename.endsWith(path.join('assets','js','consent.js'))) body=body.toString().replaceAll('https://bzrcdn.openai.com/sdk/oaiq.min.js','/__qa/pixel.js').replaceAll('https://www.googletagmanager.com/gtag/js','/__qa/gtag.js');
     send(res,body,{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.ico':'image/x-icon'}[ext]||'text/plain');

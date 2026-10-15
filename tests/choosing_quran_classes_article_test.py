@@ -325,7 +325,7 @@ class ChoosingQuranClassesArticleTests(unittest.TestCase):
             if tag == "script" and attrs.get("src")
         ]
         self.assertEqual(
-            ["/assets/js/consent.js?v=20260907-1", "/assets/js/analytics-events.js?v=20260907-1", "/assets/js/main.js"],
+            ["/assets/js/consent.js?v=20260907-1", "/assets/js/analytics-events.js?v=20260907-1", "/assets/js/main.js?v=20261014-1"],
             scripts,
         )
 

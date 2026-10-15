@@ -2,9 +2,8 @@
  * Tarteel House — booking submission handler.
  *
  * Source of truth for the Apps Script Web App that receives form posts
- * from book-trial. Paste the contents of this file into the
- * Apps Script editor (Code.gs) that is bound to the Bookings spreadsheet,
- * save, and redeploy the existing Web App version.
+ * from book-trial. Copy all apps-script/*.gs files into the bound project;
+ * see README.md for deployment and optional recovery-trigger activation.
  *
  * The form URL on the site does NOT change when you redeploy the same
  * project — only the script behind it is updated.
@@ -49,10 +48,45 @@ const HEADERS = [
   'follow_up_date',
   'internal_notes',
   'submission_id',
-  'notification_status'
+  'notification_status',
+  'submission_fingerprint',
+  'notification_attempts',
+  'notification_last_attempt_at',
+  'notification_next_attempt_at',
+  'notification_error_code'
 ];
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const FINGERPRINT_PATTERN = /^[0-9a-f]{64}$/;
+const RETRY_CONFLICT_MESSAGE = 'Your original request was already received. These changes were not saved. Please message us on WhatsApp to correct your booking details.';
+const LEGACY_RETRY_MESSAGE = 'Your original request was already received, but we could not verify these details. Please message us on WhatsApp before resubmitting.';
+const BOOKING_DETAIL_FIELDS = [
+  'source', 'parent_name', 'child_name', 'child_age', 'quran_level',
+  'session_language', 'country', 'email', 'whatsapp', 'preferred_days',
+  'preferred_time', 'city_region', 'notes', 'consent'
+];
+
+// Limits apply before trimming. Notes count logical line breaks and also cap
+// raw wire text at twice their limit because form POSTs serialize LF as CRLF.
+const FIELD_LIMITS = {
+  parent_name: 100,
+  child_name: 100,
+  city_region: 120,
+  email: 254,
+  whatsapp: 40,
+  notes: 2000,
+  source: 100,
+  child_age: 2,
+  quran_level: 32,
+  session_language: 16,
+  country: 32,
+  preferred_time: 16,
+  preferred_days: 64,
+  consent: 3,
+  submission_id: 36,
+  response_token: 36,
+  success_redirect: 256
+};
 
 const REQUIRED_FIELDS = [
   { name: 'parent_name',      label: 'parent name' },
@@ -106,9 +140,19 @@ const ALLOWED_VALUES = {
 // Entry point
 // ---------------------------------------------------------------------------
 function doPost(e) {
-  const params = requestParams_(e);
+  // Extract only bounded response capabilities before inspecting a large body.
+  let params = {};
+  ['submission_id', 'response_token', 'success_redirect'].forEach(function (name) {
+    const value = e && e.parameter && e.parameter[name];
+    if (value != null && String(value).length <= FIELD_LIMITS[name]) params[name] = value;
+  });
   let lock;
   try {
+    if (oversizedBookingRequest_(e)) {
+      return htmlError_(['This booking request is too large. Please shorten it and try again.'],
+        'Booking request could not be completed', null, params);
+    }
+    params = requestParams_(e);
 
     // Honeypot: real users never fill this field.
     if (params.website_field) {
@@ -124,6 +168,9 @@ function doPost(e) {
       return htmlError_(validation.errors, null, null, params);
     }
 
+    const fingerprint = submissionFingerprint_(params);
+    params.whatsapp = normalizeWhatsApp_(params.whatsapp);
+    // Pure request validation must not wait for the global booking lock.
     // Keep lookup, write and notification state under the same lock.
     lock = LockService.getScriptLock();
     lock.waitLock(10000);
@@ -131,30 +178,33 @@ function doPost(e) {
     ensureHeaders_(sheet);
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
     let rowNumber = findSubmissionRow_(sheet, headers, params.submission_id);
+    const existingSubmission = rowNumber !== 0;
     if (!rowNumber) {
-      appendRow_(sheet, params);
+      if (!reserveBookingCapacity_(params, Date.now())) {
+        return htmlError_(['There have been too many new requests. This booking was not saved. Please wait and try again, or message us on WhatsApp.'],
+          'Booking request could not be completed', null, params);
+      }
+      appendRow_(sheet, params, fingerprint);
       SpreadsheetApp.flush();
       rowNumber = sheet.getLastRow();
     }
     const saved = sheet.getRange(rowNumber, 1, 1, headers.length).getValues()[0];
-    const notificationColumn = headers.indexOf('notification_status') + 1;
-    if (saved[notificationColumn - 1] !== 'Sent') {
-      // Receipt means persisted in Sheets. Email is a separate operational step.
-      const savedParams = {};
-      headers.forEach(function (header, index) { savedParams[header] = saved[index]; });
-      let notificationStatus = 'Sent';
-      try {
-        sendNotification_(savedParams);
-      } catch (mailError) {
-        notificationStatus = 'Failed';
-        console.error('Booking notification failed; review the Bookings sheet.');
+    if (existingSubmission) {
+      const savedFingerprint = saved[headers.indexOf('submission_fingerprint')];
+      if (!FINGERPRINT_PATTERN.test(String(savedFingerprint || ''))) {
+        return htmlError_([LEGACY_RETRY_MESSAGE], 'Booking details could not be verified',
+          LEGACY_RETRY_MESSAGE, params);
       }
-      try {
-        sheet.getRange(rowNumber, notificationColumn).setValue(notificationStatus);
-        SpreadsheetApp.flush();
-      } catch (statusError) {
-        console.error('Booking notification status could not be updated; review Apps Script executions.');
+      if (savedFingerprint !== fingerprint) {
+        return htmlError_([RETRY_CONFLICT_MESSAGE], 'Booking details were not updated',
+          RETRY_CONFLICT_MESSAGE, params);
       }
+    }
+    // A saved row is received even when its notification must recover later.
+    try {
+      attemptNotification_(sheet, headers, rowNumber, Date.now());
+    } catch (notificationError) {
+      console.error('Saved booking notification needs review; check the Bookings sheet and Apps Script executions.');
     }
 
     return htmlRedirect_(params);
@@ -176,16 +226,14 @@ function doPost(e) {
 function requestParams_(e) {
   const source = (e && e.parameter) || {};
   const params = {};
-  Object.keys(source).forEach(function (name) {
-    params[name] = source[name];
+  BOOKING_DETAIL_FIELDS.concat(['submission_id', 'response_token', 'success_redirect', 'website_field']).forEach(function (name) {
+    if (Object.prototype.hasOwnProperty.call(source, name)) params[name] = source[name];
   });
 
   const repeatedDays = e && e.parameters && e.parameters.preferred_days;
   if (Array.isArray(repeatedDays)) {
-    params.preferred_days = repeatedDays
-      .map(function (value) { return String(value).trim(); })
-      .filter(function (value) { return value !== ''; })
-      .join(',');
+    // Retain raw padding until validation has enforced the list's length bound.
+    params.preferred_days = repeatedDays.map(function (value) { return String(value); }).join(',');
   }
   return params;
 }
@@ -232,7 +280,7 @@ function ensureHeaders_(sheet) {
   if (sheet.getFrozenRows() < 1) sheet.setFrozenRows(1);
 }
 
-function appendRow_(sheet, params) {
+function appendRow_(sheet, params, fingerprint) {
   const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const row = headers.map(function (h) {
     if (h === 'timestamp')        return new Date();
@@ -241,7 +289,12 @@ function appendRow_(sheet, params) {
     if (h === 'follow_up_date')   return '';
     if (h === 'internal_notes')   return '';
     if (h === 'notification_status') return 'Pending';
-    return literalSheetValue_(params[h] != null ? params[h] : '');
+    if (h === 'notification_attempts') return 0;
+    if (h === 'submission_fingerprint') return fingerprint;
+    if (h === 'submission_id' || BOOKING_DETAIL_FIELDS.indexOf(h) !== -1) {
+      return literalSheetValue_(params[h] != null ? params[h] : '');
+    }
+    return '';
   });
   sheet.appendRow(row);
 }
@@ -253,7 +306,7 @@ function findSubmissionRow_(sheet, headers, submissionId) {
   const column = headers.indexOf('submission_id') + 1;
   const values = sheet.getRange(2, column, count, 1).getValues();
   for (let index = 0; index < values.length; index++) {
-    if (values[index][0] === submissionId) return index + 2;
+    if (String(values[index][0]).toLowerCase() === String(submissionId).toLowerCase()) return index + 2;
   }
   return 0;
 }
@@ -269,6 +322,21 @@ function literalSheetValue_(value) {
 // ---------------------------------------------------------------------------
 function validateBooking_(params) {
   const errors = [];
+
+  Object.keys(FIELD_LIMITS).forEach(function (name) {
+    const raw = String(params[name] == null ? '' : params[name]);
+    const limit = FIELD_LIMITS[name];
+    const tooLong = name === 'notes' ?
+      raw.length > limit * 2 || raw.replace(/\r\n?/g, '\n').length > limit : raw.length > limit;
+    if (tooLong) {
+      errors.push('A booking field exceeds its permitted length. Please shorten it and try again.');
+    }
+    const controls = name === 'notes' ? /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/ : /[\x00-\x1f\x7f]/;
+    if (controls.test(raw)) {
+      errors.push('A booking field contains invalid characters. Please check the details and try again.');
+    }
+  });
+  if (errors.length) return { valid: false, errors: errors };
 
   REQUIRED_FIELDS.forEach(function (field) {
     if (!hasValue_(params[field.name])) {
@@ -288,6 +356,9 @@ function validateBooking_(params) {
 
   if (hasValue_(params.email) && !isValidEmail_(params.email)) {
     errors.push('Email address is not valid.');
+  }
+  if (hasValue_(params.whatsapp) && !normalizeWhatsApp_(params.whatsapp)) {
+    errors.push('Enter a valid international WhatsApp number, including the country code.');
   }
 
   validateAllowedSingle_(params, 'child_age', 'child age', errors);
@@ -309,6 +380,39 @@ function hasValue_(value) {
 
 function isValidEmail_(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim());
+}
+
+function normalizeWhatsApp_(value) {
+  const text = String(value == null ? '' : value).trim();
+  if (!/^(?:\+|00)[0-9 ()-]+$/.test(text)) return '';
+  const normalized = text.replace(/[ ()-]/g, '').replace(/^00/, '+');
+  return /^\+[1-9][0-9]{6,14}$/.test(normalized) ? normalized : '';
+}
+
+function submissionFingerprint_(params) {
+  const canonical = {};
+  BOOKING_DETAIL_FIELDS.forEach(function (name) {
+    const value = String(params[name] == null ? '' : params[name]);
+    if (name === 'whatsapp') {
+      canonical[name] = normalizeWhatsApp_(value);
+    } else if (name === 'preferred_days') {
+      const days = value.split(',').map(function (day) { return day.trim(); });
+      canonical[name] = ALLOWED_VALUES.preferred_days.filter(function (day) {
+        return days.indexOf(day) !== -1;
+      }).join(',');
+    } else if (name === 'notes') {
+      canonical[name] = value.replace(/\r\n?/g, '\n').trim();
+    } else {
+      canonical[name] = value.trim();
+    }
+  });
+  const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,
+    JSON.stringify(canonical), Utilities.Charset.UTF_8);
+  const fingerprint = bytes.map(function (byte) {
+    return ('0' + (byte & 255).toString(16)).slice(-2);
+  }).join('');
+  if (!FINGERPRINT_PATTERN.test(fingerprint)) throw new Error('Booking fingerprint could not be computed.');
+  return fingerprint;
 }
 
 function validateAllowedSingle_(params, name, label, errors) {
@@ -353,7 +457,7 @@ function sendNotification_(p) {
     '— Parent —',
     'Name:      ' + (p.parent_name || '—'),
     'Email:     ' + (p.email || '—'),
-    'WhatsApp:  ' + (p.whatsapp || '—'),
+    'WhatsApp:  ' + (p.whatsapp ? String(p.whatsapp).replace(/^'(?=\+)/, '') : '—'),
     'Country:   ' + (p.country || '—'),
     'City / Region: ' + (p.city_region || '—'),
     '',
@@ -378,7 +482,7 @@ function sendNotification_(p) {
     to: CONFIG.NOTIFICATION_EMAIL,
     subject: subject,
     body: lines.join('\n'),
-    replyTo: p.email || undefined,
+    replyTo: p.email ? String(p.email).trim() : undefined,
     name: 'Tarteel House bookings'
   });
 }
@@ -443,6 +547,7 @@ function getSuccessRedirect_(params) {
 
 function isAllowedSuccessRedirect_(value) {
   if (!hasValue_(value)) return false;
+  if (String(value).length > FIELD_LIMITS.success_redirect || /[\x00-\x1f\x7f]/.test(String(value))) return false;
 
   const match = String(value).trim().match(/^(https?):\/\/([^/?#]+)(\/[^?#]*)(\?[^#]*)?$/i);
   if (!match) return false;

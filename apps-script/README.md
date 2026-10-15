@@ -7,12 +7,17 @@ The booking form at `/book-trial` is configured to post to a Google Apps Script 
 This file documents the repository implementation, not current production health. Repository changes do not update the Apps Script deployment automatically. Use independent resources for a fork and the local QA harness for tests. A public web-app endpoint does not require making its backing Sheet public: keep the Sheet restricted to authorized staff. Verify backend compatibility before releasing a dependent frontend change.
 
 ## Files
-- `Code.gs` — the full Apps Script. Source of truth.
+- `Code.gs` — booking validation, persistence and response handling.
+- `AbuseProtection.gs` — bounded new-request budgets and body-size guard.
+- `NotificationRecovery.gs` — notification queue, worker and owner helpers.
+
+All three files are required in the same Apps Script project. This directory is
+the source of truth; copying only `Code.gs` will leave required helpers missing.
 
 ## Setup reference (live deployment status must be confirmed)
 1. Open the booking Google Sheet.
 2. Extensions → Apps Script.
-3. Paste the contents of `Code.gs` into `Code.gs` in the editor.
+3. Copy all three `.gs` files into matching files in the editor.
 4. Save. Deploy → New deployment → **Web app**:
    - Execute as: **Me**
    - Who has access: **Anyone**
@@ -20,8 +25,8 @@ This file documents the repository implementation, not current production health
    `/book-trial`.
 
 ## Updating the script
-1. Edit `apps-script/Code.gs` in this repo.
-2. Paste the updated contents into the bound Apps Script editor.
+1. Edit the appropriate `apps-script/*.gs` files in this repo.
+2. Copy all three current files into the bound Apps Script editor.
 3. Save. Deploy → **Manage deployments** → pencil icon on the existing
    deployment → Version: **New version** → Deploy.
    The form URL does not change.
@@ -61,16 +66,22 @@ a resolved request cannot prove that a booking was saved.
 4. Ensures the header row on the `Bookings` sheet contains all required
    columns — appends any missing ones to the right without disturbing
    existing data.
-5. Takes a script lock, looks up the opaque `submission_id`, and appends a row
-   only if that ID is not already present. Untrusted formula-leading values
+5. Validates bounded input, computes a SHA256 fingerprint of the booking
+   details, then takes a script lock and looks up the opaque `submission_id`.
+   A new ID must reserve capacity against server-side request budgets before
+   appending one row with its fingerprint. An existing ID succeeds only
+   when its saved fingerprint matches the submitted details. Edited retries
+   return a correction message without updating the row, adding another row or
+   sending another email. Untrusted formula-leading values
    are stored as literal text. The `status` column is set
    to **New lead**; `assigned_teacher`, `follow_up_date`, and
    `internal_notes` are left empty for the founder to fill in.
 6. Sends a plain-text email to `NOTIFICATION_EMAIL` with all key booking
    details. `Reply-To` is set to the parent's email, so hitting reply
    responds straight to the parent. `notification_status` records `Pending`,
-   `Sent`, or `Failed`; a retry of the same ID retries an unsent notification
-   without adding another booking. A successfully saved row counts as received
+   `Sending`, `Sent`, `Failed`, or `Needs review`. A retry of the same ID can
+   retry an unsent notification when due, without adding another booking.
+   A successfully saved row counts as received
    even if email fails, so the parent is not asked to rebook a saved request.
 7. Returns readable success/error HTML with a small `postMessage` callback
    from Google's sandbox to the top-level website. It never automatically
@@ -103,9 +114,68 @@ preventing booking.
 
 After 30 seconds without a valid acknowledgment, the form shows an uncertain
 outcome and a WhatsApp route, retains the entered fields, and enables retry.
+The field groups are inert while a response is pending: they cannot be edited,
+but their controls remain enabled and are included in the native form POST.
+The live status stays available outside those groups. An error or timeout
+unlocks the fields and retains the entered values.
+
 The retry keeps `submission_id` and creates a new `response_token`, so stale
-callbacks cannot settle the new attempt. The ID stays in the current form DOM;
+callbacks cannot settle the new attempt. An unchanged saved request reuses its
+row and can retry a failed notification after its backoff. If the first write failed, corrected
+details can be saved under that same ID. If the original request was saved,
+edited details receive a clear message that the changes were not saved and a
+WhatsApp route to request a correction. The form does not silently create a
+new ID after an edit. The ID stays in the current form DOM;
 reloading or opening a new form creates a new ID and is not deduplicated.
+
+The backend appends `submission_fingerprint` to the right of existing columns
+without rewriting prior records. The SHA256 value is computed by Apps Script;
+a client-supplied fingerprint is ignored. It covers the submitted service and
+contact fields, including notes and consent, and excludes per-attempt response
+tokens, submission IDs and success URLs. Formatting-only phone differences,
+the order of the same preferred-day set, surrounding whitespace and notes line
+ending formats do not change the fingerprint. The first saved values are
+retained, except that WhatsApp is normalized for storage. Unknown request
+properties cannot populate legacy or custom Sheet columns. UUID lookups are
+case-insensitive, while callback ID/token text retains its incoming case.
+
+Existing rows without a valid fingerprint receive an **error** response that
+says the request was already received and asks the parent to contact staff
+before resubmitting. Their details cannot be compared reliably, so the backend
+does not silently confirm new details, backfill a fingerprint, overwrite the
+row or retry its notification automatically. Staff can handle corrections
+through the existing manual workflow. Fingerprints stay in the private Sheet;
+neither fingerprints nor booking details are included in the callback or logs.
+
+## Validation limits
+
+Lengths are bounded without truncation. Counts use JavaScript UTF-16 string
+length, matching HTML `maxlength`. Multilingual names are accepted.
+
+| Field | Maximum length |
+| --- | --- |
+| Parent name / child's first name | 100 each |
+| City / region | 120 |
+| Email | 254 |
+| WhatsApp, including formatting | 40 |
+| Notes | 2,000, counting each line break once |
+| Source | 100 |
+
+Single-line and metadata limits apply to raw values before trimming. Notes
+account for native POST serialization, where each textarea line break becomes
+CRLF; their wire representation is also capped at 4,000 code units. Enum
+choices, UUIDs and redirect metadata have bounded lengths in `FIELD_LIMITS`.
+Single-line fields reject C0/DEL control characters; notes may contain tabs and
+line breaks but reject other such controls. Oversized or invalid requests are
+rejected before acquiring the global lock or opening the Sheet.
+
+WhatsApp must use `+` or `00` followed by an international number. ASCII spaces,
+parentheses and hyphens are allowed; the normalized number must have 7–15 digits
+with a nonzero first digit after `+`. For example, `+34 (600) 000-000` and
+`0034 600 000 000` both normalize to `+34600000000`. Local-only numbers,
+extensions and text are rejected. This checks format, not whether the number
+exists or has WhatsApp. Email format is validated and Reply-To whitespace is
+trimmed without changing the email local-part's case.
 
 Without JavaScript or secure randomness, the form retains a normal top-level
 POST. The backend page itself confirms receipt and provides explicit top-level
@@ -123,15 +193,141 @@ notification status/email, top-level success navigation, consent respected,
 and no duplicate on retry or refresh. Local mock tests do not verify Google's
 deployment, Sheets permissions, MailApp quota, inbox delivery, or live SDKs.
 
-Review the Bookings sheet regularly, especially rows whose notification status
-is `Pending` or `Failed`. There is no scheduled notification retry in this
-implementation. If MailApp sends an email but the subsequent status update or
-execution fails, a retry can send another notification; Sheets and MailApp do
-not share a transaction. The booking row remains deduplicated by its ID.
+Deploy all three source files. The recovery worker runs only after the owner
+explicitly installs its trigger; repository changes do not activate it. See
+the activation and queue-review procedure below.
+
+Use the [paired release and rollback procedure](../docs/release-procedure.md)
+to record the frontend revision, web-app version, saved project source and
+trigger state. A web-app version rollback alone does not restore saved project
+files or the recovery trigger; handle those explicitly before restarting mail.
 
 Google's documented [HtmlService sandbox restrictions](https://developers.google.com/apps-script/guides/html/restrictions)
 explain why an automatic iframe redirect cannot serve as a reliable return to
 the first-party website.
+
+## Abuse protection
+
+`ABUSE_POLICY` in `AbuseProtection.gs` sets these initial budgets:
+
+| Budget | Default |
+| --- | --- |
+| New attempts for either normalized email or WhatsApp | 3 per UTC hour, 12 per UTC day |
+| All new attempts | 50 per UTC hour, 200 per UTC day |
+| Retained contact hash buckets | 512 |
+| Encoded POST body | 65,536 bytes |
+
+These are fixed UTC hour/day windows, not rolling windows. A reservation happens
+under the booking lock before appending. A later Sheet write failure consumes
+the attempt. Identical saved retries bypass new-request limits, while changed
+saved details remain conflicts. Native submissions without an ID also use the
+budgets. Invalid fields, a filled honeypot and oversized bodies are rejected
+before waiting for the lock. A blocked request gets an error stating it was not
+saved, with a WhatsApp route; it cannot create a receipt or conversion.
+
+The rate identity trims and lowercases email and normalizes the international
+phone number. Stored email details and retry fingerprints retain the existing
+case-sensitive behavior. Script Properties hold keyed HMAC-SHA256 hashes,
+window timestamps and counts. The generated secret stays in Script Properties;
+neither it nor contact values are logged or returned. Expired contact buckets
+are removed without deleting unrelated project settings. Missing/corrupt state,
+storage errors or exhausted capacity deny new requests before appending.
+
+Do not delete `TH_ABUSE_SECRET_V1` independently of its counter state. If state
+needs repair, an authorized owner must investigate first and reset the owned
+`TH_ABUSE_*_V1`/`TH_ABUSE_CONTACT_V1_*` properties deliberately; resetting counters
+also resets protection. Do not clear all project properties. Policy changes
+require a new backend deployment; changing a limit does not erase current counts.
+
+Apps Script's documented [web-app event fields](https://developers.google.com/apps-script/guides/web)
+do not provide a trustworthy client IP. These limits bound intake and repeated
+contact submissions; they do not stop bots rotating contacts or consuming the
+shared budget. Stronger edge controls/challenges would require a separate
+integration. Budgets are not Google service quota entitlements: account-specific
+[Apps Script quotas](https://developers.google.com/apps-script/guides/services/quotas)
+can constrain service sooner.
+
+## Notification recovery and ownership
+
+Set the founder or a named staff member as the queue owner before activating
+recovery. Review the restricted Bookings sheet at least each working day and
+after any Apps Script failure notice. Email failure never cancels a saved lead.
+
+Each new row has `notification_attempts = 0`. Before MailApp is called, the
+script records and flushes `Sending`, the incremented attempt count and last
+attempt time. A successful mail call records `Sent`. A thrown mail error records
+`Failed` and schedules delays of 15, 60, 240 and 720 minutes after attempts 1–4.
+The fifth failed attempt becomes `Needs review` and stops automatic sending.
+An identical parent retry observes the same delay and limit.
+
+The script checks [MailApp's remaining recipient quota](https://developers.google.com/apps-script/reference/mail/mail-app#getremainingdailyquota)
+before claiming an attempt. Zero or unavailable quota postpones the row by
+15 minutes using `quota_wait` or `quota_unavailable`, without consuming an attempt.
+The worker checks no more than 200 rows, processes at most ten due/review
+candidates, and starts no new row once its 45-second work budget expires.
+Individual Google calls can still exceed that budget. A persisted cursor
+continues from the next checked row, wrapping through the queue. It shares the
+booking lock and skips overlapping runs.
+
+The claim also persists `delivery_in_progress` before mail. This guard is
+cleared only after the completion status has been flushed successfully. If
+completion is uncertain, the script retains/restores `Sending` when possible;
+the guard also suppresses a partially written `Pending` or `Failed` state when
+restoration fails. After 15 minutes a guarded row becomes `Needs review` with
+`delivery_uncertain`; it is never automatically sent again. A failed claim
+write/flush prevents the mail call. Sheets and MailApp have
+no shared transaction, and a MailApp exception can occur after delivery. The
+queue therefore cannot guarantee exactly-once email delivery. Check the inbox
+before manually retrying any uncertain or repeatedly failed notification.
+
+Existing rows with blank attempt metadata are legacy records and are never
+automatically mailed, even if their old status is `Pending` or `Failed`.
+Malformed managed metadata, including future last-attempt times or a next
+attempt preceding its last attempt, goes to `Needs review` with `invalid_metadata`.
+Queue metadata contains only timestamps, counts and fixed error codes, never
+provider error strings or additional parent/child data.
+
+### Activate after an approved release
+
+1. In the bound Apps Script project, copy all three files and authorize the
+   intended owner account for Sheets, MailApp and trigger management.
+2. Run `initializeSheet` if operational columns must be added before the next
+   request. It appends missing headers without rewriting existing records.
+3. Run `getNotificationRecoveryHealth`; inspect its counts in the execution log
+   and review existing legacy rows in the restricted Sheet. It performs no
+   writes, sends or scheduling and is not exposed through the web app.
+4. Run `installNotificationRecoveryTrigger` once as the delivery owner. It
+   reuses this account's existing handler trigger or creates a 15-minute time
+   trigger. It leaves unrelated triggers intact. Use one designated account:
+   Google [limits trigger visibility to each creator](https://developers.google.com/apps-script/guides/triggers/installable),
+   so separate owners could otherwise install redundant triggers.
+5. In **Triggers**, confirm one `retryFailedNotifications` time-driven trigger.
+   In **Executions**, verify its runs. Confirm the creator monitors Google's
+   failure-notification email. Handled mail/quota errors are queue states and
+   do not themselves fail the trigger, so daily Sheet review remains necessary.
+
+An approved deployment and real authorized test are still needed to verify
+permissions, Google execution behavior and inbox receipt. No local test installs
+a live trigger or sends real mail.
+
+### Review and recover a row
+
+| Status / code | Owner action |
+| --- | --- |
+| `Pending` or `Failed`, next attempt in future | Leave for the worker; confirm the trigger is active. |
+| Due rows remain after repeated runs | Inspect Executions, authorization, quota and cursor progress; check whether intake exceeds batch capacity. |
+| `quota_wait` / `quota_unavailable` | Review delivery-account quota/service availability; the worker will retry without spending an attempt while quota is unavailable. |
+| `Needs review` / `send_failed` | Check inbox and account errors; contact the family from the saved booking and decide whether another notification is necessary. |
+| `Sending` or `delivery_in_progress` older than 15 minutes / `delivery_uncertain` | Verify actual inbox delivery before any manual retry. |
+| `invalid_metadata` or blank legacy attempts | Review the saved row and delivery history manually; do not bulk-enable historical mail. |
+
+After confirming a notification was not delivered and correcting the cause,
+an authorized owner may explicitly requeue that single row: set status `Pending`,
+attempts `0`, and clear last-attempt, next-attempt and error-code cells. The next
+worker run will send it. If delivery was confirmed, set `Sent` instead. Preserve
+all booking fields, fingerprint and submission ID. Such edits are live Sheet
+changes and require owner authorization. Disabling recovery means removing only
+this handler's trigger; it leaves saved leads and new-request protection intact.
 
 ## Required booking fields
 The frontend and backend both require:
@@ -179,7 +375,12 @@ Columns, left to right:
 | 18| `follow_up_date`    | You        | YYYY-MM-DD                      |
 | 19| `internal_notes`    | You        | Anything operational            |
 | 20| `submission_id`     | Browser    | Stable opaque ID for the current form request |
-| 21| `notification_status` | Script  | `Pending`, `Sent`, or `Failed` |
+| 21| `notification_status` | Script  | `Pending`, `Sending`, `Sent`, `Failed`, `Needs review` |
+| 22| `submission_fingerprint` | Script | Server-computed SHA256 of booking details |
+| 23| `notification_attempts` | Script | Attempts claimed; new rows start at 0 |
+| 24| `notification_last_attempt_at` | Script | Last claimed send time |
+| 25| `notification_next_attempt_at` | Script | Earliest automatic retry time |
+| 26| `notification_error_code` | Script | Fixed operational code; no provider details |
 
 If the existing sheet is missing any of the required columns, the
 script adds them automatically on the next submission. To add them now

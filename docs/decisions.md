@@ -6,7 +6,7 @@
 - The launch booking backend is Google Apps Script, not PHP/MySQL.
 - Booking submissions are stored in Google Sheets.
 - Booking notifications are emailed to `hello@tarteelhouse.com`.
-- `apps-script/Code.gs` is the canonical Apps Script source. Paste it into the bound Apps Script project and redeploy to update the live backend.
+- `apps-script/*.gs` are the canonical Apps Script sources. Copy all three files into the bound project and redeploy; notification recovery additionally requires an explicitly owner-installed trigger. See the [operating procedure](../apps-script/README.md).
 - The owner confirms Cloudflare Pages as the production host, serving static files from the repository root at `www.tarteelhouse.com`. The legacy `CNAME` file does not establish the hosting configuration.
 - Local commits are not assumed to be published to the live site.
 - See [README](../README.md) for local verification and release boundaries.

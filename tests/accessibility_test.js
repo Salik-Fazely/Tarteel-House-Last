@@ -74,7 +74,7 @@ function element({ attrs = {}, classes = [], dataset = {} } = {}) {
 }
 
 
-function fixture({ reducedMotion = true, videos = [] } = {}) {
+function fixture({ reducedMotion = true, videos = [], formSection = false } = {}) {
   const documentTarget = eventTarget();
   const windowTarget = eventTarget();
   const animationFrames = [];
@@ -99,6 +99,7 @@ function fixture({ reducedMotion = true, videos = [] } = {}) {
 
   const firstSection = element();
   const secondSection = element();
+  secondSection.querySelector = selector => selector === 'form' && formSection ? element() : null;
   const priceCard = element({ classes: ['price-card'] });
   const observed = [];
   class Observer {
@@ -232,6 +233,15 @@ test('normal motion reveals sections and current price cards', () => {
   assert.equal(view.secondSection.classList.contains('reveal-section'), true);
   assert.equal(view.priceCard.classList.contains('reveal-card'), true);
   assert.deepEqual(view.observed, [view.secondSection, view.priceCard]);
+});
+
+
+test('form sections remain visible without waiting for an intersection', () => {
+  const view = fixture({ reducedMotion: false, formSection: true });
+
+  assert.equal(view.secondSection.classList.contains('reveal-section'), false);
+  assert.equal(view.secondSection.classList.contains('is-revealed'), true);
+  assert.deepEqual(view.observed, [view.priceCard]);
 });
 
 

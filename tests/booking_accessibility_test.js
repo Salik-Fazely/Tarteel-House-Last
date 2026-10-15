@@ -44,6 +44,13 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
     },
   ];
   const submitButton = { disabled: false, textContent: 'Request my free trial' };
+  const fieldGroups = [{ inert: false }, { inert: false }];
+  const whatsapp = {
+    ...listenerTarget(),
+    value: '+34600000000',
+    validationMessage: '',
+    setCustomValidity(message) { this.validationMessage = message; },
+  };
   const status = { hidden: true, textContent: '' };
   const windowEvents = listenerTarget();
   let reportValidityCalls = 0;
@@ -62,13 +69,14 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
   const form = {
     ...formEvents,
     action: 'https://script.google.com/macros/s/example/exec',
-    checkValidity() { return valid; },
+    checkValidity() { return valid && !whatsapp.validationMessage; },
     reportValidity() { reportValidityCalls += 1; },
     querySelector(selector) {
       assert.equal(selector, 'button[type="submit"]');
       return submitButton;
     },
     querySelectorAll(selector) {
+      if (selector === '.form-group-section, .form-consent') return fieldGroups;
       if (selector === 'input[name="preferred_days"]') return selectedDays;
       if (selector === 'input[name="preferred_days"]:checked') {
         return selectedDays.filter(control => control.checked);
@@ -88,6 +96,7 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
         'trial-form': form,
         'trial-form-status': status,
         'trial-booking-response': enhanced ? responseFrame : null,
+        'whatsapp': whatsapp,
         ...fields,
       }[id] || null;
     },
@@ -137,6 +146,7 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
     },
     timeout() { const pending = [...timers.values()]; timers.clear(); pending.forEach(callback => callback()); },
     fields,
+    fieldGroups,
     form,
     get fetchCalls() { return fetchCalls; },
     get formDataCalls() { return formDataCalls; },
@@ -145,6 +155,7 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
     selectedDays,
     status,
     submitButton,
+    whatsapp,
   };
 }
 
@@ -205,6 +216,51 @@ test('an acknowledged failure preserves the form and can be retried with the sam
   view.dispatchSubmit();
   assert.equal(view.fields['submission-id'].value, submissionId);
   assert.notEqual(view.fields['response-token'].value, responseToken);
+});
+
+test('pending enhanced requests prevent edits and unlock after an error or timeout', () => {
+  const view = bookingFixture({ enhanced: true });
+  view.dispatchSubmit();
+  assert.ok(view.fieldGroups.every(group => group.inert));
+  assert.equal(view.status.hidden, false, 'receipt status stays available outside locked groups');
+  view.dispatchResponse({ data: { type: 'tarteelhouse:booking-result', status: 'error',
+    submission_id: view.fields['submission-id'].value, response_token: view.fields['response-token'].value,
+    message: 'These changes were not saved.' } });
+  assert.ok(view.fieldGroups.every(group => !group.inert));
+  view.dispatchSubmit();
+  assert.ok(view.fieldGroups.every(group => group.inert));
+  view.timeout();
+  assert.ok(view.fieldGroups.every(group => !group.inert));
+});
+
+test('invalid international phones block posting before request identifiers are created', () => {
+  for (const number of ['not a phone number', '600000000', '+00 12345678', '+34 600000000 ext 2', '+34+600000000', '+1234567890123456', '+34\n600000000']) {
+    const view = bookingFixture({ enhanced: true });
+    view.whatsapp.value = number;
+    view.whatsapp.dispatch('input');
+    const event = view.dispatchSubmit();
+    assert.equal(event.prevented, true, number);
+    assert.equal(view.fields['submission-id'].value, '', number);
+    assert.equal(view.submitButton.disabled, false, number);
+    assert.match(view.whatsapp.validationMessage, /country code/i);
+  }
+});
+
+test('formatted international phones permit posting and correcting input clears the error', () => {
+  const view = bookingFixture({ enhanced: true });
+  view.whatsapp.value = 'invalid';
+  view.whatsapp.dispatch('input');
+  assert.match(view.whatsapp.validationMessage, /country code/i);
+  for (const number of ['+34 (600) 000-000', '0034 600 000 000', '+1234567', '+123456789012345']) {
+    const fresh = bookingFixture({ enhanced: true });
+    fresh.whatsapp.value = number;
+    fresh.whatsapp.dispatch('input');
+    assert.equal(fresh.whatsapp.validationMessage, '', number);
+    assert.equal(fresh.dispatchSubmit().prevented, false, number);
+  }
+  view.whatsapp.value = '+34600000000';
+  view.whatsapp.dispatch('change');
+  assert.equal(view.whatsapp.validationMessage, '');
 });
 
 test('a timeout preserves input, enables retry, and a late callback from the old attempt cannot settle the retry', () => {

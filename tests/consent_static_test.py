@@ -48,7 +48,7 @@ class ConsentStaticTests(unittest.TestCase):
             source = page.read_text(encoding="utf-8")
             relative = page.relative_to(ROOT)
             self.assertEqual(1, source.count(CONSENT_SCRIPT), relative)
-            self.assertLess(source.index(CONSENT_SCRIPT), source.index('<script src="/assets/js/main.js"></script>'), relative)
+            self.assertLess(source.index(CONSENT_SCRIPT), source.index('<script src="/assets/js/main.js?v=20261014-1"></script>'), relative)
 
     def test_no_html_contains_an_unconditional_ga_loader(self):
         for page in ROOT.rglob("*.html"):
