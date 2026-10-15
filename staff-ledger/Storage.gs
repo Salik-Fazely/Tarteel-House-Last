@@ -111,7 +111,9 @@ var LedgerStorage = (function(){
     if(!p.createdAt||Date.parse(ctx.nowIso)-Date.parse(p.createdAt)<300000)R.fail('REVIEW_REQUIRED','Wait at least five minutes and confirm the original Apps Script execution has ended.');
     var log=JSON.parse(ctx.props.getProperty('LEDGER_RECOVERY_LOG_V1')||'[]');
     log.push({requestId:requestId,eventId:p.eventId,reviewedAt:ctx.nowIso,actorEmail:ctx.actorEmail,reason:reason});
-    var encoded=JSON.stringify(log.slice(-10));ctx.props.setProperty('LEDGER_RECOVERY_LOG_V1',encoded);
+    log=log.slice(-10);var encoded=JSON.stringify(log);
+    while(unescape(encodeURIComponent(encoded)).length>=8000&&log.length>1){log.shift();encoded=JSON.stringify(log);}
+    ctx.props.setProperty('LEDGER_RECOVERY_LOG_V1',encoded);
     if(ctx.props.getProperty('LEDGER_RECOVERY_LOG_V1')!==encoded)R.fail('STORE_UNAVAILABLE','The recovery review could not be recorded.');
     ctx.props.deleteProperty(PENDING);
     return {ok:true,status:'NOT_FOUND',requestId:requestId,sequence:data.state.sequence};

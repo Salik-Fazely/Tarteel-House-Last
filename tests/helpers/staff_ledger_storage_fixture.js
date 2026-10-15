@@ -33,7 +33,7 @@ function storageFixture(){
     LedgerSchema:schema,
     Session:{getEffectiveUser(){return{getEmail(){return fault.identity;}};},getScriptTimeZone(){return'Europe/Madrid';}},
     LockService:{getDocumentLock(){return{tryLock(){if(fault.locked)return false;fault.locked=true;return true;},releaseLock(){fault.locked=false;}};}},
-    PropertiesService:{getDocumentProperties(){return{getProperty(k){return properties.get(k)??null;},setProperty(k,v){properties.set(k,String(v));return this;},deleteProperty(k){properties.delete(k);return this;}};}},
+    PropertiesService:{getDocumentProperties(){return{getProperty(k){return properties.get(k)??null;},setProperty(k,v){if(Buffer.byteLength(String(v),'utf8')>9000)throw Error('Private property too large');properties.set(k,String(v));return this;},deleteProperty(k){properties.delete(k);return this;}};}},
     SpreadsheetApp:{getActiveSpreadsheet(){return spreadsheet;},flush(){},newDataValidation(){return{requireNumberGreaterThanOrEqualTo(){return this;},setAllowInvalid(){return this;},build(){return{};}};},getUi(){return{createMenu(title){menu.push(title);return{addItem(label){menu.push(label);return this;},addToUi(){}};}};}},
     Utilities:{getUuid(){return id(sequence++);},DigestAlgorithm:{SHA_256:'SHA_256'},Charset:{UTF_8:'UTF_8'},computeDigest(algorithm,value){return [...crypto.createHash('sha256').update(value,'utf8').digest()].map(v=>v>127?v-256:v);}},
     HtmlService:{createTemplateFromFile(){return{evaluate(){return{setTitle(){return this;}};}};},createHtmlOutputFromFile(){return{getContent(){return'';}};}},

@@ -129,3 +129,14 @@ test('the Overview count reflects stored records after a refresh',()=>{
   const overview=f.sheets.get('Overview').cells.slice(5);
   assert.ok(overview.some(r=>r[0]==='Ledger totals'&&String(r[3]).includes('1 events')));
 });
+test('a pending request ID is recoverable from the workbook after local storage is lost',()=>{
+  const f=ready(),c=command(f);f.fault.append='before';f.call('ledgerExecute',c);f.fault.append=null;
+  assert.equal(f.call('ledgerBootstrap').health.pendingRequestId,c.requestId);
+});
+test('repeated manual recoveries keep their private property below provider size limits',()=>{
+  const f=ready();for(let n=0;n<4;n++){
+    f.fault.now=new Date(Date.parse('2026-10-15T09:00:00Z')+n*600000).toISOString();const c=command(f);f.fault.append='before';f.call('ledgerExecute',c);f.fault.append=null;
+    f.fault.now=new Date(Date.parse(f.fault.now)+360000).toISOString();assert.equal(f.call('ledgerRecoverPending_',c.requestId,'界'.repeat(1000)).ok,true);
+  }
+  assert.ok(Buffer.byteLength(f.properties.get('LEDGER_RECOVERY_LOG_V1'),'utf8')<8000);
+});

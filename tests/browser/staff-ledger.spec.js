@@ -73,6 +73,11 @@ test('unpaid scheduling and ambiguous Madrid times require staff correction',asy
   await fill(page,{startsAt:'2026-10-25T02:30'});await page.getByRole('button',{name:'Preview change'}).click();await expect(page.locator('#status')).toContainText('missing or repeated');
   await fill(page,{clockOffset:'+01:00'});await save(page);expect((await snapshot(page)).lessons[0].startsAt).toBe('2026-10-25T01:30:00.000Z');
 });
+test('a fresh browser recovers an uncertain request ID from the workbook',async({page})=>{
+  await open(page);await choose(page,'CREATE_GUARDIAN');await fill(page,{name:'QA Pending',email:'pending@example.invalid',whatsapp:'+34600000005'});await preview(page);await control(page,{fault:{append:'before'}});
+  await page.getByRole('button',{name:'Confirm and save'}).click();await expect(page.locator('#status')).toContainText('uncertain');
+  await page.evaluate(()=>localStorage.clear());await control(page,{fault:{append:null}});await page.reload();await expect(page.locator('#status')).toContainText('Review an uncertain save');await expect(page.locator('#fields')).toHaveAttribute('inert','');expect((await snapshot(page)).sequence).toBe(0);
+});
 for(const width of [300,320,480])test(`staff forms fit ${width}px and have labelled keyboard controls`,async({page})=>{
   await page.setViewportSize({width,height:850});await open(page);await choose(page,'OPEN_PACKAGE');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

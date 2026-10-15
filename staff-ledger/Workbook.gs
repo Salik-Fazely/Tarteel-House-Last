@@ -18,10 +18,10 @@ var LedgerWorkbook = (function(){
     book.setSpreadsheetTimeZone(S.timeZone);
     S.sheets.forEach(function(d){
       var sheet=book.getSheetByName(d.name),count=d.columns.length;
-      sheet.setFrozenRows(S.headerRow);sheet.setColumnWidths(1,count,160);
+      sheet.setFrozenRows(S.headerRow);
       if(d.name==='Parent Summary')sheet.setColumnWidth(1,600);
       sheet.getRange(1,1,1,count).setFontSize(16).setFontWeight('bold');
-      sheet.getRange(S.headerRow,1,1,count).setBackground('#243a2e').setFontColor('#ffffff').setFontWeight('bold').setWrap(true);
+      sheet.getRange(S.headerRow,1,1,count).setBackground('#eef0f2').setFontColor('#202124').setFontWeight('bold').setWrap(true);
       d.columns.forEach(function(c,index){
         var range=sheet.getRange(S.headerRow+1,index+1,Math.max(1,sheet.getMaxRows()-S.headerRow),1);
         range.setNumberFormat(c.type==='money'?'"€"#,##0.00':c.type==='count'?'0':c.type==='date'?'dd mmm yyyy':c.type==='instant'?'dd mmm yyyy hh:mm':'@');
@@ -59,7 +59,7 @@ var LedgerWorkbook = (function(){
   }
   function health(book,state,pending){
     var sheet=book.getSheetByName('Overview'),applied=sheet.getRange(3,2).getValue();
-    return {counts:{students:Object.keys(state.learners).length,purchases:Object.keys(state.purchases).length,payments:Object.keys(state.payments).length,events:state.sequence,unresolvedReviews:Object.values(state.reviews).filter(function(r){return !r.resolved;}).length},appliedSequence:Number(applied)||0,stale:sheet.getRange(2,2).getValue()!=='Current'||Number(applied)!==state.sequence,pendingWrite:Boolean(pending)};
+    return {counts:{students:Object.keys(state.learners).length,purchases:Object.keys(state.purchases).length,payments:Object.keys(state.payments).length,events:state.sequence,unresolvedReviews:Object.values(state.reviews).filter(function(r){return !r.resolved;}).length},appliedSequence:Number(applied)||0,stale:sheet.getRange(2,2).getValue()!=='Current'||Number(applied)!==state.sequence,pendingWrite:Boolean(pending),pendingRequestId:pending?pending.requestId:null};
   }
   return {validate:validate,configure:configure,refresh:refresh,summary:summary,health:health};
 })();
