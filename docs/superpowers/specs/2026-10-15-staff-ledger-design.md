@@ -1,6 +1,6 @@
-# Staff lesson and package ledger — proposed design
+# Staff lesson and package ledger — approved design
 
-Date: 15 October 2026. Status: proposed design for owner review; implementation has not started.
+Date: 15 October 2026. Status: owner approved this design in chat on 15 October 2026; implementation planning is in progress.
 
 ## Purpose and agreed direction
 
@@ -39,9 +39,9 @@ These rules come from `docs/commercial-facts.md`, `docs/decisions.md` and the ex
 - A late cancellation/no-show on Starter, or after the other packages' four allowances are used, consumes one lesson.
 - A covered absence uses one make-up allowance, preserves one credit for its replacement and adds no extra lesson credit. Completing the replacement consumes that credit once.
 
-## Proposed operational defaults to review
+## Approved operational defaults
 
-These details are implementation proposals, not previously approved public policy:
+The owner approved these operational defaults with this written design. They specify ledger behavior without rewriting the public terms:
 
 - Operational dates use **Europe/Madrid**. Scheduled instants and notice instants are stored in UTC and displayed with their timezone. Exactly 24 elapsed hours qualifies as timely notice; daylight-saving changes do not turn this into a calendar-day comparison.
 - A package's default last usable date is the day before its next purchase anniversary in Europe/Madrid (for example, purchase 15 October 2026 → last usable date 14 October 2027). For a 29 February purchase, use 28 February of the next year as its last usable date. Staff see and confirm this date before saving. Any later change requires a reason and an audit event.
@@ -66,7 +66,7 @@ Create a separate restricted workbook with its own container-bound Apps Script p
 | Events | Canonical ordered records of staff commands and corrections |
 | Parent Summary | One selected learner's reviewable summary, never the whole roster |
 
-The workbook owner is the intended Tarteel House operations Google account; verify that account before creating/importing the file. Initial access is owner-only. Additional editors require the owner to identify the recipients before sharing. There is no public staff URL, anonymous endpoint or publish-to-web step.
+The owner selected their currently connected personal Google account to own the workbook, explicitly choosing it over the existing operations account on 15 October 2026. Verify the connector identity before creating/importing the file; keep the actual account details in private operational notes. Initial access is owner-only. Additional editors require the owner to identify the recipients before sharing. There is no public staff URL, anonymous endpoint or publish-to-web step.
 
 Use a bound menu/sidebar and `google.script.run`; no `doGet`/`doPost` is required. Request the current-spreadsheet, container-UI and user-email scopes needed by this project, without Drive-wide, mail or payment-service access. Each staff command obtains the actual executing user's identity through the authorized bound-script context; blank/unavailable identity fails with a clear message. The simple `onOpen` trigger only adds the menu and does not require or fabricate an actor. No client-supplied actor name is trusted.
 
@@ -128,4 +128,4 @@ Rollback disables staff form writes and restores the compatible script/view vers
 
 ## Review checkpoint
 
-The owner has selected the Sheet interface and manual payment reconciliation. This written design, including the proposed date/exception defaults and opening-balance workflow, awaits review. Implementation planning follows its approval; product code and provider resources have not been created by this design step.
+The owner approved the written design, including the date/exception defaults and opening-balance workflow, on 15 October 2026. They selected the Sheet interface, manual payment reconciliation and ownership by the currently connected personal Google account. The implementation plan requires its own review and execution-method selection before product implementation; no product code or provider resources have been created by the design step.
