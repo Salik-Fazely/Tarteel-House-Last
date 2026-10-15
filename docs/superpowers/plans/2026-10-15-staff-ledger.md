@@ -103,7 +103,7 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
 
 **Interfaces:** Consume the command/event contract above. Produce normalization, replay/decide, purchase/receipt/match state and package/payment projection fields for later tasks.
 
-- [ ] **Step 1: Write failing finance tests** using Node's existing `node:test` and `assert/strict`, deterministic UUIDs and deep-frozen inputs. Pin these assertions:
+- [x] **Step 1: Write failing finance tests** using Node's existing `node:test` and `assert/strict`, deterministic UUIDs and deep-frozen inputs. Pin these assertions:
 
   ```js
   assert.deepEqual(catalogTerms, [[12000,6,0],[22000,12,4],[40000,25,4]]);
@@ -115,10 +115,10 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
   ```
 
   Also reject non-EUR, zero/negative/fractional/unsafe cents, malformed dates, unknown keys, oversized fields and duplicate normalized source/reference. Prove one receipt can fund two siblings' explicit purchases, catalog snapshots survive replay, guardian/learner contact corrections preserve linked history, and parent summaries exclude the sibling/contacts/reference.
-- [ ] **Step 2: Run** `node --test tests/staff_ledger_finance_test.js`; verify failure is the missing ledger implementation.
-- [ ] **Step 3: Implement** the defined pure interfaces for guardian/learner create/update, purchase/receipt/match commands and the date/money helpers. Compare Madrid dates through one explicit timezone helper; never parse ambiguous local wall times silently. Overview statuses derive from actual funding, not an editable “Paid” cell.
-- [ ] **Step 4: Run** the same test file; all finance assertions pass with no external services.
-- [ ] **Step 5: Commit** the named files as `feat: add staff ledger purchases and payment matching`.
+- [x] **Step 2: Run** `node --test tests/staff_ledger_finance_test.js`; verify failure is the missing ledger implementation.
+- [x] **Step 3: Implement** the defined pure interfaces for guardian/learner create/update, purchase/receipt/match commands and the date/money helpers. Compare Madrid dates through one explicit timezone helper; never parse ambiguous local wall times silently. Overview statuses derive from actual funding, not an editable “Paid” cell.
+- [x] **Step 4: Run** the same test file; all finance assertions pass with no external services.
+- [x] **Step 5: Commit** the named files as `feat: add staff ledger purchases and payment matching`.
 
 ### Task 2: Lesson entitlements, review cases and recorded corrections
 
@@ -126,7 +126,7 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
 
 **Interfaces:** Consume Task 1's state/decision functions. Produce all remaining commands, complete projections and invariant-checked event replay.
 
-- [ ] **Step 1: Write failing tests** for these independently meaningful outcomes:
+- [x] **Step 1: Write failing tests** for these independently meaningful outcomes:
 
   ```js
   assert.deepEqual(openingBalances, {remaining:8,reserved:1,available:7,makeupsAvailable:3});
@@ -138,10 +138,10 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
   ```
 
   Cover trials, unpaid/expired scheduling, reserved versus available, duplicate replacements, Starter no-show, first four Steady/Committed covered absences and fifth charge, exactly 24 hours versus 1ms less, spring/autumn DST, missed replacement review, refund caps and affected purchases, factual attendance during holds, individual case resolution, closing, opening commitment duplicates/unknowns, and summaries' neutral under-review status. Mix accepted/rejected commands in a conservation test and check invariants after each step.
-- [ ] **Step 2: Run** `node --test tests/staff_ledger_lessons_test.js tests/staff_ledger_recovery_test.js`; verify the new behavior fails before implementation.
-- [ ] **Step 3: Implement** one persistent entitlement per reserved paid credit. Rescheduling transfers the same entitlement; completion/charged absence closes it once. Replay corrections against dependencies and reject any result that breaks invariants. Keep explicit review resolution separate from payment matching; no automatic entitlement restoration or expiry extension.
-- [ ] **Step 4: Run** `node --test tests/staff_ledger_*_test.js`; all domain suites pass, including replay equivalence and the exact eight/seven-credit opening case.
-- [ ] **Step 5: Commit** as `feat: track lesson entitlements and audited ledger corrections`.
+- [x] **Step 2: Run** `node --test tests/staff_ledger_lessons_test.js tests/staff_ledger_recovery_test.js`; verify the new behavior fails before implementation.
+- [x] **Step 3: Implement** one persistent entitlement per reserved paid credit. Rescheduling transfers the same entitlement; completion/charged absence closes it once. Replay corrections against dependencies and reject any result that breaks invariants. Keep explicit review resolution separate from payment matching; no automatic entitlement restoration or expiry extension.
+- [x] **Step 4: Run** `node --test tests/staff_ledger_*_test.js`; all domain suites pass, including replay equivalence and the exact eight/seven-credit opening case.
+- [x] **Step 5: Commit** as `feat: track lesson entitlements and audited ledger corrections`.
 
 ### Task 3: Authorized bound-script persistence and workbook views
 
@@ -205,4 +205,4 @@ Success is `{ok:true,requestId,eventId,sequence,duplicate,status,preview}` with 
 
 ## Plan review and execution choice
 
-This plan implements the approved design without a public staff app or payment-provider connection. It awaits owner review and an execution-method selection. Recommended: **Native execution in this session**, because the state, storage and UI share tightly coupled contracts; use one fresh whole-branch reviewer before native deployment. Subagent-driven execution is also available and adds a fresh implementer/reviewer gate for each task.
+This plan implements the approved design without a public staff app or payment-provider connection. The owner approved continuation on 15 October 2026; Native execution is underway. Recommended: **Native execution in this session**, because the state, storage and UI share tightly coupled contracts; use one fresh whole-branch reviewer before native deployment. Subagent-driven execution is also available and adds a fresh implementer/reviewer gate for each task.

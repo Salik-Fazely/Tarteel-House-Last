@@ -100,3 +100,8 @@ test('identical durable command retries ignore stale sequence while edits confli
   rejects(()=>h.execute(edited),'REQUEST_CONFLICT');
   assert.equal(h.events.length,1);
 });
+test('audit target IDs do not depend on the submitted property order',()=>{
+  const h=domainFixture(),f=family(h);
+  const result=h.do('CREATE_PURCHASE',{learnerId:f.learnerId,purchaseId:id(20),packageCode:'STARTER',purchasedOn:'2026-10-15',lastUsableOn:'2027-10-14'});
+  assert.equal(result.event.targetId,id(20));
+});
