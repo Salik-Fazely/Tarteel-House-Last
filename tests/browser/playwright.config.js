@@ -40,11 +40,17 @@ module.exports = defineConfig({
       args: ['--disable-background-networking', '--disable-component-update', '--disable-sync'],
     },
   },
-  webServer: {
+  webServer: [{
     command: 'node ../../scripts/qa_server.js',
     env: { TARTEEL_QA_PORT: '8876' },
     url: 'http://127.0.0.1:8876/__qa/',
     reuseExistingServer: false,
     timeout: 10000,
-  },
+  }, {
+    command: 'node ../../staff-ledger/scripts/qa_server.js',
+    env: { TARTEEL_LEDGER_QA_PORT: '8878' },
+    url: 'http://127.0.0.1:8878/__ledger/',
+    reuseExistingServer: false,
+    timeout: 10000,
+  }],
 });

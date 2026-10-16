@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tarteel House — Staff ledger</title><?!= ledgerInclude_('Styles'); ?></head>
+<body><header><p class="eyebrow">TARTEEL HOUSE · PRIVATE STAFF</p><h1>Staff ledger</h1><p>Lessons, packages & verified payments</p></header>
+<main>
+<p class="notice">Trusted staff only. Editors can access the whole workbook. Share only the prepared parent summary.</p>
+<p id="identity"></p><p id="status" role="status" aria-live="polite" tabindex="-1">Loading ledger…</p>
+<div class="toolbar"><button id="refresh" type="button">Refresh ledger</button><button id="check-status" type="button" hidden>Check save status</button></div>
+<section aria-labelledby="overview-title"><h2 id="overview-title">Needs attention</h2><div id="overview"></div><h2>Packages</h2><div id="packages"></div></section>
+<details id="records"><summary>Find a record</summary><label for="search">Name or record ID</label><input id="search" type="search" maxlength="128"><button id="find" type="button">Find records</button><p id="page-info"></p><button id="previous" type="button">Previous page</button><button id="next" type="button">Next page</button><div id="record-list"></div></details>
+<section aria-labelledby="task-title"><h2 id="task-title">Record a change</h2><label for="task">Task</label><select id="task"></select>
+<form id="change-form"><fieldset id="fields"><legend id="form-title"></legend><div id="form-fields"></div></fieldset><button id="preview-button" type="submit">Preview change</button></form>
+<section id="confirmation" aria-labelledby="confirm-title" hidden><h3 id="confirm-title" tabindex="-1">Review this change</h3><div id="preview"></div><button id="confirm" type="button">Confirm and save</button><button id="edit" type="button">Edit details</button></section></section>
+<section aria-labelledby="summary-title"><h2 id="summary-title">Parent summary</h2><label for="summary-child">Summary child</label><input id="summary-child" list="choices-students" autocomplete="off"><button id="prepare-summary" type="button">Prepare parent summary</button><label for="summary">Prepared summary</label><textarea id="summary" readonly rows="10"></textarea><button id="copy-summary" type="button">Copy summary</button><p>Check the child’s name before sharing. Never share the workbook with parents.</p></section>
+<p class="footnote">All lesson dates use Europe/Madrid. Lessons last 40 minutes. Payment is confirmed manually; this ledger does not move money.</p>
+</main><?!= ledgerInclude_('Client'); ?></body></html>

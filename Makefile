@@ -1,11 +1,14 @@
 NODE ?= node
 PYTHON ?= python3
 
-.PHONY: dev check check-browser check-release verify-release
+.PHONY: dev dev-ledger check check-browser check-release verify-release
 
 # Local fake booking/notification/measurement environment. Stop with Ctrl+C.
 dev:
 	$(NODE) scripts/qa_server.js
+
+dev-ledger:
+	$(NODE) staff-ledger/scripts/qa_server.js
 
 # Standard-library checks; no package installation is required.
 check:
