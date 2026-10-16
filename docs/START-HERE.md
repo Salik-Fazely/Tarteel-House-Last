@@ -12,6 +12,8 @@ Start with [README](../README.md) for architecture, local setup, tests, licensin
 - [Release procedure](release-procedure.md) covers CI gates, backend-first publication, read-only checks and rollback.
 - [Private staff ledger](../staff-ledger/README.md) covers package balances, manually verified payments, lesson records and its separate owner-only Google Sheet installation.
 
+Staff use the private ledger's **Tarteel Ledger → Open staff forms** menu. Use a browser session signed into only its approved account. The operational workbook starts empty; existing students and historical balances need verified opening entries before use.
+
 Preserve service facts. Every two months, we invite parents to a 15-minute progress review. If a parent is unavailable or does not want a meeting, we send a visual progress report through WhatsApp instead.
 
 ## Safe development

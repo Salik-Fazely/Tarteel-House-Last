@@ -4,6 +4,8 @@ The ledger tracks each child's purchases, lesson reservations, attendance and ma
 
 This is a separate workbook and container-bound Apps Script project. It has no public deployment, web endpoint, trigger, booking import or payment-provider connection. Do not add these files to the public booking project. Workbook URLs, owners, installation evidence and operational records stay outside this public repository.
 
+Use a desktop Chrome profile signed into only the approved Google account. If the menu opens an empty sidebar, try a clean profile or an Incognito window with that account alone. Google documents [multi-account limitations for Apps Script](https://developers.google.com/apps-script/guides/support/troubleshooting#issues_with_multiple_google_accounts); native acceptance confirmed the forms in an isolated single-account session.
+
 ## Daily use
 
 1. Add the guardian, then the child. Choose an existing guardian when adding a sibling.
