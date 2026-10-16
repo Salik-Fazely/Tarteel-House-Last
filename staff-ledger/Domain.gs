@@ -85,6 +85,7 @@ var LedgerDomain = (function () {
     else t.status='FORFEITED';
   }
   function openPackage(s,e,p){
+    if(p.paymentEvidence.verifiedOn>R.madridDate(e.recordedAt))R.fail('INVALID_INPUT','Historical payment verification cannot be in the future.');
     var clean={purchaseId:p.purchaseId,learnerId:p.learnerId,packageCode:p.packageCode,purchasedOn:p.purchasedOn,lastUsableOn:p.lastUsableOn};
     if(Object.values(s.purchases).some(function(old){return old.learnerId===p.learnerId&&old.openingSource===p.sourceReference;}))R.fail('DUPLICATE_REFERENCE','This opening source is already recorded for the learner.');
     var purchaseEvent=clone(e);purchaseEvent.payload.command={type:'CREATE_PURCHASE',payload:clean};reduce(s,purchaseEvent);
@@ -111,12 +112,18 @@ var LedgerDomain = (function () {
     var r=find(s.reviews,p.caseId);if(r.resolved)R.fail('INVALID_INPUT','This review is already resolved.');
     var needed=['MARK_COMPLETED','CHARGE_ABSENCE','PRESERVE_REPLACEMENT'].indexOf(p.decision)>=0?'LESSON_DECISION':p.decision;
     if(p.decision==='CLOSE_PACKAGE'){
-      if(r.required.indexOf('RECONCILIATION_CONFIRMED')>=0)R.fail('REVIEW_REQUIRED','Reconcile the payment before closing this case.');
-      r.purchaseIds.forEach(function(key){var purchase=s.purchases[key];if(purchaseBalance(s,purchase,e.recordedAt).reserved)R.fail('DEPENDENCY_CONFLICT','Resolve outstanding lessons before closing.');purchase.closed=true;});r.required=[];
+      var key=p.decisionData.purchaseId;
+      if(r.purchaseIds.indexOf(key)<0)R.fail('INVALID_INPUT','Select a purchase affected by this case.');
+      if(r.required.indexOf('RECONCILIATION_CONFIRMED')>=0&&paymentBalance(s,s.payments[r.details.paymentId]).shortfallCents)R.fail('REVIEW_REQUIRED','Correct excess payment allocations before closing.');
+      var purchase=s.purchases[key];if(purchaseBalance(s,purchase,e.recordedAt).reserved)R.fail('DEPENDENCY_CONFLICT','Resolve outstanding lessons before closing.');
+      r.closedPurchaseIds=r.closedPurchaseIds||[];
+      if(r.closedPurchaseIds.indexOf(key)>=0)R.fail('INVALID_INPUT','This purchase was already closed for this case.');
+      purchase.closed=true;r.closedPurchaseIds.push(key);
+      if(r.purchaseIds.every(function(id){return r.closedPurchaseIds.indexOf(id)>=0;}))r.required=[];
     }else{
       if(r.required.indexOf(needed)<0)R.fail('INVALID_INPUT','This decision does not match the review case.');
       if(needed==='RECONCILIATION_CONFIRMED'){
-        if(paymentBalance(s,s.payments[r.details.paymentId]).shortfallCents||r.purchaseIds.some(function(key){return purchaseBalance(s,s.purchases[key],e.recordedAt).unpaidCents>0;}))R.fail('REVIEW_REQUIRED','The payment allocation is not yet reconciled.');
+        if(paymentBalance(s,s.payments[r.details.paymentId]).shortfallCents||r.purchaseIds.some(function(key){return (r.closedPurchaseIds||[]).indexOf(key)<0&&purchaseBalance(s,s.purchases[key],e.recordedAt).unpaidCents>0;}))R.fail('REVIEW_REQUIRED','The payment allocation is not yet reconciled.');
       }else if(needed==='EXPIRY_CONFIRMED'){
         if(p.decisionData.lastUsableOn<r.details.proposedDate)R.fail('INVALID_INPUT','The expiry does not cover the proposed lesson.');
         r.purchaseIds.forEach(function(key){s.purchases[key].lastUsableOn=p.decisionData.lastUsableOn;});
@@ -134,7 +141,7 @@ var LedgerDomain = (function () {
   function delta(before,after){var result=[];MAPS.forEach(function(map){var keys=Array.from(new Set(Object.keys(before[map]).concat(Object.keys(after[map]))));keys.forEach(function(key){var a=before[map][key]||null,b=after[map][key]||null;if(R.stable(a)!==R.stable(b))result.push({map:map,key:key,before:clone(a),after:clone(b)});});});return result;}
   function reverse(s,e,p){
     var original=s.events.find(function(old){return old.eventId===p.originalEventId;});
-    if(!original||original.type==='REVERSE_EVENT'||s.reversed[p.originalEventId]||!Array.isArray(original.payload.undo))R.fail('DEPENDENCY_CONFLICT','This event cannot be reversed.');
+    if(!original||['REVERSE_EVENT','CANCEL_REQUEST'].indexOf(original.type)>=0||s.reversed[p.originalEventId]||!Array.isArray(original.payload.undo))R.fail('DEPENDENCY_CONFLICT','This event cannot be reversed.');
     original.payload.undo.forEach(function(d){
       if(MAPS.indexOf(d.map)<0||R.stable(s[d.map][d.key]||null)!==R.stable(d.after))R.fail('DEPENDENCY_CONFLICT','Later changes depend on this event.',null,[d.key]);
       if(d.before===null)delete s[d.map][d.key];else s[d.map][d.key]=clone(d.before);
@@ -142,7 +149,7 @@ var LedgerDomain = (function () {
     try{
       assertInvariants(s);
       Object.values(s.purchases).forEach(function(purchase){var b=purchaseBalance(s,purchase,e.recordedAt);if(b.unpaidCents&&!b.held&&(b.reserved||b.completed||b.forfeited))R.fail('DEPENDENCY_CONFLICT','Recorded lessons depend on this payment match.');});
-    }catch(error){R.fail('DEPENDENCY_CONFLICT','Resolve the dependent ledger records first.',null,original.targetId?[original.targetId]:[]);}
+    }catch(error){R.fail('DEPENDENCY_CONFLICT','Resolve the dependent ledger records first.',null,error.recordIds&&error.recordIds.length?error.recordIds:original.targetId?[original.targetId]:[]);}
     s.reversed[p.originalEventId]=e.eventId;
   }
   function reduce(s,e){
@@ -180,6 +187,7 @@ var LedgerDomain = (function () {
     }
     else if(c.type==='RESOLVE_REVIEW')resolve(s,e,p);
     else if(c.type==='REVERSE_EVENT')reverse(s,e,p);
+    else if(c.type==='CANCEL_REQUEST'){/* Durable request fence. No financial or attendance change. */}
     else R.fail('INVALID_INPUT','Unsupported command.');
   }
   function assertInvariants(s){
@@ -192,7 +200,7 @@ var LedgerDomain = (function () {
     });
     Object.values(s.adjustments).forEach(function(a){if(!s.payments[a.originalReceiptId])R.fail('CORRUPT_LEDGER','The original payment is missing.');});
     Object.values(s.reviews).forEach(function(r){if(!Array.isArray(r.required)||!Array.isArray(r.purchaseIds)||r.purchaseIds.some(function(key){return !s.purchases[key];}))R.fail('CORRUPT_LEDGER','A review reference is invalid.');});
-    Object.values(s.purchases).forEach(function(p){var b=purchaseBalance(s,p,'2000-01-01T00:00:00.000Z');if(b.remaining<0||b.available<0||b.makeupsAvailable<0||b.matchedCents>p.priceCents)R.fail('CORRUPT_LEDGER','The ledger balances need review.');});
+    Object.values(s.purchases).forEach(function(p){if(!s.learners[p.learnerId])R.fail('CORRUPT_LEDGER','A purchase learner reference is missing.',null,[p.purchaseId]);var b=purchaseBalance(s,p,'2000-01-01T00:00:00.000Z');if(b.remaining<0||b.available<0||b.makeupsAvailable<0||b.matchedCents>p.priceCents)R.fail('CORRUPT_LEDGER','The ledger balances need review.');});
     Object.values(s.payments).forEach(function(p){var b=paymentBalance(s,p);if(!s.guardians[p.guardianId]||b.netCents<0||!Number.isSafeInteger(b.matchedCents)||!Number.isSafeInteger(b.netCents))R.fail('CORRUPT_LEDGER','The ledger amounts need review.');});
     return true;
   }
@@ -217,12 +225,16 @@ var LedgerDomain = (function () {
     if(existing){if(existing.fingerprint!==context.fingerprint)R.fail('REQUEST_CONFLICT','This request ID was used with different details.');return {event:clone(existing),nextState:state,duplicate:true,preview:{balanceChanges:[],createdReviewCases:[]}};}
     if(c.expectedSequence!==state.sequence)R.fail('STALE_PREVIEW','The ledger changed. Refresh and preview again.');
     if(!context.actorEmail)R.fail('IDENTITY_REQUIRED','Authorize your Google account before saving.');
-    var targetField={CREATE_GUARDIAN:'guardianId',UPDATE_GUARDIAN:'guardianId',CREATE_LEARNER:'learnerId',UPDATE_LEARNER:'learnerId',CREATE_PURCHASE:'purchaseId',OPEN_PACKAGE:'purchaseId',RECORD_RECEIPT:'paymentId',MATCH_PAYMENT:'matchId',SCHEDULE_LESSON:'lessonId',RECORD_OUTCOME:'lessonId',RECORD_PAYMENT_ADJUSTMENT:'adjustmentId',CHANGE_EXPIRY:'purchaseId',REVERSE_EVENT:'originalEventId',RESOLVE_REVIEW:'caseId'}[c.type];
+    var targetField={CREATE_GUARDIAN:'guardianId',UPDATE_GUARDIAN:'guardianId',CREATE_LEARNER:'learnerId',UPDATE_LEARNER:'learnerId',CREATE_PURCHASE:'purchaseId',OPEN_PACKAGE:'purchaseId',RECORD_RECEIPT:'paymentId',MATCH_PAYMENT:'matchId',SCHEDULE_LESSON:'lessonId',RECORD_OUTCOME:'lessonId',RECORD_PAYMENT_ADJUSTMENT:'adjustmentId',CHANGE_EXPIRY:'purchaseId',REVERSE_EVENT:'originalEventId',RESOLVE_REVIEW:'caseId',CANCEL_REQUEST:'originalRequestId'}[c.type];
     var e={schemaVersion:1,sequence:state.sequence+1,eventId:R.uuid(context.eventId),requestId:c.requestId,recordedAt:R.instant(context.nowIso),actorEmail:context.actorEmail,fingerprint:context.fingerprint,type:c.type,targetId:c.payload[targetField],reason:c.reason,payload:{command:clone(c)}};
     if(c.type==='CREATE_PURCHASE'||c.type==='OPEN_PACKAGE')e.payload.terms=clone(R.CATALOG[c.payload.packageCode]);
     var next=clone(state);reduce(next,e);next.sequence=e.sequence;next.events.push(clone(e));assertInvariants(next);
     e.payload.undo=delta(state,next);next.events[next.events.length-1]=clone(e);
-    var changes=Object.values(next.purchases).map(function(p){return {purchaseId:p.purchaseId,before:state.purchases[p.purchaseId]?purchaseBalance(state,state.purchases[p.purchaseId],context.nowIso):null,after:purchaseBalance(next,p,context.nowIso)};});
+    var changes=Array.from(new Set(Object.keys(state.purchases).concat(Object.keys(next.purchases)))).map(function(id){
+      var old=state.purchases[id],current=next.purchases[id],p=current||old,before=old?purchaseBalance(state,old,context.nowIso):null,after=current?purchaseBalance(next,current,context.nowIso):null;
+      if(R.stable(old||null)===R.stable(current||null)&&R.stable(before)===R.stable(after))return null;
+      return {purchaseId:id,childName:(next.learners[p.learnerId]||state.learners[p.learnerId]).firstName,packageName:p.name,priceCents:p.priceCents,before:before,after:after,beforeClosed:Boolean(old&&old.closed),afterClosed:Boolean(current&&current.closed)};
+    }).filter(function(value){return value!==null;});
     return {event:e,nextState:next,duplicate:false,preview:{balanceChanges:changes,createdReviewCases:Object.values(next.reviews).filter(function(r){return !state.reviews[r.caseId];})}};
   }
   return {replay:replay,decide:decide,assertInvariants:assertInvariants,purchaseBalance:purchaseBalance,paymentBalance:paymentBalance};

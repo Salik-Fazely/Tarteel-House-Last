@@ -4,8 +4,9 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {storageFixture}=require('../../tests/helpers/staff_ledger_storage_fixture');
 const base=path.resolve(__dirname,'..');
 function createLedgerServer(){
-  let fixture,loseReply=false,delayMs=0;
-  function reset(){fixture=storageFixture();fixture.call('ledgerInitialize');loseReply=false;delayMs=0;}reset();
+  let fixture,loseReply=false,delayMs=0,deferExecution=false,deferred=[];const containers=new Map();
+  function select(id){if(!containers.has(id)){const f=storageFixture();f.setContainer(id);f.call('ledgerInitialize');containers.set(id,f);}fixture=containers.get(id);}
+  function reset(){containers.clear();select('qa-ledger-container');loseReply=false;delayMs=0;deferExecution=false;deferred=[];}reset();
   const allowed=new Set(['ledgerBootstrap','ledgerPreview','ledgerExecute','ledgerCommandStatus','ledgerRefresh','ledgerParentSummary','ledgerHealth']);
   const server=http.createServer(async(req,res)=>{
     res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
@@ -30,11 +31,16 @@ function createLedgerServer(){
     let input;try{input=JSON.parse(body);}catch{send(400,{error:'Invalid JSON'});return;}
     if(url.pathname==='/__ledger/control'){
       if(input.reset)reset();
-      if(input.fault){const {loseReply:lost,delayMs:delay,...fault}=input.fault;Object.assign(fixture.fault,fault);if(lost!==undefined)loseReply=Boolean(lost);if(delay!==undefined)delayMs=Math.min(1500,Math.max(0,Number(delay)||0));}
-      send(200,{ok:true,events:fixture.eventRows().length});return;
+      if(['qa-ledger-container','qa-second-ledger'].includes(input.container))select(input.container);
+      if(input.fault){const {loseReply:lost,delayMs:delay,deferExecution:defer,...fault}=input.fault;Object.assign(fixture.fault,fault);if(lost!==undefined)loseReply=Boolean(lost);if(delay!==undefined)delayMs=Math.min(1500,Math.max(0,Number(delay)||0));if(defer!==undefined)deferExecution=Boolean(defer);}
+      const results=[];
+      if(input.recover)results.push(fixture.call('ledgerRecoverPending_',input.recover.requestId,input.recover.reason));
+      if(input.runDeferred){for(const item of deferred)results.push(item.fixture.call(item.method,...item.args));deferred=[];}
+      send(200,{ok:true,events:fixture.eventRows().length,results});return;
     }
     if(!allowed.has(input.method)||!Array.isArray(input.args)||input.args.length>1){send(400,{error:'Unsupported RPC'});return;}
     try{
+      if(input.method==='ledgerExecute'&&deferExecution){deferExecution=false;if(deferred.length>=8){send(429,{error:'Too many deferred calls'});return;}deferred.push({fixture,method:input.method,args:input.args});send(503,{error:'Simulated failure before execution'});return;}
       const result=fixture.call(input.method,...input.args);
       if(input.method==='ledgerExecute'&&delayMs)await new Promise(r=>setTimeout(r,delayMs));
       if(input.method==='ledgerExecute'&&loseReply){loseReply=false;send(503,{error:'Simulated lost reply'});return;}

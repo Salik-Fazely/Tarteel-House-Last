@@ -4,7 +4,7 @@ const {id,plain}=require('./staff_ledger_fixture');
 const directory=path.resolve(__dirname,'../../staff-ledger');
 function storageFixture(){
   const schema=JSON.parse(fs.readFileSync(path.join(directory,'Schema.json'),'utf8'));
-  const fault={identity:'qa.staff@example.invalid',now:'2026-10-15T09:00:00Z',locked:false,append:null,readAfterAppend:false,refresh:false};
+  const fault={identity:'qa.staff@example.invalid',now:'2026-10-15T09:00:00Z',locked:false,append:null,readAfterAppend:false,refresh:false,spreadsheetTimeZone:'America/Los_Angeles',scriptTimeZone:'Europe/Madrid'};
   const properties=new Map(),writes=[],sheets=new Map();let appended=false,sequence=10000,container='qa-ledger-container';
   function makeSheet(name,columns){
     const cells=Array.from({length:5},()=>[]);cells[4]=columns.map(c=>c.label);
@@ -27,19 +27,19 @@ function storageFixture(){
     };sheets.set(name,sheet);return sheet;
   }
   for(const s of schema.sheets)makeSheet(s.name,s.columns);
-  const spreadsheet={getId(){return container;},getName(){return 'Tarteel House — Staff Ledger QA';},getSheets(){return [...sheets.values()];},getSheetByName(name){return sheets.get(name)||null;},getSpreadsheetTimeZone(){return 'Europe/Madrid';},setSpreadsheetTimeZone(){}};
-  const menu=[];
+  const spreadsheet={getId(){return container;},getName(){return 'Tarteel House — Staff Ledger QA';},getSheets(){return [...sheets.values()];},getSheetByName(name){return sheets.get(name)||null;},getSpreadsheetTimeZone(){return fault.spreadsheetTimeZone;},setSpreadsheetTimeZone(value){fault.spreadsheetTimeZone=value;}};
+  const menu=[],alerts=[];
   const context=vm.createContext({Intl,Date:class extends Date{constructor(...args){super(...(args.length?args:[fault.now]));}static now(){return Date.parse(fault.now);}},
     LedgerSchema:schema,
-    Session:{getEffectiveUser(){return{getEmail(){return fault.identity;}};},getScriptTimeZone(){return'Europe/Madrid';}},
+    Session:{getEffectiveUser(){return{getEmail(){return fault.identity;}};},getScriptTimeZone(){return fault.scriptTimeZone;}},
     LockService:{getDocumentLock(){return{tryLock(){if(fault.locked)return false;fault.locked=true;return true;},releaseLock(){fault.locked=false;}};}},
     PropertiesService:{getDocumentProperties(){return{getProperty(k){return properties.get(k)??null;},setProperty(k,v){if(Buffer.byteLength(String(v),'utf8')>9000)throw Error('Private property too large');properties.set(k,String(v));return this;},deleteProperty(k){properties.delete(k);return this;}};}},
-    SpreadsheetApp:{getActiveSpreadsheet(){return spreadsheet;},flush(){},newDataValidation(){return{requireNumberGreaterThanOrEqualTo(){return this;},setAllowInvalid(){return this;},build(){return{};}};},getUi(){return{createMenu(title){menu.push(title);return{addItem(label){menu.push(label);return this;},addToUi(){}};}};}},
+    SpreadsheetApp:{getActiveSpreadsheet(){return spreadsheet;},flush(){},newDataValidation(){return{requireNumberGreaterThanOrEqualTo(){return this;},setAllowInvalid(){return this;},build(){return{};}};},getUi(){return{alert(value){alerts.push(String(value));},createMenu(title){menu.push(title);return{addItem(label){menu.push(label);return this;},addToUi(){}};}};}},
     Utilities:{getUuid(){return id(sequence++);},DigestAlgorithm:{SHA_256:'SHA_256'},Charset:{UTF_8:'UTF_8'},computeDigest(algorithm,value){return [...crypto.createHash('sha256').update(value,'utf8').digest()].map(v=>v>127?v-256:v);}},
     HtmlService:{createTemplateFromFile(){return{evaluate(){return{setTitle(){return this;}};}};},createHtmlOutputFromFile(){return{getContent(){return'';}};}},
   });
   for(const file of ['Rules.gs','Domain.gs','Views.gs','Workbook.gs','Storage.gs','Menu.gs'])vm.runInContext(fs.readFileSync(path.join(directory,file),'utf8'),context,{filename:file});
-  return {schema,fault,properties,writes,sheets,menu,context,spreadsheet,makeSheet,
+  return {schema,fault,properties,writes,sheets,menu,alerts,context,spreadsheet,makeSheet,
     setContainer(value){container=value;},
     call(name,...args){const result=context[name](...args);return result===undefined?undefined:plain(result);},
     command(type,payload,reason=''){return{schemaVersion:1,requestId:id(sequence++),expectedSequence:Math.max(0,sheets.get('Events').getLastRow()-5),type,payload,reason};},

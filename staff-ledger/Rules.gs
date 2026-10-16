@@ -22,7 +22,8 @@ var LedgerRules = (function () {
     CHANGE_EXPIRY:['purchaseId','lastUsableOn'],
     OPEN_PACKAGE:['purchaseId','learnerId','packageCode','purchasedOn','lastUsableOn','paymentEvidence','completed','forfeited','makeupsUsed','commitments','commitmentsConfirmed','sourceReference'],
     REVERSE_EVENT:['originalEventId'],
-    RESOLVE_REVIEW:['caseId','decision','decisionData']
+    RESOLVE_REVIEW:['caseId','decision','decisionData'],
+    CANCEL_REQUEST:['originalRequestId']
   };
   function fail(code, message, field, ids) {
     var error = new Error(message || 'The request could not be accepted.');
@@ -112,6 +113,7 @@ var LedgerRules = (function () {
         if(!object(value))fail('INVALID_INPUT','Use valid review details.');
         if(input.payload.decision==='EXPIRY_CONFIRMED'){keys(value,['lastUsableOn']);value={lastUsableOn:date(value.lastUsableOn)};}
         else if(input.payload.decision==='COMMITMENTS_CONFIRMED'){keys(value,['commitments']);value={commitments:commitments(value.commitments)};}
+        else if(input.payload.decision==='CLOSE_PACKAGE'){keys(value,['purchaseId']);value={purchaseId:uuid(value.purchaseId)};}
         else {keys(value,[]);value={};}
       }
       else if(k==='commitmentsConfirmed'){if(typeof value!=='boolean')fail('INVALID_INPUT','Confirm outstanding commitments.');}
@@ -139,7 +141,8 @@ var LedgerRules = (function () {
     if(c.type==='SCHEDULE_LESSON'&&((c.payload.kind==='PAID'&&!c.payload.purchaseId)||(c.payload.kind==='TRIAL'&&(c.payload.purchaseId||c.payload.entitlementId))||['TRIAL','PAID'].indexOf(c.payload.kind)<0))fail('INVALID_INPUT','Choose the correct lesson and package.');
     if(c.type==='RECORD_OUTCOME'&&((c.payload.outcome==='PARENT_CANCELLED'&&!c.payload.noticeAt)||(c.payload.outcome!=='PARENT_CANCELLED'&&c.payload.noticeAt)))fail('INVALID_INPUT','Enter notice only for a parent cancellation.');
     if(c.type==='RECORD_PAYMENT_ADJUSTMENT'&&['REFUND','REVERSAL'].indexOf(c.payload.kind)<0)fail('INVALID_INPUT','Select a refund or reversal.');
-    if (/^(UPDATE_|CHANGE_|REVERSE_|RESOLVE_|OPEN_|RECORD_PAYMENT_ADJUSTMENT)/.test(c.type)&&!c.reason) fail('INVALID_INPUT','Enter a reason for this change.','reason');
+    if(c.type==='CANCEL_REQUEST'&&c.requestId!==c.payload.originalRequestId)fail('INVALID_INPUT','Cancellation must retain the original request ID.');
+    if (/^(UPDATE_|CHANGE_|REVERSE_|RESOLVE_|OPEN_|RECORD_PAYMENT_ADJUSTMENT|CANCEL_)/.test(c.type)&&!c.reason) fail('INVALID_INPUT','Enter a reason for this change.','reason');
     return c;
   }
   return {CATALOG:CATALOG,normalizeCommand:normalizeCommand,canonicalCommand:canonicalCommand,stable:stable,defaultLastUsableOn:defaultLastUsableOn,parseEuroAmount:parseEuroAmount,madridDate:madridDate,date:date,instant:instant,text:text,uuid:uuid,integer:integer,keys:keys,commitments:commitments,fail:fail};

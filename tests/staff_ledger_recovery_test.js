@@ -96,9 +96,39 @@ test('unresolved cases require individual decisions and separate completed from 
 test('closing a reviewed package preserves unused credits and blocks further scheduling',()=>{
   const h=domainFixture(),f=family(h);opening(h,f,{completed:0,forfeited:0,makeupsUsed:0,commitments:[],commitmentsConfirmed:false});
   const caseId=h.project().reviewCases[0].caseId;
-  h.do('RESOLVE_REVIEW',{caseId,decision:'CLOSE_PACKAGE',decisionData:{}},'No future lessons will be scheduled');
+  h.do('RESOLVE_REVIEW',{caseId,decision:'CLOSE_PACKAGE',decisionData:{purchaseId:id(20)}},'No future lessons will be scheduled');
   assert.deepEqual([h.project().packages[0].remaining,h.project().packages[0].closed,h.project().packages[0].canSchedule],[12,true,false]);
   assert.match(h.summary(f.learnerId),/Closed/);
+});
+test('an unpaid purchase prevents reversing its learner and preserves usable projections',()=>{
+  const h=domainFixture(),f=family(h);const p=purchase(h,f),original=h.events.find(e=>e.type==='CREATE_LEARNER'),before=plain(h.events);
+  rejects(()=>h.do('REVERSE_EVENT',{originalEventId:original.eventId},'Incorrect child entry'),'DEPENDENCY_CONFLICT');
+  assert.deepEqual(h.events,before);assert.equal(h.project().packages[0].purchaseId,p);
+});
+test('a fully refunded purchase closes explicitly without replacement money',()=>{
+  const x=setup();adjust(x,70,22000);const match=x.h.events.find(e=>e.type==='MATCH_PAYMENT');x.h.do('REVERSE_EVENT',{originalEventId:match.eventId},'Remove refunded allocation');const caseId=x.h.project().reviewCases[0].caseId;
+  x.h.do('RESOLVE_REVIEW',{caseId,decision:'CLOSE_PACKAGE',decisionData:{purchaseId:x.p}},'Verified full refund; no future lessons');
+  assert.equal(x.h.project().packages[0].closed,true);assert.equal(x.h.project().packages[0].held,false);assert.equal(x.h.project().payments[0].netCents,0);
+});
+test('refund closure selects one sibling purchase and preserves the other review until funded',()=>{
+  const h=domainFixture(),f=family(h);h.do('CREATE_LEARNER',{learnerId:id(3),guardianId:f.guardianId,firstName:'QA Sibling',language:'arabic'});
+  const a=purchase(h,f),b=purchase(h,{learnerId:id(3),purchaseId:id(21)}),pay=receipt(h,{...f,amountCents:24000});
+  const ma=h.do('MATCH_PAYMENT',{matchId:id(40),paymentId:pay,purchaseId:a,amountCents:12000}),mb=h.do('MATCH_PAYMENT',{matchId:id(41),paymentId:pay,purchaseId:b,amountCents:12000});
+  const refund=h.do('RECORD_PAYMENT_ADJUSTMENT',{adjustmentId:id(70),originalReceiptId:pay,kind:'REFUND',amountCents:12000,occurredOn:'2026-10-15',reference:'QA sibling refund',verified:true},'Verified one package refund');
+  rejects(()=>h.do('RESOLVE_REVIEW',{caseId:refund.event.eventId,decision:'CLOSE_PACKAGE',decisionData:{purchaseId:a}},'Close before correcting allocations'),'REVIEW_REQUIRED');
+  h.do('REVERSE_EVENT',{originalEventId:ma.event.eventId},'Refunded purchase allocation');
+  h.do('RESOLVE_REVIEW',{caseId:refund.event.eventId,decision:'CLOSE_PACKAGE',decisionData:{purchaseId:a}},'Close only refunded child package');
+  assert.equal(h.state.purchases[a].closed,true);assert.equal(h.state.purchases[b].closed,false);assert.equal(h.project().reviewCases[0].resolved,false);
+  h.do('RESOLVE_REVIEW',{caseId:refund.event.eventId,decision:'RECONCILIATION_CONFIRMED',decisionData:{}},'Remaining child package fully funded');
+  assert.equal(h.project().packages.find(p=>p.purchaseId===b).canSchedule,true);assert.equal(h.project().packages.find(p=>p.purchaseId===a).canSchedule,false);
+});
+test('historical verification cannot be dated in the future',()=>{
+  const h=domainFixture(),f=family(h);rejects(()=>opening(h,f,{paymentEvidence:{verified:true,verifiedOn:'2027-10-15',sourceReference:'QA future check'}}),'INVALID_INPUT');assert.equal(h.events.length,2);
+});
+test('previews identify only affected purchases and show both old and new balances',()=>{
+  const x=setup();const other=purchase(x.h,{learnerId:x.f.learnerId,purchaseId:id(21)});
+  const d=x.h.do('SCHEDULE_LESSON',{lessonId:id(50),learnerId:x.f.learnerId,purchaseId:x.p,kind:'PAID',teacher:'QA Teacher',startsAt:'2026-10-16T10:00:00Z',timeZone:'Europe/Madrid'});
+  assert.equal(d.preview.balanceChanges.length,1);const c=d.preview.balanceChanges[0];assert.equal(c.purchaseId,x.p);assert.equal(c.childName,'QA Child 1');assert.equal(c.packageName,'Steady');assert.equal(c.before.available,12);assert.equal(c.after.available,11);
 });
 test('replay retains agreed purchase terms after a later catalog revision',()=>{
   const x=setup();x.h.api.rules.CATALOG={STARTER:{name:'Starter',priceCents:13000,lessonCount:6,makeupLimit:0},STEADY:{name:'Steady',priceCents:23000,lessonCount:12,makeupLimit:4}};

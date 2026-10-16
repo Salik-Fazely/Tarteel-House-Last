@@ -115,9 +115,11 @@ test('manual recovery requires a completed execution review, elapsed wait and no
   assert.equal(f.call('ledgerRecoverPending_',c.requestId,'Execution ended; no event was saved').error.code,'REVIEW_REQUIRED');
   f.fault.now='2026-10-15T09:06:00Z';
   assert.equal(f.call('ledgerRecoverPending_',c.requestId,'Execution ended; no event was saved').ok,true);
-  assert.equal(f.call('ledgerHealth').pendingWrite,false);assert.equal(f.eventRows().length,0);
-  assert.equal(f.call('ledgerExecute',c).ok,true);assert.equal(f.eventRows().length,1);
-  assert.equal(f.call('ledgerRecoverPending_',c.requestId,'Duplicate recovery').ok,false);
+  assert.equal(f.call('ledgerHealth').pendingWrite,false);assert.equal(f.eventRows().length,1);
+  assert.equal(f.call('ledgerExecute',c).error.code,'REQUEST_CONFLICT');
+  assert.equal(f.call('ledgerCommandStatus',c.requestId).status,'CANCELLED');
+  assert.equal(f.call('ledgerExecute',command(f)).ok,true);assert.equal(f.eventRows().length,2);
+  assert.equal(f.call('ledgerRecoverPending_',c.requestId,'Duplicate recovery').status,'CANCELLED');
   assert.match(f.properties.get('LEDGER_RECOVERY_LOG_V1'),/qa.staff@example.invalid/);
 });
 test('recovery resolves an actually saved event without deleting or duplicating it',()=>{
@@ -139,4 +141,26 @@ test('repeated manual recoveries keep their private property below provider size
     f.fault.now=new Date(Date.parse(f.fault.now)+360000).toISOString();assert.equal(f.call('ledgerRecoverPending_',c.requestId,'界'.repeat(1000)).ok,true);
   }
   assert.ok(Buffer.byteLength(f.properties.get('LEDGER_RECOVERY_LOG_V1'),'utf8')<8000);
+});
+test('a cancellation fences an original request that has not started executing yet',()=>{
+  const f=ready(),c=command(f);assert.equal(f.call('ledgerCommandStatus',c.requestId).status,'NOT_FOUND');
+  assert.equal(f.call('ledgerRecoverPending_',c.requestId,'Reviewed execution; close unsaved request').status,'CANCELLED');
+  assert.equal(f.call('ledgerExecute',c).error.code,'REQUEST_CONFLICT');assert.equal(f.call('ledgerBootstrap').guardians.length,0);assert.equal(f.eventRows().length,1);
+});
+test('learner reversal with an unpaid purchase is rejected before durable storage',()=>{
+  const f=ready();f.call('ledgerExecute',command(f));
+  const child=f.call('ledgerExecute',f.command('CREATE_LEARNER',{learnerId:id(2),guardianId:id(1),firstName:'QA Child',language:'english'}));
+  f.call('ledgerExecute',f.command('CREATE_PURCHASE',{purchaseId:id(3),learnerId:id(2),packageCode:'STARTER',purchasedOn:'2026-10-15',lastUsableOn:'2027-10-14'}));
+  const result=f.call('ledgerExecute',f.command('REVERSE_EVENT',{originalEventId:child.eventId},'Incorrect learner'));
+  assert.equal(result.error.code,'DEPENDENCY_CONFLICT');assert.deepEqual(result.error.recordIds,[id(3)]);assert.equal(f.eventRows().length,3);assert.equal(f.call('ledgerBootstrap').ok,true);
+});
+test('normal operations reject timezone drift and invalidate the current marker',()=>{
+  const f=ready();assert.equal(f.spreadsheet.getSpreadsheetTimeZone(),'Europe/Madrid');f.fault.spreadsheetTimeZone='America/New_York';
+  assert.equal(f.call('ledgerHealth').ok,false);assert.equal(f.call('ledgerExecute',command(f)).ok,false);assert.equal(f.eventRows().length,0);assert.match(f.sheets.get('Overview').cells[1][1],/Stopped/);
+  assert.equal(f.call('ledgerInitialize').ok,false);f.fault.spreadsheetTimeZone='Europe/Madrid';assert.equal(f.call('ledgerRefresh').ok,true);
+});
+test('native menu failures are visible and corruption invalidates Current without touching a wrong container',()=>{
+  const f=ready();f.call('ledgerExecute',command(f));f.eventRows()[0][10]='tampered';
+  f.call('ledgerMenuRefresh');assert.match(f.alerts.at(-1),/CORRUPT_LEDGER/);assert.match(f.sheets.get('Overview').cells[1][1],/Stopped/);assert.equal(f.eventRows().length,1);
+  const g=ready(),before=g.writes.length;g.setContainer('wrong-copy');g.call('ledgerMenuRefresh');assert.equal(g.writes.length,before);assert.match(g.alerts.at(-1),/STORE_UNAVAILABLE/);
 });

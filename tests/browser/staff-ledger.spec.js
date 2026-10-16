@@ -13,9 +13,10 @@ async function save(page){await preview(page);await page.getByRole('button',{nam
 async function guardian(page){await choose(page,'CREATE_GUARDIAN');await fill(page,{name:'QA Guardian',email:'qa@example.invalid',whatsapp:'+34600000000'});await save(page);return (await snapshot(page)).guardians[0].guardianId;}
 async function snapshot(page){return page.request.post(root+'/__ledger/rpc',{headers:{Origin:root},data:{method:'ledgerBootstrap',args:[]}}).then(r=>r.json());}
 async function child(page,parent,name='QA Child'){await choose(page,'CREATE_LEARNER');await fill(page,{guardianId:parent,firstName:name});await save(page);return (await snapshot(page)).students.find(s=>s.firstName===name).learnerId;}
-async function financed(page){const g=await guardian(page),c=await child(page,g);await choose(page,'CREATE_PURCHASE');await fill(page,{learnerId:c,packageCode:'STEADY',purchasedOn:'2026-10-15'});await save(page);const p=(await snapshot(page)).packages[0].purchaseId;
+async function financed(page,initialMatch='220'){const g=await guardian(page),c=await child(page,g);await choose(page,'CREATE_PURCHASE');await fill(page,{learnerId:c,packageCode:'STEADY',purchasedOn:'2026-10-15'});await save(page);const p=(await snapshot(page)).packages[0].purchaseId;
   await choose(page,'RECORD_RECEIPT');await fill(page,{guardianId:g,source:'Bank checked',reference:'QA-220',amountEUR:'220',receivedOn:'2026-10-15',verified:true});await save(page);
-  const r=(await snapshot(page)).payments[0].paymentId;await choose(page,'MATCH_PAYMENT');await fill(page,{paymentId:r,purchaseId:p,amountEUR:'220'});const response=page.waitForResponse(res=>res.url()===root+'/__ledger/rpc'&&res.request().postDataJSON().method==='ledgerExecute');await save(page);const matchEvent=(await (await response).json()).eventId;return{g,c,p,r,matchEvent};}
+  const r=(await snapshot(page)).payments[0].paymentId;await choose(page,'MATCH_PAYMENT');await fill(page,{paymentId:r,purchaseId:p,amountEUR:initialMatch});const response=page.waitForResponse(res=>res.url()===root+'/__ledger/rpc'&&res.request().postDataJSON().method==='ledgerExecute');await save(page);const matchEvent=(await (await response).json()).eventId;return{g,c,p,r,matchEvent};}
+async function pendingMetadata(page){return page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('tarteel.ledger.pending.v1')).map(k=>localStorage.getItem(k)).join(''));}
 test('guided payment, explicit matching and a completed paid lesson conserve balances',async({page})=>{
   await open(page);const {c,p}=await financed(page);await expect(page.locator('#packages')).toContainText('12 available');
   await choose(page,'SCHEDULE_LESSON');await fill(page,{learnerId:c,purchaseId:p,teacher:'QA Teacher',startsAt:'2026-10-15T09:00'});await save(page);
@@ -26,7 +27,7 @@ test('lost acknowledgement locks the form and reload checks status without anoth
   await open(page);await choose(page,'CREATE_GUARDIAN');await fill(page,{name:'QA Lost',email:'lost@example.invalid',whatsapp:'+34600000001'});await preview(page);await control(page,{fault:{loseReply:true,delayMs:500}});
   await page.getByRole('button',{name:'Confirm and save'}).dblclick();await expect(page.locator('#fields')).toHaveAttribute('inert','');
   await expect(page.locator('#status')).toContainText('uncertain');const before=await snapshot(page);expect(before.sequence).toBe(1);
-  const pending=await page.evaluate(()=>localStorage.getItem('tarteel.ledger.pending.v1'));expect(pending).not.toContain('lost@example.invalid');expect(pending).not.toContain('QA Lost');
+  const pending=await pendingMetadata(page);expect(pending).not.toContain('lost@example.invalid');expect(pending).not.toContain('QA Lost');
   await page.reload();await expect(page.locator('#status')).toContainText('Saved');expect((await snapshot(page)).sequence).toBe(1);
 });
 test('a changed ledger invalidates a preview and saved view failures require refresh',async({page})=>{
@@ -77,6 +78,31 @@ test('a fresh browser recovers an uncertain request ID from the workbook',async(
   await open(page);await choose(page,'CREATE_GUARDIAN');await fill(page,{name:'QA Pending',email:'pending@example.invalid',whatsapp:'+34600000005'});await preview(page);await control(page,{fault:{append:'before'}});
   await page.getByRole('button',{name:'Confirm and save'}).click();await expect(page.locator('#status')).toContainText('uncertain');
   await page.evaluate(()=>localStorage.clear());await control(page,{fault:{append:null}});await page.reload();await expect(page.locator('#status')).toContainText('Review an uncertain save');await expect(page.locator('#fields')).toHaveAttribute('inert','');expect((await snapshot(page)).sequence).toBe(0);
+});
+test('missing status cannot release a request whose execution starts later',async({page})=>{
+  await open(page);const{p,r}=await financed(page,'10');await choose(page,'MATCH_PAYMENT');await fill(page,{paymentId:r,purchaseId:p,amountEUR:'10'});await preview(page);await control(page,{fault:{deferExecution:true}});
+  await page.getByRole('button',{name:'Confirm and save'}).click();await expect(page.locator('#status')).toContainText('uncertain');const original=await pendingMetadata(page);
+  await page.getByRole('button',{name:'Check save status'}).click();await expect(page.locator('#fields')).toHaveAttribute('inert','');expect(await pendingMetadata(page)).toBe(original);
+  await page.reload();await expect(page.locator('#fields')).toHaveAttribute('inert','');await control(page,{runDeferred:true});await page.getByRole('button',{name:'Check save status'}).click();await expect(page.locator('#status')).toContainText('Saved');
+  const v=await snapshot(page);expect(v.matches.filter(m=>m.purchaseId===p).length).toBe(2);expect(v.packages[0].matchedCents).toBe(2000);
+});
+test('manual cancellation fences delayed execution and records no financial match',async({page})=>{
+  await open(page);const{p,r}=await financed(page,'10');await choose(page,'MATCH_PAYMENT');await fill(page,{paymentId:r,purchaseId:p,amountEUR:'10'});await preview(page);await control(page,{fault:{deferExecution:true}});
+  await page.getByRole('button',{name:'Confirm and save'}).click();await expect(page.locator('#status')).toContainText('uncertain');const requestId=JSON.parse(await pendingMetadata(page)).requestId;
+  const cancellation=await control(page,{recover:{requestId,reason:'Reviewed unsaved execution; close this request'}}).then(r=>r.json());expect(cancellation.results[0].status).toBe('CANCELLED');
+  const delayed=await control(page,{runDeferred:true}).then(r=>r.json());expect(delayed.results[0].error.code).toBe('REQUEST_CONFLICT');
+  await page.getByRole('button',{name:'Check save status'}).click();await expect(page.locator('#status')).toContainText('closed');await expect(page.locator('#fields')).not.toHaveAttribute('inert','');expect((await snapshot(page)).packages[0].matchedCents).toBe(1000);
+});
+test('pending metadata from one workbook does not lock another workbook at the same origin',async({page})=>{
+  await open(page);await choose(page,'CREATE_GUARDIAN');await fill(page,{name:'QA First Book',email:'first@example.invalid',whatsapp:'+34600000005'});await preview(page);await control(page,{fault:{deferExecution:true}});await page.getByRole('button',{name:'Confirm and save'}).click();await expect(page.locator('#status')).toContainText('uncertain');
+  await control(page,{container:'qa-second-ledger'});await page.reload();await expect(page.locator('#status')).toContainText('Ready');await expect(page.locator('#fields')).not.toHaveAttribute('inert','');
+  await control(page,{container:'qa-ledger-container'});await page.reload();await expect(page.locator('#status')).toContainText('uncertain');await expect(page.locator('#fields')).toHaveAttribute('inert','');
+});
+test('refund closure and preview identify the selected child and package',async({page})=>{
+  await open(page);const{p,r,matchEvent}=await financed(page);await choose(page,'RECORD_PAYMENT_ADJUSTMENT');await fill(page,{originalReceiptId:r,kind:'REFUND',amountEUR:'220',occurredOn:'2026-10-15',reference:'QA complete refund',verified:true,reason:'Verified full refund'});await save(page);
+  await choose(page,'REVERSE_EVENT');await fill(page,{originalEventId:matchEvent,reason:'Remove refunded allocation'});await save(page);const caseId=(await snapshot(page)).reviewCases[0].caseId;
+  await choose(page,'RESOLVE_REVIEW');await fill(page,{caseId,decision:'CLOSE_PACKAGE',purchaseId:p,reason:'Close this refunded package'});await preview(page);await expect(page.locator('#preview')).toContainText('QA Child · Steady');await expect(page.locator('#preview')).toContainText('Before:');await expect(page.locator('#preview')).toContainText('After:');
+  await page.getByRole('button',{name:'Confirm and save'}).click();await expect(page.locator('#status')).toContainText('Saved');expect((await snapshot(page)).packages[0].closed).toBe(true);
 });
 for(const width of [300,320,480])test(`staff forms fit ${width}px and have labelled keyboard controls`,async({page})=>{
   await page.setViewportSize({width,height:850});await open(page);await choose(page,'OPEN_PACKAGE');
