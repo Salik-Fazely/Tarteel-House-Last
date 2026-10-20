@@ -25,6 +25,7 @@ PAGES = {
     "/blog/how-children-learn-to-read-quran/": "blog/how-children-learn-to-read-quran/index.html",
     "/blog/juz-amma-memorization-order-for-kids/": "blog/juz-amma-memorization-order-for-kids/index.html",
     "/blog/ramadan-quran-plan-for-kids/": "blog/ramadan-quran-plan-for-kids/index.html",
+    "/blog/what-age-should-a-child-start-learning-quran/": "blog/what-age-should-a-child-start-learning-quran/index.html",
     "/book-trial/": "book-trial/index.html",
     "/fa/": "fa/index.html",
     "/how-it-works/": "how-it-works/index.html",
@@ -45,17 +46,20 @@ ARTICLES = {
     "/blog/how-children-learn-to-read-quran/": "/assets/blog/how-children-learn-to-read-quran.png",
     "/blog/juz-amma-memorization-order-for-kids/": "/assets/blog/juz-amma-memorization-order.png",
     "/blog/ramadan-quran-plan-for-kids/": "/assets/blog/ramadan-quran-plan-for-kids.png",
+    "/blog/what-age-should-a-child-start-learning-quran/": "/assets/blog/what-age-to-start-learning-quran.png",
 }
 ARTICLE_PUBLISHED_DATES = {
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
     "/blog/juz-amma-memorization-order-for-kids/": "2026-10-20",
     "/blog/ramadan-quran-plan-for-kids/": "2026-10-20",
+    "/blog/what-age-should-a-child-start-learning-quran/": "2026-10-20",
 }
 ARTICLE_MODIFIED_DATES = {
     "/blog/child-refuses-quran-practice/": "2026-09-01",
     "/blog/how-children-learn-to-read-quran/": "2026-09-01",
     "/blog/juz-amma-memorization-order-for-kids/": "2026-10-20",
     "/blog/ramadan-quran-plan-for-kids/": "2026-10-20",
+    "/blog/what-age-should-a-child-start-learning-quran/": "2026-10-20",
 }
 SHIMS = {
     "about.html": "/about/",
