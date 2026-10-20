@@ -8,6 +8,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 INDEX_IMAGES = [
     (
+        "ramadan-quran-plan-for-kids",
+        "Tarteel House parent guide cover: a Ramadan Quran plan for kids.",
+    ),
+    (
+        "juz-amma-memorization-order",
+        "Tarteel House parent guide cover: Juz Amma memorisation order for children.",
+    ),
+    (
         "child-refuses-quran-practice",
         "A child and parent rebuild a calm Quran practice routine at home",
     ),
@@ -38,12 +46,14 @@ INDEX_IMAGES = [
 ]
 
 ARTICLE_IMAGES = {
-    "blog/child-refuses-quran-practice/index.html": INDEX_IMAGES[0],
-    "blog/how-children-learn-to-read-quran/index.html": INDEX_IMAGES[1],
-    "blog/help-children-memorize-short-surahs/index.html": INDEX_IMAGES[3],
-    "blog/online-quran-classes-for-kids-parents-look-for/index.html": INDEX_IMAGES[4],
-    "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": INDEX_IMAGES[5],
-    "blog/how-parents-can-track-their-childs-quran-progress/index.html": INDEX_IMAGES[6],
+    "blog/ramadan-quran-plan-for-kids/index.html": INDEX_IMAGES[0],
+    "blog/juz-amma-memorization-order-for-kids/index.html": INDEX_IMAGES[1],
+    "blog/child-refuses-quran-practice/index.html": INDEX_IMAGES[2],
+    "blog/how-children-learn-to-read-quran/index.html": INDEX_IMAGES[3],
+    "blog/help-children-memorize-short-surahs/index.html": INDEX_IMAGES[5],
+    "blog/online-quran-classes-for-kids-parents-look-for/index.html": INDEX_IMAGES[6],
+    "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": INDEX_IMAGES[7],
+    "blog/how-parents-can-track-their-childs-quran-progress/index.html": INDEX_IMAGES[8],
 }
 
 REQUIRED_PAGES = [

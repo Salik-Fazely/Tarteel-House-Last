@@ -23,13 +23,17 @@ PAGES = {
     "/blog/how-parents-can-track-their-childs-quran-progress/": "blog/how-parents-can-track-their-childs-quran-progress/index.html",
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "blog/free-online-quran-trial-lesson-parent-checklist/index.html",
     "/blog/how-children-learn-to-read-quran/": "blog/how-children-learn-to-read-quran/index.html",
+    "/blog/juz-amma-memorization-order-for-kids/": "blog/juz-amma-memorization-order-for-kids/index.html",
+    "/blog/ramadan-quran-plan-for-kids/": "blog/ramadan-quran-plan-for-kids/index.html",
     "/book-trial/": "book-trial/index.html",
+    "/fa/": "fa/index.html",
     "/how-it-works/": "how-it-works/index.html",
     "/pricing/": "pricing/index.html",
     "/privacy-policy/": "privacy-policy/index.html",
     "/success/": "success/index.html",
     "/teachers/": "teachers/index.html",
     "/terms/": "terms/index.html",
+    "/tr/": "tr/index.html",
 }
 ARTICLES = {
     "/blog/child-refuses-quran-practice/": "/assets/blog/child-refuses-quran-practice.png",
@@ -39,13 +43,19 @@ ARTICLES = {
     "/blog/how-parents-can-track-their-childs-quran-progress/": "/assets/blog/track-child-quran-progress.png",
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "/assets/blog/free-online-quran-trial-lesson-cover.png",
     "/blog/how-children-learn-to-read-quran/": "/assets/blog/how-children-learn-to-read-quran.png",
+    "/blog/juz-amma-memorization-order-for-kids/": "/assets/blog/juz-amma-memorization-order.png",
+    "/blog/ramadan-quran-plan-for-kids/": "/assets/blog/ramadan-quran-plan-for-kids.png",
 }
 ARTICLE_PUBLISHED_DATES = {
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
+    "/blog/juz-amma-memorization-order-for-kids/": "2026-10-20",
+    "/blog/ramadan-quran-plan-for-kids/": "2026-10-20",
 }
 ARTICLE_MODIFIED_DATES = {
     "/blog/child-refuses-quran-practice/": "2026-09-01",
     "/blog/how-children-learn-to-read-quran/": "2026-09-01",
+    "/blog/juz-amma-memorization-order-for-kids/": "2026-10-20",
+    "/blog/ramadan-quran-plan-for-kids/": "2026-10-20",
 }
 SHIMS = {
     "about.html": "/about/",
@@ -180,6 +190,8 @@ class TechnicalSeoTests(unittest.TestCase):
             "/how-it-works/": default_image,
             "/pricing/": default_image,
             "/teachers/": default_image,
+            "/fa/": default_image,
+            "/tr/": default_image,
             **ARTICLES,
         }
         for path, relative in PAGES.items():

@@ -287,6 +287,10 @@ class ChildRefusesQuranPracticeArticleTests(unittest.TestCase):
         self.assertIn("Teacher-reviewed guidance for parents", source)
         self.assertNotIn("Teacher-written notes", source)
         grid_start = source.index('<div class="blog-grid">')
+        # The two newest guides (Ramadan plan, Juz Amma order) lead the grid;
+        # positions below are counted after them.
+        for _ in range(2):
+            grid_start = source.index('<article class="blog-card">', grid_start) + 1
         first_card_start = source.index('<article class="blog-card">', grid_start)
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)
         first_card = source[first_card_start:second_card_start]
@@ -298,8 +302,8 @@ class ChildRefusesQuranPracticeArticleTests(unittest.TestCase):
         )
         self.assertIn("Home Practice", first_card)
         self.assertIn("/assets/blog/child-refuses-quran-practice-640.webp 640w", first_card)
-        self.assertIn('loading="eager"', first_card)
-        self.assertIn('fetchpriority="high"', first_card)
+        self.assertIn('loading="lazy"', first_card)
+        self.assertNotIn('fetchpriority="high"', first_card)
 
     def test_sitemap_structure_and_required_targets_are_valid(self):
         tree = ET.parse(SITEMAP)
