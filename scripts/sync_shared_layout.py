@@ -94,6 +94,11 @@ PAGE_CONFIGS = (
         None,
         footer_variant="no_prebooking_contact",
     ),
+    PageConfig(
+        "blog/what-age-should-a-child-start-learning-quran/index.html",
+        None,
+        footer_variant="no_prebooking_contact",
+    ),
     PageConfig("book-trial/index.html", None),
     PageConfig("fa/index.html", None),
     PageConfig("how-it-works/index.html", "how_it_works"),

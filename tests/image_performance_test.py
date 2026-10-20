@@ -8,6 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 INDEX_IMAGES = [
     (
+        "what-age-to-start-learning-quran",
+        "Tarteel House parent guide cover: what age a child should start learning the Quran.",
+    ),
+    (
         "ramadan-quran-plan-for-kids",
         "Tarteel House parent guide cover: a Ramadan Quran plan for kids.",
     ),
@@ -46,14 +50,15 @@ INDEX_IMAGES = [
 ]
 
 ARTICLE_IMAGES = {
-    "blog/ramadan-quran-plan-for-kids/index.html": INDEX_IMAGES[0],
-    "blog/juz-amma-memorization-order-for-kids/index.html": INDEX_IMAGES[1],
-    "blog/child-refuses-quran-practice/index.html": INDEX_IMAGES[2],
-    "blog/how-children-learn-to-read-quran/index.html": INDEX_IMAGES[3],
-    "blog/help-children-memorize-short-surahs/index.html": INDEX_IMAGES[5],
-    "blog/online-quran-classes-for-kids-parents-look-for/index.html": INDEX_IMAGES[6],
-    "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": INDEX_IMAGES[7],
-    "blog/how-parents-can-track-their-childs-quran-progress/index.html": INDEX_IMAGES[8],
+    "blog/what-age-should-a-child-start-learning-quran/index.html": INDEX_IMAGES[0],
+    "blog/ramadan-quran-plan-for-kids/index.html": INDEX_IMAGES[1],
+    "blog/juz-amma-memorization-order-for-kids/index.html": INDEX_IMAGES[2],
+    "blog/child-refuses-quran-practice/index.html": INDEX_IMAGES[3],
+    "blog/how-children-learn-to-read-quran/index.html": INDEX_IMAGES[4],
+    "blog/help-children-memorize-short-surahs/index.html": INDEX_IMAGES[6],
+    "blog/online-quran-classes-for-kids-parents-look-for/index.html": INDEX_IMAGES[7],
+    "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": INDEX_IMAGES[8],
+    "blog/how-parents-can-track-their-childs-quran-progress/index.html": INDEX_IMAGES[9],
 }
 
 REQUIRED_PAGES = [

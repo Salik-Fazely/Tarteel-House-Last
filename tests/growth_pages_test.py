@@ -162,6 +162,7 @@ class NewParentGuideTests(unittest.TestCase):
         for relative in (
             "blog/juz-amma-memorization-order-for-kids/index.html",
             "blog/ramadan-quran-plan-for-kids/index.html",
+            "blog/what-age-should-a-child-start-learning-quran/index.html",
         ):
             parser = parse(relative)
             posting = next(node for node in parser.json_ld[0]["@graph"] if node["@type"] == "BlogPosting")
@@ -169,6 +170,10 @@ class NewParentGuideTests(unittest.TestCase):
                 self.assertNotIn("author", posting)
                 self.assertNotIn("reviewedBy", posting)
                 self.assertNotIn("Reviewed by", visible_text(parser))
+
+    def test_blog_index_makes_no_teacher_review_claim(self):
+        # Guides are not individually teacher-reviewed yet, so the index must not say so.
+        self.assertNotIn("reviewed", visible_text(parse("blog/index.html")).lower())
 
 
 class IndexNowKeyTests(unittest.TestCase):

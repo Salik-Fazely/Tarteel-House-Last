@@ -25,7 +25,7 @@ def public_pages():
 class AnalyticsEventsStaticTests(unittest.TestCase):
     def test_all_public_pages_load_the_shared_module_once_after_consent(self):
         pages = public_pages()
-        self.assertEqual(22, len(pages))
+        self.assertEqual(23, len(pages))
 
         for page in pages:
             source = page.read_text(encoding="utf-8")

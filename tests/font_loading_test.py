@@ -26,6 +26,7 @@ CANONICAL_PAGES = (
     "blog/online-quran-classes-for-kids-parents-look-for/index.html",
     "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
     "blog/ramadan-quran-plan-for-kids/index.html",
+    "blog/what-age-should-a-child-start-learning-quran/index.html",
     "book-trial/index.html",
     "how-it-works/index.html",
     "pricing/index.html",

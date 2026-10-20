@@ -419,12 +419,12 @@ class QuranReadingStagesArticleTests(unittest.TestCase):
 
     def test_blog_index_places_card_first_and_uses_truthful_intro(self):
         source = BLOG_INDEX.read_text(encoding="utf-8")
-        self.assertIn("Teacher-reviewed guidance for parents", source)
+        self.assertIn("Practical guidance for parents", source)
         self.assertNotIn("Teacher-written notes", source)
         grid_start = source.index('<div class="blog-grid">')
-        # The two newest guides (Ramadan plan, Juz Amma order) lead the grid;
-        # positions below are counted after them.
-        for _ in range(2):
+        # The three newest guides (starting age, Ramadan plan, Juz Amma order)
+        # lead the grid; positions below are counted after them.
+        for _ in range(3):
             grid_start = source.index('<article class="blog-card">', grid_start) + 1
         first_card_start = source.index('<article class="blog-card">', grid_start)
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)

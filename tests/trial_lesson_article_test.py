@@ -517,9 +517,9 @@ class TrialLessonArticleTests(unittest.TestCase):
     def test_blog_index_keeps_the_trial_card_after_the_newest_article(self):
         source = BLOG_INDEX.read_text(encoding="utf-8")
         grid_start = source.index('<div class="blog-grid">')
-        # The two newest guides (Ramadan plan, Juz Amma order) lead the grid;
-        # positions below are counted after them.
-        for _ in range(2):
+        # The three newest guides (starting age, Ramadan plan, Juz Amma order)
+        # lead the grid; positions below are counted after them.
+        for _ in range(3):
             grid_start = source.index('<article class="blog-card">', grid_start) + 1
         first_card_start = source.index('<article class="blog-card">', grid_start)
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)
