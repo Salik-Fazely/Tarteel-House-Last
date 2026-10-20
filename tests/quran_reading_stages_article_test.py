@@ -422,6 +422,10 @@ class QuranReadingStagesArticleTests(unittest.TestCase):
         self.assertIn("Teacher-reviewed guidance for parents", source)
         self.assertNotIn("Teacher-written notes", source)
         grid_start = source.index('<div class="blog-grid">')
+        # The two newest guides (Ramadan plan, Juz Amma order) lead the grid;
+        # positions below are counted after them.
+        for _ in range(2):
+            grid_start = source.index('<article class="blog-card">', grid_start) + 1
         first_card_start = source.index('<article class="blog-card">', grid_start)
         second_card_start = source.index('<article class="blog-card">', first_card_start + 1)
         third_card_start = source.index('<article class="blog-card">', second_card_start + 1)

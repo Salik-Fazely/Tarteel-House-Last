@@ -75,6 +75,11 @@ PAGE_CONFIGS = (
         footer_variant="no_prebooking_contact",
     ),
     PageConfig(
+        "blog/juz-amma-memorization-order-for-kids/index.html",
+        None,
+        footer_variant="no_prebooking_contact",
+    ),
+    PageConfig(
         "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
         None,
         footer_variant="no_prebooking_contact",
@@ -84,7 +89,13 @@ PAGE_CONFIGS = (
         None,
         footer_variant="no_prebooking_contact",
     ),
+    PageConfig(
+        "blog/ramadan-quran-plan-for-kids/index.html",
+        None,
+        footer_variant="no_prebooking_contact",
+    ),
     PageConfig("book-trial/index.html", None),
+    PageConfig("fa/index.html", None),
     PageConfig("how-it-works/index.html", "how_it_works"),
     PageConfig("pricing/index.html", "pricing"),
     PageConfig("privacy-policy/index.html", None),
@@ -95,6 +106,7 @@ PAGE_CONFIGS = (
     ),
     PageConfig("teachers/index.html", "teachers"),
     PageConfig("terms/index.html", None),
+    PageConfig("tr/index.html", None),
 )
 
 

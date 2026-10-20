@@ -32,7 +32,7 @@ class AssetVersioningTests(unittest.TestCase):
     def test_every_public_page_uses_the_current_version_for_each_shared_asset(self):
         pages = [path for path in ROOT.rglob("*.html")
                  if "<!-- SHARED FOOTER:START -->" in path.read_text(encoding="utf-8")]
-        self.assertEqual(18, len(pages))
+        self.assertEqual(22, len(pages))
         for page in pages:
             with self.subTest(page=str(page.relative_to(ROOT))):
                 parser = AssetParser()

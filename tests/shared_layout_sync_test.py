@@ -24,15 +24,19 @@ EXPECTED_COMPLETE_PAGES = (
     "blog/help-children-memorize-short-surahs/index.html",
     "blog/how-children-learn-to-read-quran/index.html",
     "blog/how-parents-can-track-their-childs-quran-progress/index.html",
+    "blog/juz-amma-memorization-order-for-kids/index.html",
     "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html",
     "blog/online-quran-classes-for-kids-parents-look-for/index.html",
+    "blog/ramadan-quran-plan-for-kids/index.html",
     "book-trial/index.html",
+    "fa/index.html",
     "how-it-works/index.html",
     "pricing/index.html",
     "privacy-policy/index.html",
     "success/index.html",
     "teachers/index.html",
     "terms/index.html",
+    "tr/index.html",
 )
 
 REDIRECT_STUBS = (
