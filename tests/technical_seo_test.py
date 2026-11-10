@@ -30,6 +30,8 @@ PAGES = {
     "/fa/": "fa/index.html",
     "/how-it-works/": "how-it-works/index.html",
     "/pricing/": "pricing/index.html",
+    "/quran-classes-in-farsi-and-dari/": "quran-classes-in-farsi-and-dari/index.html",
+    "/quran-classes-in-turkish/": "quran-classes-in-turkish/index.html",
     "/privacy-policy/": "privacy-policy/index.html",
     "/success/": "success/index.html",
     "/teachers/": "teachers/index.html",
@@ -204,6 +206,8 @@ class TechnicalSeoTests(unittest.TestCase):
             "/teachers/": default_image,
             "/fa/": default_image,
             "/tr/": default_image,
+            "/quran-classes-in-farsi-and-dari/": default_image,
+            "/quran-classes-in-turkish/": default_image,
             **ARTICLES,
         }
         for path, relative in PAGES.items():
