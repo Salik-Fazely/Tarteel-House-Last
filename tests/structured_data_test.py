@@ -85,6 +85,10 @@ class StructuredDataTests(unittest.TestCase):
                 self.assertEqual(price, offers[name]["price"])
                 self.assertEqual("EUR", offers[name]["priceCurrency"])
         self.assertEqual("0", offers["Free trial lesson"]["price"])
+        # The trial is booked on the booking page; packages are explained on Pricing.
+        self.assertEqual("https://www.tarteelhouse.com/book-trial/", offers["Free trial lesson"]["url"])
+        for name in expected:
+            self.assertEqual("https://www.tarteelhouse.com/pricing/", offers[name]["url"])
         self.assertEqual(4, len(offers))
         audience = service["audience"]
         self.assertEqual((5, 16), (audience["suggestedMinAge"], audience["suggestedMaxAge"]))
