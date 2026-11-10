@@ -48,7 +48,15 @@ ARTICLES = {
     "/blog/ramadan-quran-plan-for-kids/": "/assets/blog/ramadan-quran-plan-for-kids.png",
     "/blog/what-age-should-a-child-start-learning-quran/": "/assets/blog/what-age-to-start-learning-quran.png",
 }
+# First publication dates come from the repository history: the commit that
+# first added each guide to the site.
 ARTICLE_PUBLISHED_DATES = {
+    "/blog/child-refuses-quran-practice/": "2026-09-01",
+    "/blog/help-children-memorize-short-surahs/": "2026-07-09",
+    "/blog/how-children-learn-to-read-quran/": "2026-09-01",
+    "/blog/how-parents-can-track-their-childs-quran-progress/": "2026-07-09",
+    "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "2026-07-09",
+    "/blog/online-quran-classes-for-kids-parents-look-for/": "2026-07-09",
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
     "/blog/juz-amma-memorization-order-for-kids/": "2026-10-20",
     "/blog/ramadan-quran-plan-for-kids/": "2026-10-20",
@@ -240,10 +248,7 @@ class TechnicalSeoTests(unittest.TestCase):
             self.assertEqual(BASE_URL + image_path, posting["image"]["url"], path)
             self.assertEqual(BASE_URL + path, posting["mainEntityOfPage"]["@id"], path)
             self.assertEqual("Tarteel House", posting["publisher"]["name"], path)
-            if path in ARTICLE_PUBLISHED_DATES:
-                self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
-            else:
-                self.assertNotIn("datePublished", posting, path)
+            self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
             self.assertEqual(
                 ARTICLE_MODIFIED_DATES.get(path, "2026-07-14"),
                 posting["dateModified"],

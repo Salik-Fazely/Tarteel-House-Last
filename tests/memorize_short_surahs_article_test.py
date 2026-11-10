@@ -189,7 +189,7 @@ class MemorizeShortSurahsArticleTest(unittest.TestCase):
         self.assertEqual("How to Help Children Memorize Short Surahs", posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
         self.assertEqual("2026-07-14", posting["dateModified"])
-        self.assertNotIn("datePublished", posting)
+        self.assertEqual("2026-07-09", posting["datePublished"])
         self.assertEqual(IMAGE, posting["image"]["url"])
         self.assertEqual(CANONICAL, posting["mainEntityOfPage"]["@id"])
         self.assertNotIn("reviewedBy", posting)

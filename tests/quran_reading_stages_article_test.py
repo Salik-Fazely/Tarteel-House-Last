@@ -388,7 +388,7 @@ class QuranReadingStagesArticleTests(unittest.TestCase):
         posting = postings[0]
         self.assertEqual(HEADLINE, posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
-        self.assertNotIn("datePublished", posting)
+        self.assertEqual("2026-09-01", posting["datePublished"])
         self.assertEqual("2026-09-01", posting["dateModified"])
         self.assertNotIn("author", posting)
         self.assertNotIn("reviewedBy", posting)

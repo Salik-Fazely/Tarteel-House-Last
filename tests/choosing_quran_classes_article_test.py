@@ -353,7 +353,7 @@ class ChoosingQuranClassesArticleTests(unittest.TestCase):
         posting = postings[0]
         self.assertEqual("Online Quran Classes for Kids: What Parents Should Look For", posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
-        self.assertNotIn("datePublished", posting)
+        self.assertEqual("2026-07-09", posting["datePublished"])
         self.assertEqual("2026-07-14", posting["dateModified"])
         self.assertNotIn("reviewedBy", posting)
         self.assertNotIn("author", posting)
