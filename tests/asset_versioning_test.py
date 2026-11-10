@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE_VERSION = "20260907-1"
+RELEASE_VERSION = "20261110-1"
 VERSIONED_ASSETS = {
     "/assets/css/styles.css",
     "/assets/js/consent.js",

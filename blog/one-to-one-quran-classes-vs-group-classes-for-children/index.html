@@ -86,7 +86,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" />
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260907-1" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20261110-1" />
 </head>
 <body>
 
@@ -102,7 +102,27 @@
           <li><a href="/teachers/" class="nav__link">Teachers</a></li>
           <li><a href="/pricing/" class="nav__link">Pricing</a></li>
           <li><a href="/about/" class="nav__link">About</a></li>
+          <li class="nav__lang">
+            <svg class="lang-switch__globe" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.25"></circle><path d="M2.75 10h14.5M10 2.75c2.1 2 3.15 4.4 3.15 7.25S12.1 15.25 10 17.25M10 2.75C7.9 4.75 6.85 7.15 6.85 10S7.9 15.25 10 17.25"></path></svg>
+            <span class="sr-only">Language</span>
+            <span class="nav__lang-option is-current" lang="en" aria-current="true">English</span>
+            <a href="/fa/" class="nav__lang-option" lang="fa" hreflang="fa">فارسی</a>
+            <a href="/tr/" class="nav__lang-option" lang="tr" hreflang="tr">Türkçe</a>
+          </li>
         </ul>
+        <details class="lang-switch">
+          <summary class="lang-switch__button">
+            <svg class="lang-switch__globe" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.25"></circle><path d="M2.75 10h14.5M10 2.75c2.1 2 3.15 4.4 3.15 7.25S12.1 15.25 10 17.25M10 2.75C7.9 4.75 6.85 7.15 6.85 10S7.9 15.25 10 17.25"></path></svg>
+            <span class="sr-only">Language:</span>
+            <span class="lang-switch__current" lang="en">English</span>
+            <svg class="lang-switch__chevron" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 4.5 6 8l3.5-3.5"></path></svg>
+          </summary>
+          <ul class="lang-switch__menu" role="list">
+            <li><span class="lang-switch__option is-current" lang="en" aria-current="true">English</span></li>
+            <li><a href="/fa/" class="lang-switch__option" lang="fa" hreflang="fa">فارسی</a></li>
+            <li><a href="/tr/" class="lang-switch__option" lang="tr" hreflang="tr">Türkçe</a></li>
+          </ul>
+        </details>
         <a href="/book-trial/" class="btn btn--primary nav__cta" aria-label="Book a free trial">
           <span class="nav__cta-label--full" aria-hidden="true">Book a Free Trial</span>
           <span class="nav__cta-label--short" aria-hidden="true">Free trial</span>
@@ -396,8 +416,8 @@
   </footer>
   <!-- SHARED FOOTER:END -->
 
-  <script src="/assets/js/consent.js?v=20260907-1"></script>
-  <script src="/assets/js/analytics-events.js?v=20260907-1"></script>
+  <script src="/assets/js/consent.js?v=20261110-1"></script>
+  <script src="/assets/js/analytics-events.js?v=20261110-1"></script>
   <script src="/assets/js/main.js?v=20261014-1"></script>
 </body>
 </html>
