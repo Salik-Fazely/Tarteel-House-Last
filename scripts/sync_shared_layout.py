@@ -37,11 +37,40 @@ NAV_PLACEHOLDERS = {
 VALID_NAV_KEYS = {None, *NAV_PLACEHOLDERS}
 UNRESOLVED_PLACEHOLDER = re.compile(r"{{[^{}]+}}")
 
+# Language versions of the site. This one list drives the header language
+# switch on every page: the desktop button and the row in the mobile menu.
+# Each entry is (code, home path, name in that language, the word "Language").
+LANGUAGES = (
+    ("en", "/", "English", "Language"),
+    ("fa", "/fa/", "فارسی", "زبان"),
+    ("tr", "/tr/", "Türkçe", "Dil"),
+)
+LANGUAGE_CODES = tuple(code for code, _, _, _ in LANGUAGES)
+LANGUAGE_SWITCH_PLACEHOLDER = "{{LANGUAGE_SWITCH}}"
+LANGUAGE_ROW_PLACEHOLDER = "{{LANGUAGE_ROW}}"
+GLOBE_ICON = (
+    '<svg class="lang-switch__globe" viewBox="0 0 20 20" width="18" height="18" '
+    'fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" '
+    'aria-hidden="true" focusable="false">'
+    '<circle cx="10" cy="10" r="7.25"></circle>'
+    '<path d="M2.75 10h14.5M10 2.75c2.1 2 3.15 4.4 3.15 7.25S12.1 15.25 10 17.25'
+    'M10 2.75C7.9 4.75 6.85 7.15 6.85 10S7.9 15.25 10 17.25"></path>'
+    "</svg>"
+)
+CHEVRON_ICON = (
+    '<svg class="lang-switch__chevron" viewBox="0 0 12 12" width="10" height="10" '
+    'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" '
+    'stroke-linejoin="round" aria-hidden="true" focusable="false">'
+    '<path d="M2.5 4.5 6 8l3.5-3.5"></path>'
+    "</svg>"
+)
+
 
 @dataclass(frozen=True)
 class PageConfig:
     path: str
     active_nav: str | None
+    language: str = "en"
     header_variant: str = "standard"
     footer_variant: str = "standard"
     sync_header: bool = True
@@ -104,7 +133,7 @@ PAGE_CONFIGS = (
         footer_variant="no_prebooking_contact",
     ),
     PageConfig("book-trial/index.html", None),
-    PageConfig("fa/index.html", None),
+    PageConfig("fa/index.html", None, language="fa"),
     PageConfig("how-it-works/index.html", "how_it_works"),
     PageConfig("pricing/index.html", "pricing"),
     PageConfig("privacy-policy/index.html", None),
@@ -115,7 +144,13 @@ PAGE_CONFIGS = (
     ),
     PageConfig("teachers/index.html", "teachers"),
     PageConfig("terms/index.html", None),
-    PageConfig("tr/index.html", None, header_variant="tr", footer_variant="tr"),
+    PageConfig(
+        "tr/index.html",
+        None,
+        language="tr",
+        header_variant="tr",
+        footer_variant="tr",
+    ),
 )
 
 
@@ -146,6 +181,10 @@ def validate_configuration(root: Path) -> None:
             raise SyncError(
                 f"unknown navigation key for {config.path}: {config.active_nav!r}"
             )
+        if config.language not in LANGUAGE_CODES:
+            raise SyncError(
+                f"unknown language for {config.path}: {config.language!r}"
+            )
         if config.header_variant not in HEADER_FRAGMENTS:
             raise SyncError(
                 f"unknown Header variant for {config.path}: {config.header_variant!r}"
@@ -168,6 +207,76 @@ def normalized_fragment(root: Path, relative_path: str) -> str:
     return fragment
 
 
+def language_options(current: str, option_class: str) -> list[str]:
+    """One entry per language: plain text for the current one, a link otherwise."""
+    options = []
+    for code, path, name, _ in LANGUAGES:
+        if code == current:
+            options.append(
+                f'<span class="{option_class} is-current" lang="{code}" '
+                f'aria-current="true">{name}</span>'
+            )
+        else:
+            options.append(
+                f'<a href="{path}" class="{option_class}" lang="{code}" '
+                f'hreflang="{code}">{name}</a>'
+            )
+    return options
+
+
+def render_language_switch(current: str) -> str:
+    """The desktop button: a native disclosure, so it works without JavaScript."""
+    _, _, name, word = next(entry for entry in LANGUAGES if entry[0] == current)
+    lines = [
+        '<details class="lang-switch">',
+        '  <summary class="lang-switch__button">',
+        f"    {GLOBE_ICON}",
+        f'    <span class="sr-only">{word}:</span>',
+        f'    <span class="lang-switch__current" lang="{current}">{name}</span>',
+        f"    {CHEVRON_ICON}",
+        "  </summary>",
+        '  <ul class="lang-switch__menu" role="list">',
+    ]
+    for option in language_options(current, "lang-switch__option"):
+        lines.append(f"    <li>{option}</li>")
+    lines += ["  </ul>", "</details>"]
+    return "\n".join(lines)
+
+
+def render_language_row(current: str) -> str:
+    """The same choices as one row at the end of the mobile menu."""
+    _, _, _, word = next(entry for entry in LANGUAGES if entry[0] == current)
+    lines = [
+        '<li class="nav__lang">',
+        f"  {GLOBE_ICON}",
+        f'  <span class="sr-only">{word}</span>',
+    ]
+    lines += [f"  {option}" for option in language_options(current, "nav__lang-option")]
+    lines.append("</li>")
+    return "\n".join(lines)
+
+
+def replace_placeholder_line(
+    rendered: str, placeholder: str, block: str, source_name: str
+) -> str:
+    """Swap a placeholder that sits alone on its line for an indented block."""
+    if rendered.count(placeholder) != 1:
+        raise SyncError(
+            f"Header fragment must contain exactly one {placeholder}: {source_name}"
+        )
+    lines = rendered.split("\n")
+    for index, line in enumerate(lines):
+        if placeholder in line:
+            if line.strip() != placeholder:
+                raise SyncError(
+                    f"{placeholder} must be on its own line: {source_name}"
+                )
+            indent = line[: len(line) - len(line.lstrip())]
+            lines[index:index + 1] = [indent + item for item in block.split("\n")]
+            break
+    return "\n".join(lines)
+
+
 def render_header(root: Path, config: PageConfig) -> str:
     relative_path = HEADER_FRAGMENTS[config.header_variant]
     rendered = normalized_fragment(root, relative_path)
@@ -183,6 +292,19 @@ def render_header(root: Path, config: PageConfig) -> str:
         if config.active_nav == nav_key:
             attributes = ' class="nav__link is-active" aria-current="page"'
         rendered = rendered.replace(placeholder, attributes)
+
+    rendered = replace_placeholder_line(
+        rendered,
+        LANGUAGE_ROW_PLACEHOLDER,
+        render_language_row(config.language),
+        relative_path,
+    )
+    rendered = replace_placeholder_line(
+        rendered,
+        LANGUAGE_SWITCH_PLACEHOLDER,
+        render_language_switch(config.language),
+        relative_path,
+    )
 
     ensure_resolved(rendered, relative_path)
     return rendered

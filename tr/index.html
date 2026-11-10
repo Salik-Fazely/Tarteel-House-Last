@@ -62,7 +62,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" />
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260907-1" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20261110-1" />
 
   <!-- Layout helpers for the Turkish page only. They reuse the shared tokens;
        nothing here changes another page. -->
@@ -192,7 +192,27 @@
           <li><a href="#ogretmenler" class="nav__link">Öğretmenler</a></li>
           <li><a href="#ucretler" class="nav__link">Ücretler</a></li>
           <li><a href="#sorular" class="nav__link">Sorular</a></li>
+          <li class="nav__lang">
+            <svg class="lang-switch__globe" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.25"></circle><path d="M2.75 10h14.5M10 2.75c2.1 2 3.15 4.4 3.15 7.25S12.1 15.25 10 17.25M10 2.75C7.9 4.75 6.85 7.15 6.85 10S7.9 15.25 10 17.25"></path></svg>
+            <span class="sr-only">Dil</span>
+            <a href="/" class="nav__lang-option" lang="en" hreflang="en">English</a>
+            <a href="/fa/" class="nav__lang-option" lang="fa" hreflang="fa">فارسی</a>
+            <span class="nav__lang-option is-current" lang="tr" aria-current="true">Türkçe</span>
+          </li>
         </ul>
+        <details class="lang-switch">
+          <summary class="lang-switch__button">
+            <svg class="lang-switch__globe" viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.25"></circle><path d="M2.75 10h14.5M10 2.75c2.1 2 3.15 4.4 3.15 7.25S12.1 15.25 10 17.25M10 2.75C7.9 4.75 6.85 7.15 6.85 10S7.9 15.25 10 17.25"></path></svg>
+            <span class="sr-only">Dil:</span>
+            <span class="lang-switch__current" lang="tr">Türkçe</span>
+            <svg class="lang-switch__chevron" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 4.5 6 8l3.5-3.5"></path></svg>
+          </summary>
+          <ul class="lang-switch__menu" role="list">
+            <li><a href="/" class="lang-switch__option" lang="en" hreflang="en">English</a></li>
+            <li><a href="/fa/" class="lang-switch__option" lang="fa" hreflang="fa">فارسی</a></li>
+            <li><span class="lang-switch__option is-current" lang="tr" aria-current="true">Türkçe</span></li>
+          </ul>
+        </details>
         <a href="/book-trial/" class="btn btn--primary nav__cta" aria-label="Ücretsiz deneme dersi alın">
           <span class="nav__cta-label--full" aria-hidden="true">Ücretsiz Deneme</span>
           <span class="nav__cta-label--short" aria-hidden="true">Deneme</span>
@@ -597,8 +617,8 @@
   <!-- SHARED FOOTER:END -->
 
   <!-- Scripts -->
-  <script src="/assets/js/consent.js?v=20260907-1"></script>
-  <script src="/assets/js/analytics-events.js?v=20260907-1"></script>
+  <script src="/assets/js/consent.js?v=20261110-1"></script>
+  <script src="/assets/js/analytics-events.js?v=20261110-1"></script>
   <script src="/assets/js/main.js?v=20261014-1"></script>
 
 </body>
