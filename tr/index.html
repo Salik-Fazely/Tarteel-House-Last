@@ -20,6 +20,7 @@
   <meta property="og:title"       content="Çocuklar İçin Online Kur&rsquo;an Dersleri (Türkçe) | Tarteel House" />
   <meta property="og:description" content="5–16 yaş arası çocuklar için Türkçe, birebir online Kur&rsquo;an dersleri. Sabit öğretmen ve ücretsiz deneme dersi." />
   <meta property="og:url"         content="https://www.tarteelhouse.com/tr/" />
+  <meta property="og:locale"      content="tr_TR" />
   <meta property="og:image"       content="https://www.tarteelhouse.com/assets/images/tarteel-house-social-card.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -63,12 +64,117 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="/assets/css/styles.css?v=20260907-1" />
 
-  <!-- Layout helpers for the Turkish page only -->
+  <!-- Layout helpers for the Turkish page only. They reuse the shared tokens;
+       nothing here changes another page. -->
   <style>
-    .lang-page__note { margin-top: var(--space-4); font-size: 0.875rem; color: var(--subtle); }
-    .lang-page__teachers { display: grid; gap: var(--space-4); margin-top: var(--space-8); text-align: left; }
-    .lang-page__faq { display: grid; gap: var(--space-6); margin-top: var(--space-8); text-align: left; }
-    .lang-page__faq h3 { font-size: var(--text-md); margin-bottom: var(--space-2); }
+    /* In-page navigation: keep section tops clear of the sticky header. */
+    .lang-page section[id] { scroll-margin-top: clamp(72px, 10vw, 88px); }
+
+    .lang-page__nowrap { white-space: nowrap; }
+
+    .lang-page__note {
+      max-width: 470px;
+      margin: var(--space-5) auto 0;
+      font-size: 0.875rem;
+      line-height: var(--leading-normal);
+      color: var(--subtle);
+    }
+
+    /* Turkish words run long: two steps per row read better than four. */
+    @media (min-width: 861px) {
+      .lang-page .hiw-preview__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* Inside a lesson: an editorial list beneath the four steps. */
+    .lang-page__lesson {
+      margin-top: var(--space-16);
+      padding-top: var(--space-12);
+      border-top: 1px solid var(--rule);
+    }
+    .lang-page__lesson-title {
+      margin-top: var(--space-4);
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+      font-weight: 500;
+      line-height: var(--leading-snug);
+      color: var(--ink);
+    }
+    .lang-page__lesson-list {
+      max-width: 720px;
+      margin: var(--space-8) auto 0;
+      border-top: 0.5px solid var(--rule);
+      text-align: left;
+    }
+    .lang-page__lesson-item {
+      display: grid;
+      grid-template-columns: 11rem minmax(0, 1fr);
+      gap: var(--space-6);
+      padding-block: 1.125rem;
+      border-bottom: 0.5px solid var(--rule);
+    }
+    .lang-page__lesson-item dt { font-weight: 500; color: var(--ink); }
+    .lang-page__lesson-item dd {
+      font-size: 0.9375rem;
+      line-height: var(--leading-relaxed);
+      color: var(--subtle);
+    }
+    @media (max-width: 600px) {
+      .lang-page__lesson-item { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+    }
+
+    /* Teachers: typographic cards, three across on wide screens. */
+    .lang-page__teachers {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+      margin-top: var(--space-12);
+      text-align: left;
+    }
+    .lang-page__teachers .teacher-card__info { padding: 1.5rem; gap: var(--space-3); }
+    .lang-page__teachers .teacher-card__info::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background-color: var(--bronze);
+      opacity: 0.6;
+    }
+    .lang-page__teachers .teacher-card__name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      line-height: var(--leading-snug);
+    }
+    .lang-page__teachers .teacher-card__languages { text-transform: uppercase; }
+    .lang-page__teachers .teacher-card__specialty { margin-top: 0; }
+    @media (max-width: 860px) {
+      .lang-page__teachers {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 440px;
+        margin-inline: auto;
+      }
+    }
+
+    /* Pricing: keep the three cards inside the container and let labels wrap. */
+    @media (min-width: 901px) {
+      .lang-page .pricing-preview__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .lang-page .price-card__btn { padding-inline: 1em; white-space: normal; text-align: center; }
+    .lang-page .price-card__item--note { color: var(--subtle); }
+    .lang-page__dash {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 17px;
+      height: 17px;
+      margin-top: 1px;
+      border-radius: 50%;
+      background-color: var(--ivory-2);
+      color: var(--subtle);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .lang-page__dash::before { content: '\2013'; }
   </style>
 </head>
 
@@ -77,21 +183,21 @@
   <!-- SHARED HEADER:START -->
   <header class="site-header" id="top">
     <div class="container">
-      <nav class="nav" aria-label="Main navigation">
-        <a href="/" class="nav__logo" aria-label="Tarteel House &mdash; home">
+      <nav class="nav" aria-label="Ana menü">
+        <a href="/tr/" class="nav__logo" aria-label="Tarteel House &mdash; Türkçe ana sayfa">
           <img src="/assets/logo/tarteel-house.svg" alt="Tarteel House" width="276" height="175" />
         </a>
         <ul class="nav__links" id="nav-menu" role="list">
-          <li><a href="/how-it-works/" class="nav__link">How It Works</a></li>
-          <li><a href="/teachers/" class="nav__link">Teachers</a></li>
-          <li><a href="/pricing/" class="nav__link">Pricing</a></li>
-          <li><a href="/about/" class="nav__link">About</a></li>
+          <li><a href="#nasil-isliyor" class="nav__link">Nasıl İşliyor</a></li>
+          <li><a href="#ogretmenler" class="nav__link">Öğretmenler</a></li>
+          <li><a href="#ucretler" class="nav__link">Ücretler</a></li>
+          <li><a href="#sorular" class="nav__link">Sorular</a></li>
         </ul>
-        <a href="/book-trial/" class="btn btn--primary nav__cta" aria-label="Book a free trial">
-          <span class="nav__cta-label--full" aria-hidden="true">Book a Free Trial</span>
-          <span class="nav__cta-label--short" aria-hidden="true">Free trial</span>
+        <a href="/book-trial/" class="btn btn--primary nav__cta" aria-label="Ücretsiz deneme dersi alın">
+          <span class="nav__cta-label--full" aria-hidden="true">Ücretsiz Deneme</span>
+          <span class="nav__cta-label--short" aria-hidden="true">Deneme</span>
         </a>
-        <button class="nav__toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open navigation menu">
+        <button class="nav__toggle" id="nav-toggle" aria-controls="nav-menu" aria-expanded="false" aria-label="Open navigation menu" lang="en">
           <span></span><span></span><span></span>
         </button>
       </nav>
@@ -114,41 +220,139 @@
         <p class="hero__arabic arabic" lang="ar">وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</p>
         <p class="hero__ref">MÜZZEMMİL SURESİ &middot; 73:4</p>
         <p class="hero__translation">&ldquo;Kur&rsquo;an&rsquo;ı <span class="hero__tarteel">tertil</span> ile, tane tane ve ağır ağır oku.&rdquo;</p>
-        <p class="hero__attribution">— Adımızı aldığımız ayet</p>
+        <p class="hero__attribution">— Adımızı bu ayetten aldık</p>
 
         <hr class="hero__divider" aria-hidden="true" />
 
-        <h1 class="hero__headline" id="hero-headline">Çocuklar için birebir online Kur&rsquo;an dersleri, Türkçe</h1>
+        <h1 class="hero__headline" id="hero-headline">Çocuklar için Türkçe, birebir online Kur&rsquo;an dersleri</h1>
 
-        <p class="hero__sub">Tarteel House, Avrupa ve ABD&rsquo;de yaşayan 5–16 yaş arası kız ve erkek çocuklar için online bir Kur&rsquo;an programıdır. Her çocuğun kendine ait bir öğretmeni olur, öğrenme yolu nettir ve başlangıç ücretsiz bir deneme dersiyle yapılır. Dersler Türkçe verilir.</p>
+        <p class="hero__sub">Tarteel House, Avrupa ve ABD&rsquo;de yaşayan <span class="lang-page__nowrap">5–16 yaş</span> arası kız ve erkek çocuklar için online bir Kur&rsquo;an programıdır. Her çocuk kendi öğretmeniyle, belirli bir öğrenme planıyla ilerler; ilk adım ise ücretsiz bir deneme dersidir.</p>
 
         <div class="hero__actions">
-          <a href="/book-trial/" class="btn btn--primary">Ücretsiz deneme dersi al</a>
-          <a href="https://wa.me/34614494311?text=Merhaba%2C%20%C3%A7ocu%C4%9Fum%20i%C3%A7in%20%C3%BCcretsiz%20Kur%27an%20deneme%20dersi%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." class="btn btn--ghost" target="_blank" rel="noopener noreferrer">WhatsApp&rsquo;tan Türkçe sorun</a>
+          <a href="/book-trial/" class="btn btn--primary">Ücretsiz deneme dersi alın</a>
+          <a href="https://wa.me/34614494311?text=Merhaba%2C%20%C3%A7ocu%C4%9Fum%20i%C3%A7in%20%C3%BCcretsiz%20Kur%27an%20deneme%20dersi%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." class="btn btn--ghost" target="_blank" rel="noopener noreferrer">WhatsApp&rsquo;tan Türkçe yazın</a>
         </div>
 
-        <p class="lang-page__note">Rezervasyon formu İngilizcedir ve yaklaşık iki dakika sürer. &ldquo;Preferred session language&rdquo; bölümünde &ldquo;Turkish&rdquo; seçeneğini işaretleyin.</p>
+        <p class="lang-page__note">Başvuru formu İngilizcedir ve yaklaşık iki dakika sürer. Formda <span lang="en">&ldquo;Preferred session language&rdquo;</span> bölümünden <span lang="en">&ldquo;Turkish&rdquo;</span> seçeneğini işaretlemeniz yeterlidir.</p>
 
         <ul class="hero__trust" role="list">
           <li class="hero__trust-item">
             <span class="hero__trust-icon" aria-hidden="true"></span>
-            Ücretsiz 40 dakikalık deneme dersi
+            Ücretsiz deneme dersi
           </li>
           <li class="hero__trust-item">
             <span class="hero__trust-icon" aria-hidden="true"></span>
-            Birebir ders
+            Her çocuğa sabit öğretmen
           </li>
           <li class="hero__trust-item">
             <span class="hero__trust-icon" aria-hidden="true"></span>
-            Kadın öğretmen tercihi
+            Kadın öğretmen seçeneği
           </li>
         </ul>
 
       </div>
     </section>
 
+    <!-- HOW IT WORKS + INSIDE A LESSON -->
+    <section class="hiw-preview" id="nasil-isliyor" aria-labelledby="hiw-headline">
+      <div class="container container--mid">
+        <p class="eyebrow">NASIL İŞLİYOR</p>
+        <h2 class="hiw-preview__headline" id="hiw-headline">Sakin ve düzenli bir başlangıç</h2>
+        <p class="hiw-preview__desc">İlk başvurudan düzenli haftalık derslere, dört adımda.</p>
+
+        <div class="hiw-preview__grid">
+          <article class="step-card">
+            <span class="step-card__num">01</span>
+            <h3 class="step-card__title">Çocuğunuzu tanıtın</h3>
+            <p class="step-card__desc">Çocuğunuzun ders dilini, seviyesini, öğrenme ihtiyaçlarını ve uygun olduğunuz zamanları paylaşın. Öğretmen tercihinizi belirtebilirsiniz; eşleştirmeyi biz yaparız.</p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-card__num">02</span>
+            <h3 class="step-card__title">Ücretsiz deneme dersini alın</h3>
+            <p class="step-card__desc">Eşleştirdiğimiz öğretmenle 40 dakikalık ücretsiz bir ders. Ödeme yok, taahhüt yok. Genellikle iki gün içinde WhatsApp üzerinden sizinle iletişime geçeriz.</p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-card__num">03</span>
+            <h3 class="step-card__title">Paketi onaylayın</h3>
+            <p class="step-card__desc">Devam etmek isterseniz uygun paketi teyit eder, ödeme bilgilerini veya güvenli bir ödeme bağlantısını WhatsApp üzerinden paylaşırız.</p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-card__num">04</span>
+            <h3 class="step-card__title">Haftalık düzeninizi kurun</h3>
+            <p class="step-card__desc">Ücretli dersler ödeme onayından sonra planlanır; genellikle aynı öğretmenle, düzenli bir haftalık programla sürer.</p>
+          </article>
+        </div>
+
+        <div class="lang-page__lesson">
+          <p class="eyebrow">DERS AKIŞI</p>
+          <h3 class="lang-page__lesson-title" id="lesson-headline">40 dakikalık bir derste neler olur?</h3>
+
+          <dl class="lang-page__lesson-list">
+            <div class="lang-page__lesson-item">
+              <dt>Kısa tekrar</dt>
+              <dd>Her ders, bir önceki dersin kısa bir tekrarıyla başlar; çocuk derse özgüvenle girer.</dd>
+            </div>
+            <div class="lang-page__lesson-item">
+              <dt>Yeni konu</dt>
+              <dd>Yeni harfler, sesler veya ayetler adım adım öğretilir; öğretmen hızı çocuğa göre ayarlar.</dd>
+            </div>
+            <div class="lang-page__lesson-item">
+              <dt>Birlikte okuma</dt>
+              <dd>Çocuk sesli okur; öğretmen dinler, nazikçe düzeltir ve doğru telaffuzu pekiştirir.</dd>
+            </div>
+            <div class="lang-page__lesson-item">
+              <dt>Evde çalışma hedefi</dt>
+              <dd>Ders, bir sonraki derse kadar evde yapılacak kısa bir çalışma için net bir hedefle biter.</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEACHERS -->
+    <section class="teachers-preview" id="ogretmenler" aria-labelledby="teachers-headline">
+      <div class="container container--mid">
+        <p class="eyebrow">ÖĞRETMENLER</p>
+        <h2 class="teachers-preview__headline" id="teachers-headline">Türkçe ders veren öğretmenlerimiz</h2>
+        <p class="teachers-preview__desc">Özenle seçilmiş küçük bir ekibiz; öğretmenlerimizin çoğu kadındır. Çocuğunuzun dili, seviyesi, öğrenme ihtiyaçları ve müsait olduğunuz zamanlara göre en uygun öğretmeni biz öneririz.</p>
+
+        <div class="lang-page__teachers">
+          <article class="teacher-card">
+            <div class="teacher-card__info">
+              <h3 class="teacher-card__name">Sadiah Hamid</h3>
+              <p class="teacher-card__languages">Türkçe &middot; İngilizce &middot; Arapça &middot; Farsça</p>
+              <p class="teacher-card__specialty">6 yıldır tecvid, hafızlık ve Kur&rsquo;an tilaveti öğretiyor.</p>
+            </div>
+          </article>
+
+          <article class="teacher-card">
+            <div class="teacher-card__info">
+              <h3 class="teacher-card__name">Farkhonda Jami</h3>
+              <p class="teacher-card__languages">Türkçe &middot; Farsça</p>
+              <p class="teacher-card__specialty">2 yıldır tecvid ve tefsir öğretiyor.</p>
+            </div>
+          </article>
+
+          <article class="teacher-card">
+            <div class="teacher-card__info">
+              <h3 class="teacher-card__name">Fareshta Suroush</h3>
+              <p class="teacher-card__languages">Türkçe &middot; Farsça &middot; İngilizce</p>
+              <p class="teacher-card__specialty">2 yıldır tecvid öğretiyor.</p>
+            </div>
+          </article>
+        </div>
+
+        <p class="teachers-preview__cta">
+          <a href="/teachers/" class="text-link" hreflang="en">Öğretmen tanıtımları ve örnek dersler (İngilizce) &#x2192;</a>
+        </p>
+      </div>
+    </section>
+
     <!-- WHY US -->
-    <section class="why-us" aria-labelledby="why-us-headline">
+    <section class="why-us" id="neden" aria-labelledby="why-us-headline">
       <div class="container">
         <p class="eyebrow">NEDEN TARTEEL HOUSE</p>
         <h2 class="why-us__headline" id="why-us-headline">Özenle ve sevgiyle Kur&rsquo;an eğitimi</h2>
@@ -156,137 +360,48 @@
         <div class="why-us__grid">
           <article class="value-card">
             <h3 class="value-card__title">Sabit bir öğretmen</h3>
-            <p class="value-card__desc">Çocuğunuz genellikle paket boyunca aynı öğretmenle devam eder. Öğretmen değişikliği kaçınılmaz olursa en uygun seçeneği sizinle birlikte konuşuruz.</p>
-          </article>
-
-          <article class="value-card">
-            <h3 class="value-card__title">Kadın öğretmenler</h3>
-            <p class="value-card__desc">Öğretmenlerimizin çoğu kadındır. Çocuğunuzun bir kadın (bayan) öğretmenle ders almasını tercih ediyorsanız bunu rezervasyon formuna yazın; eşleştirmede bu tercihi, uygunluk durumuna göre dikkate alırız.</p>
-          </article>
-
-          <article class="value-card">
-            <h3 class="value-card__title">İki ayda bir gelişim görüşmesi</h3>
-            <p class="value-card__desc">İki ayda bir velileri 15 dakikalık bir gelişim görüşmesine davet ederiz. Görüşmeye katılamıyorsanız veya istemiyorsanız WhatsApp üzerinden görsel bir gelişim raporu göndeririz.</p>
-          </article>
-
-          <article class="value-card">
-            <h3 class="value-card__title">Aile düzenine uygun</h3>
-            <p class="value-card__desc">En az 24 saat önceden haber verirseniz ders, telafi hakkınız kullanılmadan yeniden planlanır. Öğretmenin veya Tarteel House&rsquo;un iptal ettiği dersler her zaman yeniden planlanır.</p>
+            <p class="value-card__desc">Çocuğunuz genellikle paket boyunca aynı öğretmenle devam eder. Değişiklik kaçınılmaz olursa en uygun seçeneği sizinle birlikte değerlendiririz.</p>
           </article>
 
           <article class="value-card">
             <h3 class="value-card__title">Güvenlik ve veli katılımı</h3>
-            <p class="value-card__desc">Planlama ve iletişim veli üzerinden yürütülür; dersler Zoom veya Google Meet üzerinden yapılır. Tarteel House dersleri varsayılan olarak kaydetmez ve öğretmenler velinin izni ve katılımı olmadan çocukla özel iletişim kurmaz.</p>
+            <p class="value-card__desc">Planlama ve iletişim veli üzerinden yürütülür; dersler genellikle Zoom veya Google Meet üzerinden yapılır. Tarteel House dersleri varsayılan olarak kaydetmez. Öğretmenler, velinin izni ve katılımı olmadan çocukla özel iletişim kurmaz.</p>
+          </article>
+
+          <article class="value-card">
+            <h3 class="value-card__title">Kadın öğretmenler</h3>
+            <p class="value-card__desc">Öğretmenlerimizin çoğu kadındır. Çocuğunuzun bir kadın öğretmenle ders almasını tercih ediyorsanız bunu başvuru formunda belirtin; eşleştirmede bu tercihi, uygunluk durumuna göre dikkate alırız.</p>
+          </article>
+
+          <article class="value-card">
+            <h3 class="value-card__title">İki ayda bir gelişim görüşmesi</h3>
+            <p class="value-card__desc">İki ayda bir velileri 15 dakikalık bir gelişim görüşmesine davet ederiz. Katılamazsanız veya görüşme istemezseniz, WhatsApp üzerinden görsel bir gelişim raporu göndeririz.</p>
+          </article>
+
+          <article class="value-card">
+            <h3 class="value-card__title">Aile düzeninize uyumlu</h3>
+            <p class="value-card__desc">En az 24 saat önceden haber verirseniz ders, telafi hakkınız kullanılmadan yeniden planlanır. Öğretmenin veya Tarteel House&rsquo;un iptal ettiği dersler ise her zaman yeniden planlanır.</p>
           </article>
 
           <article class="value-card">
             <h3 class="value-card__title">5–16 yaş arası çocuklar için</h3>
-            <p class="value-card__desc">Tarteel House şu anda yalnızca 5–16 yaş arası kız ve erkek çocuklara ders vermektedir; yetişkin sınıfı bulunmamaktadır.</p>
+            <p class="value-card__desc">Tarteel House şu anda yalnızca <span class="lang-page__nowrap">5–16 yaş</span> arası kız ve erkek çocuklara ders veriyor; yetişkinlere yönelik dersimiz bulunmuyor.</p>
           </article>
         </div>
-      </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section class="hiw-preview" aria-labelledby="hiw-headline">
-      <div class="container container--mid">
-        <p class="eyebrow">NASIL İŞLER</p>
-        <h2 class="hiw-preview__headline" id="hiw-headline">Sakin ve düzenli bir başlangıç</h2>
-        <p class="hiw-preview__desc">İlk ziyaretten düzenli bir haftalık programa dört adım.</p>
-
-        <div class="hiw-preview__grid">
-          <article class="step-card">
-            <span class="step-card__num">01</span>
-            <h3 class="step-card__title">Çocuğunuzu tanıtın</h3>
-            <p class="step-card__desc">Çocuğunuzun dilini, seviyesini, öğrenme ihtiyaçlarını ve uygun zamanlarını paylaşın. Öğretmen tercihinizi belirtebilirsiniz; eşleştirmeyi biz yaparız.</p>
-          </article>
-
-          <article class="step-card">
-            <span class="step-card__num">02</span>
-            <h3 class="step-card__title">Ücretsiz deneme dersi</h3>
-            <p class="step-card__desc">Eşleştirilen öğretmenle 40 dakikalık ücretsiz bir ders. Ödeme yok, taahhüt yok. Genellikle iki gün içinde WhatsApp üzerinden sizinle iletişime geçeriz.</p>
-          </article>
-
-          <article class="step-card">
-            <span class="step-card__num">03</span>
-            <h3 class="step-card__title">Paketi onaylayın</h3>
-            <p class="step-card__desc">Devam etmek isterseniz uygun paketi onaylar, ödeme talimatlarını veya güvenli bir ödeme bağlantısını WhatsApp üzerinden paylaşırız.</p>
-          </article>
-
-          <article class="step-card">
-            <span class="step-card__num">04</span>
-            <h3 class="step-card__title">Haftalık düzen oluşturun</h3>
-            <p class="step-card__desc">Ücretli dersler ödeme onayından sonra planlanır; genellikle aynı öğretmenle ve düzenli bir haftalık programla.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- INSIDE A SESSION -->
-    <section class="hiw-preview" aria-labelledby="session-headline">
-      <div class="container container--mid">
-        <p class="eyebrow">DERSİN İÇİ</p>
-        <h2 class="hiw-preview__headline" id="session-headline">40 dakikalık bir derste neler olur?</h2>
-        <div class="hiw-preview__grid">
-          <article class="step-card">
-            <h3 class="step-card__title">Kısa tekrar</h3>
-            <p class="step-card__desc">Her ders, bir önceki dersin kısa bir tekrarıyla başlar; çocuk özgüvenle derse girer.</p>
-          </article>
-          <article class="step-card">
-            <h3 class="step-card__title">Yeni konu</h3>
-            <p class="step-card__desc">Yeni harfler, sesler veya ayetler adım adım öğretilir; öğretmen hızı çocuğa göre ayarlar.</p>
-          </article>
-          <article class="step-card">
-            <h3 class="step-card__title">Rehberli okuma</h3>
-            <p class="step-card__desc">Çocuk sesli okur; öğretmen dinler, nazikçe düzeltir ve doğru telaffuzu pekiştirir.</p>
-          </article>
-          <article class="step-card">
-            <h3 class="step-card__title">Evde çalışma hedefi</h3>
-            <p class="step-card__desc">Ders, bir sonraki derse kadar evde yapılacak kısa çalışma için net bir hedefle biter.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- TEACHERS -->
-    <section class="teachers-preview" aria-labelledby="teachers-headline">
-      <div class="container container--mid">
-        <p class="eyebrow">ÖĞRETMENLER</p>
-        <h2 class="teachers-preview__headline" id="teachers-headline">Türkçe ders veren öğretmenlerimiz</h2>
-        <p class="teachers-preview__desc">Küçük ve özenle seçilmiş bir ekip. Çocuğunuzun dili, seviyesi, öğrenme ihtiyaçları ve uygun zamanlarına göre uygun öğretmeni öneririz.</p>
-
-        <div class="lang-page__teachers">
-          <article class="value-card">
-            <h3 class="value-card__title">Farkhonda Jami</h3>
-            <p class="value-card__desc">Türkçe ve Farsça &middot; 2 yıllık Tecvid ve Tefsir öğretmenliği deneyimi</p>
-          </article>
-          <article class="value-card">
-            <h3 class="value-card__title">Fareshta Suroush</h3>
-            <p class="value-card__desc">Farsça, İngilizce ve Türkçe &middot; 2 yıllık Tecvid öğretmenliği deneyimi</p>
-          </article>
-          <article class="value-card">
-            <h3 class="value-card__title">Sadiah Hamid</h3>
-            <p class="value-card__desc">İngilizce, Arapça, Türkçe ve Farsça &middot; 6 yıllık Tecvid, hafızlık ve Kur&rsquo;an tilaveti öğretmenliği deneyimi</p>
-          </article>
-        </div>
-
-        <p class="teachers-preview__cta">
-          <a href="/teachers/" class="text-link">Öğretmen tanıtımları ve örnek dersler &#x2192;</a>
-        </p>
       </div>
     </section>
 
     <!-- PRICING -->
-    <section class="pricing-preview" aria-labelledby="pricing-headline">
+    <section class="pricing-preview" id="ucretler" aria-labelledby="pricing-headline">
       <div class="container container--mid">
         <p class="eyebrow">ÜCRETLER</p>
-        <h2 class="pricing-preview__headline" id="pricing-headline">Üç paket. Tek eğitim kalitesi.</h2>
-        <p class="pricing-preview__desc">Tüm dersler birebir ve 40 dakikadır. Her paket tek bir çocuk içindir ve satın alma tarihinden itibaren bir yıl geçerlidir.</p>
+        <h2 class="pricing-preview__headline" id="pricing-headline">Üç paket, tek bir eğitim kalitesi</h2>
+        <p class="pricing-preview__desc">Tüm dersler birebirdir ve 40 dakika sürer. Her paket tek bir çocuk içindir ve satın alma tarihinden itibaren bir yıl geçerlidir.</p>
 
         <div class="pricing-preview__grid">
           <article class="price-card">
-            <p class="price-card__bundle">STARTER</p>
-            <p class="price-card__best-for">Yavaş ve sakin başlamak isteyen aileler için</p>
+            <p class="price-card__bundle" lang="en">STARTER</p>
+            <p class="price-card__best-for">Sakin bir başlangıç isteyen aileler için</p>
             <p class="price-card__price">120 &euro;</p>
             <p class="price-card__detail">6 ders &middot; ders başı 20 &euro;</p>
             <hr class="price-card__divider" aria-hidden="true" />
@@ -294,77 +409,118 @@
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>6 birebir, 40 dakikalık ders</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Genellikle paket boyunca aynı öğretmen</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>İki ayda bir gelişim görüşmesi</li>
-              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Yeterli haber verilmeyen devamsızlık için telafi hakkı yoktur</li>
+              <li class="price-card__item price-card__item--note"><span class="lang-page__dash" aria-hidden="true"></span>Telafi dersi hakkı içermez</li>
             </ul>
-            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Ücretsiz deneme ile başla</a>
+            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Ücretsiz deneyin</a>
           </article>
 
           <article class="price-card price-card--featured">
-            <span class="price-card__badge">EN ÇOK TERCİH EDİLEN</span>
-            <p class="price-card__bundle">STEADY</p>
-            <p class="price-card__best-for">Haftalık düzen oluşturmak için en iyisi</p>
+            <span class="price-card__badge">En çok tercih edilen</span>
+            <p class="price-card__bundle" lang="en">STEADY</p>
+            <p class="price-card__best-for">Haftalık bir düzen kurmak için ideal</p>
             <p class="price-card__price">220 &euro;</p>
             <p class="price-card__detail">12 ders &middot; ders başı yaklaşık 18,33 &euro;</p>
             <hr class="price-card__divider" aria-hidden="true" />
             <ul class="price-card__includes" role="list">
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>12 birebir, 40 dakikalık ders</li>
-              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>En fazla dört telafi dersi</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Genellikle paket boyunca aynı öğretmen</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>İki ayda bir gelişim görüşmesi</li>
+              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>En fazla dört telafi dersi</li>
             </ul>
-            <a href="/book-trial/" class="btn btn--primary price-card__btn">Ücretsiz deneme ile başla</a>
+            <a href="/book-trial/" class="btn btn--primary price-card__btn">Ücretsiz deneyin</a>
           </article>
 
           <article class="price-card">
-            <p class="price-card__bundle">COMMITTED</p>
-            <p class="price-card__best-for">Daha derin ve istikrarlı bir yolculuğa hazır aileler için</p>
+            <p class="price-card__bundle" lang="en">COMMITTED</p>
+            <p class="price-card__best-for">Uzun soluklu, istikrarlı bir yolculuk için</p>
             <p class="price-card__price">400 &euro;</p>
             <p class="price-card__detail">25 ders &middot; ders başı 16 &euro;</p>
             <hr class="price-card__divider" aria-hidden="true" />
             <ul class="price-card__includes" role="list">
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>25 birebir, 40 dakikalık ders</li>
-              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>En fazla dört telafi dersi</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>Genellikle paket boyunca aynı öğretmen</li>
               <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>İki ayda bir gelişim görüşmesi</li>
+              <li class="price-card__item"><span class="check-icon" aria-hidden="true"></span>En fazla dört telafi dersi</li>
             </ul>
-            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Ücretsiz deneme ile başla</a>
+            <a href="/book-trial/" class="btn btn--ghost price-card__btn">Ücretsiz deneyin</a>
           </article>
         </div>
 
         <p class="pricing-preview__cta">
-          <a href="/pricing/" class="text-link">Tüm ücret ve telafi kuralları (İngilizce) &#x2192;</a>
+          <a href="/pricing/" class="text-link" hreflang="en">Tüm ücret ve telafi kuralları (İngilizce) &#x2192;</a>
         </p>
       </div>
     </section>
 
     <!-- QUESTIONS -->
-    <section class="why-us" aria-labelledby="faq-headline">
-      <div class="container container--mid">
+    <section class="faq-section" id="sorular" aria-labelledby="faq-headline">
+      <div class="container container--text">
         <p class="eyebrow">SIK SORULAN SORULAR</p>
         <h2 class="why-us__headline" id="faq-headline">Velilerin sık sorduğu sorular</h2>
 
-        <div class="lang-page__faq">
-          <div>
-            <h3>Çocuğum daha önce hiç Kur&rsquo;an okumadı. Sorun olur mu?</h3>
-            <p>Hiç sorun değil. Birçok öğrencimiz sıfırdan başlar. Öğretmen Arap alfabesinden başlar ve çocuğunuzun kendi hızında ilerler.</p>
-          </div>
-          <div>
-            <h3>Dersler hangi platformda yapılıyor?</h3>
-            <p>Ailenizin tercihine göre Zoom veya Google Meet üzerinden. İkisi de ücretsizdir ve telefon, tablet veya bilgisayarda çalışır. Küçük çocuklar için ders sırasında bir velinin yakında ve ulaşılabilir olmasını rica ederiz.</p>
-          </div>
-          <div>
-            <h3>Çocuğum bir dersi kaçırırsa ne olur?</h3>
-            <p>En az 24 saat önceden haber verilirse ders, telafi hakkı kullanılmadan yeniden planlanır. 6 derslik pakette yeterli haber verilmeyen devamsızlık için telafi hakkı yoktur; 12 ve 25 derslik paketlerde en fazla dört telafi dersi vardır.</p>
-          </div>
-          <div>
-            <h3>Sertifika veriyor musunuz?</h3>
-            <p>Sertifika yalnızca çocuk en az 30 dersi tamamladığında, belirli bir öğrenme aşamasını bitirdiğinde ve öğretmen bu aşamanın tamamlandığını onayladığında verilir. Yalnızca paket satın almak sertifika için yeterli değildir.</p>
-          </div>
-          <div>
-            <h3>Ödeme nasıl yapılıyor?</h3>
-            <p>Önce ücretsiz deneme dersi yapılır. Devam etmek isterseniz uygun paketi onaylar, ödeme talimatlarını veya güvenli bir ödeme bağlantısını WhatsApp üzerinden göndeririz.</p>
-          </div>
-        </div>
+        <ul class="faq-list" role="list">
+
+          <li class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="tr-faq-panel-1">
+              <span>Çocuğum daha önce hiç Kur&rsquo;an okumadı. Sorun olur mu?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer" id="tr-faq-panel-1" role="region" hidden>
+              <p>Hiç sorun olmaz. Birçok öğrencimiz sıfırdan başlar. Öğretmen Arap harflerinden başlar ve çocuğunuzun hızına göre ilerler.</p>
+            </div>
+          </li>
+
+          <li class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="tr-faq-panel-2">
+              <span>Dersler hangi platformda yapılıyor?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer" id="tr-faq-panel-2" role="region" hidden>
+              <p>Ailenizin tercihine göre Zoom veya Google Meet üzerinden. İkisi de ücretsizdir ve telefon, tablet veya bilgisayarda çalışır. Küçük çocuklarda, ders sırasında bir velinin yakında bulunmasını rica ederiz.</p>
+            </div>
+          </li>
+
+          <li class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="tr-faq-panel-3">
+              <span>Çocuğum bir dersi kaçırırsa ne olur?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer" id="tr-faq-panel-3" role="region" hidden>
+              <p>En az 24 saat önceden haber verirseniz ders, telafi hakkı kullanılmadan yeniden planlanır. 12 ve 25 derslik paketlerde, yeterli haber verilmeyen devamsızlıklar için en fazla dört telafi dersi hakkı vardır; bu hak bittiğinde kaçırılan ders kullanılmış sayılır. 6 derslik pakette telafi hakkı yoktur; yeterli haber verilmeden kaçırılan ders kullanılmış sayılır.</p>
+            </div>
+          </li>
+
+          <li class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="tr-faq-panel-4">
+              <span>Ödeme nasıl yapılıyor?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer" id="tr-faq-panel-4" role="region" hidden>
+              <p>Önce ücretsiz deneme dersi yapılır. Devam etmek isterseniz uygun paketi teyit eder, ödeme bilgilerini veya güvenli bir ödeme bağlantısını WhatsApp üzerinden göndeririz. Ücretli dersler ödeme onayından sonra planlanır.</p>
+            </div>
+          </li>
+
+          <li class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="tr-faq-panel-5">
+              <span>Sertifika veriyor musunuz?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer" id="tr-faq-panel-5" role="region" hidden>
+              <p>Sertifika; çocuk en az 30 dersi tamamladığında, belirli bir öğrenme aşamasını bitirdiğinde ve öğretmen bu aşamanın tamamlandığını onayladığında verilir. Yalnızca paket satın almak sertifika için yeterli değildir.</p>
+            </div>
+          </li>
+
+          <li class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false" aria-controls="tr-faq-panel-6">
+              <span>Başvuru formu İngilizce. Nasıl doldururum?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer" id="tr-faq-panel-6" role="region" hidden>
+              <p>Form kısadır ve yaklaşık iki dakika sürer. Önce çocuğunuzun adını, yaşını, Kur&rsquo;an seviyesini ve ders dilini; ardından sizin adınızı, ülkenizi, e-posta adresinizi ve WhatsApp numaranızı; son olarak da uygun gün ve saatlerinizi sorar. <span lang="en">&ldquo;Preferred session language&rdquo;</span> bölümünde <span lang="en">&ldquo;Turkish&rdquo;</span> seçeneğini işaretleyin. Takıldığınız bir yer olursa WhatsApp&rsquo;tan Türkçe yazabilirsiniz.</p>
+            </div>
+          </li>
+
+        </ul>
       </div>
     </section>
 
@@ -377,9 +533,10 @@
           <span class="final-cta__ornament-line"></span>
         </div>
         <h2 class="final-cta__headline" id="final-cta-headline">Ücretsiz bir deneme dersiyle başlayın</h2>
-        <p class="final-cta__body">Eşleştirilen öğretmenle 40 dakika tanışın ve eğitimin kalitesini önce kendiniz görün. Bir paketi yalnızca size uygun geldiğinde onaylayın.</p>
-        <a href="/book-trial/" class="btn btn--ivory final-cta__btn">Ücretsiz deneme dersi al</a>
-        <p class="final-cta__reassurance">Ödeme yok. Taahhüt yok.</p>
+        <p class="final-cta__body">Eşleştirdiğimiz öğretmenle 40 dakika tanışın, eğitimin kalitesini önce kendiniz görün. Paketi ancak içinize sindiğinde onaylarsınız.</p>
+        <a href="/book-trial/" class="btn btn--ivory final-cta__btn">Ücretsiz deneme dersi alın</a>
+        <p class="final-cta__reassurance">Ödeme gerekmez. Taahhüt yok.</p>
+        <p class="final-cta__secondary"><a href="https://wa.me/34614494311?text=Merhaba%2C%20%C3%A7ocu%C4%9Fum%20i%C3%A7in%20%C3%BCcretsiz%20Kur%27an%20deneme%20dersi%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." class="final-cta__secondary-link" target="_blank" rel="noopener noreferrer" aria-label="Tarteel House&rsquo;a WhatsApp&rsquo;tan Türkçe yazın (yeni sekmede açılır)">Ya da WhatsApp&rsquo;tan Türkçe yazın</a></p>
       </div>
     </section>
 
@@ -390,37 +547,42 @@
     <div class="container">
       <div class="footer__grid">
         <div class="footer__col footer__col--brand">
-          <a href="/" aria-label="Tarteel House &mdash; home">
+          <a href="/tr/" aria-label="Tarteel House &mdash; Türkçe ana sayfa">
             <img src="/assets/logo/tarteel-house-reversed.svg" alt="Tarteel House" class="footer__logo" width="276" height="175" loading="lazy" decoding="async" />
           </a>
-          <p class="footer__tagline">One-to-one Qur&rsquo;an learning for children</p>
-          <p class="footer__contact">Have a question before booking? <a href="https://wa.me/34614494311" class="footer__contact-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Tarteel House with a question before booking (opens in a new tab)">WhatsApp us</a>.</p>
+          <p class="footer__tagline">Çocuklar için birebir Kur&rsquo;an eğitimi</p>
+          <p class="footer__contact">Başvurudan önce sorunuz mu var? <a href="https://wa.me/34614494311?text=Merhaba%2C%20%C3%A7ocu%C4%9Fum%20i%C3%A7in%20%C3%BCcretsiz%20Kur%27an%20deneme%20dersi%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." class="footer__contact-link" target="_blank" rel="noopener noreferrer" aria-label="Tarteel House&rsquo;a WhatsApp&rsquo;tan Türkçe yazın (yeni sekmede açılır)">WhatsApp&rsquo;tan yazın</a>.</p>
         </div>
 
-        <nav class="footer__col" aria-label="Learn">
-          <h3 class="footer__heading">LEARN</h3>
+        <nav class="footer__col" aria-label="Keşfedin">
+          <h3 class="footer__heading">Keşfedin</h3>
           <ul role="list">
-            <li><a href="/how-it-works/" class="footer__link">How it works</a></li>
-            <li><a href="/teachers/" class="footer__link">Teachers</a></li>
-            <li><a href="/pricing/" class="footer__link">Pricing</a></li>
-            <li><a href="/blog/" class="footer__link">Blog</a></li>
-            <li><a href="/book-trial/" class="footer__link">Book a trial</a></li>
+            <li><a href="#nasil-isliyor" class="footer__link">Nasıl işliyor</a></li>
+            <li><a href="#ogretmenler" class="footer__link">Öğretmenler</a></li>
+            <li><a href="#ucretler" class="footer__link">Ücretler</a></li>
+            <li><a href="#sorular" class="footer__link">Sık sorulan sorular</a></li>
+            <li><a href="/book-trial/" class="footer__link">Ücretsiz deneme dersi</a></li>
           </ul>
         </nav>
 
-        <nav class="footer__col" aria-label="About">
-          <h3 class="footer__heading">ABOUT</h3>
+        <nav class="footer__col" aria-label="İngilizce sayfalar">
+          <h3 class="footer__heading">İngilizce sayfalar</h3>
           <ul role="list">
-            <li><a href="/about/" class="footer__link">Our story</a></li>
-            <li><a href="/about/#approach" class="footer__link">Our approach</a></li>
+            <li><a href="/teachers/" class="footer__link" hreflang="en">Öğretmenler ve örnek dersler</a></li>
+            <li><a href="/pricing/" class="footer__link" hreflang="en">Ücret ve telafi kuralları</a></li>
+            <li><a href="/about/" class="footer__link" hreflang="en">Hakkımızda</a></li>
+            <li><a href="/blog/" class="footer__link" hreflang="en">Blog</a></li>
+            <li><a href="/privacy-policy/" class="footer__link" hreflang="en">Gizlilik politikası</a></li>
+            <li><a href="/terms/" class="footer__link" hreflang="en">Kullanım koşulları</a></li>
           </ul>
         </nav>
 
-        <nav class="footer__col" aria-label="Support">
-          <h3 class="footer__heading">SUPPORT</h3>
+        <nav class="footer__col" aria-label="Diller">
+          <h3 class="footer__heading">Diller</h3>
           <ul role="list">
-            <li><a href="/privacy-policy/" class="footer__link">Privacy</a></li>
-            <li><a href="/terms/" class="footer__link">Terms</a></li>
+            <li><a href="/tr/" class="footer__link" aria-current="page">Türkçe</a></li>
+            <li><a href="/" class="footer__link" lang="en" hreflang="en">English</a></li>
+            <li><a href="/fa/" class="footer__link" lang="fa" hreflang="fa">فارسی</a></li>
           </ul>
         </nav>
       </div>
@@ -428,8 +590,7 @@
       <hr class="footer__divider" aria-hidden="true" />
 
       <div class="footer__bottom">
-        <p class="footer__copy">&copy; 2026 Tarteel House &middot; Barcelona, Spain</p>
-        <p class="footer__copy">Also in <a href="/fa/" class="footer__link" lang="fa" hreflang="fa">فارسی</a> &middot; <a href="/tr/" class="footer__link" lang="tr" hreflang="tr">Türkçe</a></p>
+        <p class="footer__copy">&copy; 2026 Tarteel House &middot; Barselona, İspanya</p>
       </div>
     </div>
   </footer>

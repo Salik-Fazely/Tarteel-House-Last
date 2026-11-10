@@ -16,12 +16,16 @@ HEADER_END = "<!-- SHARED HEADER:END -->"
 FOOTER_START = "<!-- SHARED FOOTER:START -->"
 FOOTER_END = "<!-- SHARED FOOTER:END -->"
 
+# Language variants keep a translated page's shared chrome in its own language.
+# The Turkish fragments link to in-page anchors because /tr/ is a single page.
 HEADER_FRAGMENTS = {
     "standard": "partials/header.html",
+    "tr": "partials/header-tr.html",
 }
 FOOTER_FRAGMENTS = {
     "standard": "partials/footer.html",
     "no_prebooking_contact": "partials/footer-no-prebooking-contact.html",
+    "tr": "partials/footer-tr.html",
 }
 
 NAV_PLACEHOLDERS = {
@@ -111,7 +115,7 @@ PAGE_CONFIGS = (
     ),
     PageConfig("teachers/index.html", "teachers"),
     PageConfig("terms/index.html", None),
-    PageConfig("tr/index.html", None),
+    PageConfig("tr/index.html", None, header_variant="tr", footer_variant="tr"),
 )
 
 
