@@ -31,6 +31,8 @@ python scripts/sync_shared_layout.py --write
 python scripts/sync_shared_layout.py --check
 ```
 
+Language pages can use their own fragments: the Turkish page renders from `partials/header-tr.html` and `partials/footer-tr.html` through the `tr` variants in `scripts/sync_shared_layout.py`.
+
 Review all generated page changes. For a new page, update the page inventory and related tests intentionally. Keep changed CSS/consent/analytics asset versions consistent across pages; `tests/asset_versioning_test.py` checks the current release references.
 
 ## Booking and measurement changes

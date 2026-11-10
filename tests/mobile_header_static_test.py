@@ -5,6 +5,20 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_CTA = {
+    "aria-label": "Book a free trial",
+    "full": "Book a Free Trial",
+    "short": "Free trial",
+}
+# Language pages translate the visible CTA but keep the same destination,
+# markup and label pair so the shared mobile CSS applies unchanged.
+LOCALIZED_CTA = {
+    "tr/index.html": {
+        "aria-label": "Ücretsiz deneme dersi alın",
+        "full": "Ücretsiz Deneme",
+        "short": "Deneme",
+    },
+}
 
 
 def header_pages():
@@ -94,18 +108,27 @@ class MobileHeaderStaticTests(unittest.TestCase):
             self.assertEqual(1, len(parser.ctas), relative)
 
             cta = parser.ctas[0]
+            expected = LOCALIZED_CTA.get(relative.as_posix(), DEFAULT_CTA)
             self.assertEqual("/book-trial/", cta["attrs"].get("href"), relative)
-            self.assertEqual("Book a free trial", cta["attrs"].get("aria-label"), relative)
+            self.assertEqual(expected["aria-label"], cta["attrs"].get("aria-label"), relative)
             self.assertEqual(
-                "Book a Free Trial",
+                expected["full"],
                 normalized_text(cta["labels"].get("nav__cta-label--full", [])),
                 relative,
             )
             self.assertEqual(
-                "Free trial",
+                expected["short"],
                 normalized_text(cta["labels"].get("nav__cta-label--short", [])),
                 relative,
             )
+
+    def test_localized_cta_pages_exist_and_stay_short_enough_for_small_phones(self):
+        pages = {page.relative_to(ROOT).as_posix() for page in header_pages()}
+        for relative, expected in LOCALIZED_CTA.items():
+            self.assertIn(relative, pages)
+            # The English label is 17 characters; a longer one overflows a 360px header.
+            self.assertLessEqual(len(expected["full"]), len(DEFAULT_CTA["full"]), relative)
+            self.assertLessEqual(len(expected["short"]), len(DEFAULT_CTA["short"]), relative)
 
     def test_canonical_headers_use_the_accessible_menu_trigger_contract(self):
         for page in header_pages():

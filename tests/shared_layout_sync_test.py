@@ -343,6 +343,27 @@ class SharedLayoutSyncTests(unittest.TestCase):
                         f"{config.path}:{start_marker}:{line_number}",
                     )
 
+    def test_12_language_variants_render_from_their_own_fragments(self):
+        sync = load_sync_module()
+        variants = {
+            config.path: (config.header_variant, config.footer_variant)
+            for config in sync.PAGE_CONFIGS
+            if config.header_variant != "standard"
+        }
+        self.assertEqual({"tr/index.html": ("tr", "tr")}, variants)
+
+        for relative in (sync.HEADER_FRAGMENTS["tr"], sync.FOOTER_FRAGMENTS["tr"]):
+            self.assertTrue((ROOT / relative).is_file(), relative)
+
+        footer = (ROOT / sync.FOOTER_FRAGMENTS["tr"]).read_text(encoding="utf-8")
+        self.assertIn('href="https://wa.me/34614494311?text=', footer)
+
+        page = parse_page("tr/index.html")
+        self.assertEqual(
+            ["#nasil-isliyor", "#ogretmenler", "#ucretler", "#sorular"],
+            [link.get("href") for link in page.nav_links],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

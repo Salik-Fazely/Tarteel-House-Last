@@ -77,6 +77,14 @@
 - Earlier plan mentioned iubenda; this remains an option, not a confirmed final legal provider.
 - Do not invent legal facts. Use confirmed business details only.
 
+## Language page decisions
+- `/fa/` and `/tr/` are single-page language versions of the homepage. Every other page remains English.
+- The Turkish page has its own shared fragments, `partials/header-tr.html` and `partials/footer-tr.html`, selected through the `tr` variants in `scripts/sync_shared_layout.py`.
+- Because `/tr/` is one page, its header and footer navigation link to sections of that page. Links that leave Turkish for an English-only page are grouped under “İngilizce sayfalar” or labelled “(İngilizce)”, and carry `hreflang="en"`.
+- Turkish copy addresses parents formally (“siz”). Package names stay as Starter, Steady and Committed.
+- Turkish claims follow [commercial facts](commercial-facts.md) exactly; translate the approved wording rather than adding new promises.
+- Still English on language pages: the booking form and success page, the measurement consent banner, and the menu button’s screen-reader label. These come from the booking flow and the shared versioned scripts, so translating them is a separate release.
+
 ## Open decisions
 - The existing `assets/images/tarteel-house-social-card.png` is the current shared social preview asset; verify its published delivery after deployment.
 - The owner-run live booking, notification and advertising-delivery test remains unverified. Local verification is not proof of production behaviour.

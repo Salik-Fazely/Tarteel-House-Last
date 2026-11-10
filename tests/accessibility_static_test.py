@@ -10,6 +10,7 @@ FAQ_PAGES = {
     Path("how-it-works/index.html"): 6,
     Path("pricing/index.html"): 9,
     Path("teachers/index.html"): 7,
+    Path("tr/index.html"): 6,
 }
 BOOKING_ACTION = (
     "https://script.google.com/macros/s/"

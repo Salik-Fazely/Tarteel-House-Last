@@ -15,6 +15,17 @@ EXPECTED_ALTERNATES = {
     "x-default": BASE_URL + "/",
 }
 OFFICIAL_WHATSAPP = "https://wa.me/34614494311"
+TURKISH_PAGE = "tr/index.html"
+TURKISH_NAV_ANCHORS = ["#nasil-isliyor", "#ogretmenler", "#ucretler", "#sorular"]
+# Destinations that exist in English only; Turkish links to them must say so.
+ENGLISH_ONLY_DESTINATIONS = {
+    "/teachers/",
+    "/pricing/",
+    "/about/",
+    "/blog/",
+    "/privacy-policy/",
+    "/terms/",
+}
 
 # Surah order, number and verse count (Hafs) used in the Juz Amma guide.
 JUZ_AMMA_ORDER = [
@@ -87,6 +98,54 @@ class PageParser(HTMLParser):
             self.text.append(data)
 
 
+class ChromeParser(HTMLParser):
+    """Collects ids, links with their text, and header/footer text."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.ids = set()
+        self.links = []
+        self.region_text = {"header": [], "footer": []}
+        self._region = None
+        self._link = None
+
+    def handle_starttag(self, tag, attrs):
+        attributes = dict(attrs)
+        classes = set(attributes.get("class", "").split())
+        if attributes.get("id"):
+            self.ids.add(attributes["id"])
+        if tag == "header" and "site-header" in classes:
+            self._region = "header"
+        elif tag == "footer" and "site-footer" in classes:
+            self._region = "footer"
+        if tag == "a" and attributes.get("href"):
+            self._link = {"attrs": attributes, "region": self._region, "text": []}
+            self.links.append(self._link)
+
+    def handle_endtag(self, tag):
+        if tag == "a":
+            self._link = None
+        elif tag in {"header", "footer"}:
+            self._region = None
+
+    def handle_data(self, data):
+        if self._region:
+            self.region_text[self._region].append(data)
+        if self._link is not None:
+            self._link["text"].append(data)
+
+
+def parse_chrome(relative):
+    parser = ChromeParser()
+    parser.feed((ROOT / relative).read_text(encoding="utf-8"))
+    parser.close()
+    return parser
+
+
+def link_text(link):
+    return re.sub(r"\s+", " ", "".join(link["text"])).strip()
+
+
 def parse(relative):
     parser = PageParser()
     parser.feed((ROOT / relative).read_text(encoding="utf-8"))
@@ -140,6 +199,65 @@ class LanguagePageTests(unittest.TestCase):
             source = (ROOT / partial).read_text(encoding="utf-8")
             self.assertIn('href="/fa/"', source)
             self.assertIn('href="/tr/"', source)
+
+
+class TurkishPageTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.page = parse_chrome(TURKISH_PAGE)
+        cls.header = re.sub(r"\s+", " ", " ".join(cls.page.region_text["header"]))
+        cls.footer = re.sub(r"\s+", " ", " ".join(cls.page.region_text["footer"]))
+
+    def test_header_and_footer_are_in_turkish(self):
+        for phrase in ("Nasıl İşliyor", "Öğretmenler", "Ücretler", "Sorular", "Ücretsiz Deneme"):
+            self.assertIn(phrase, self.header)
+        for phrase in ("How It Works", "Teachers", "Pricing", "About", "Book a Free Trial"):
+            self.assertNotIn(phrase, self.header)
+
+        for phrase in ("Keşfedin", "İngilizce sayfalar", "Diller", "WhatsApp’tan yazın"):
+            self.assertIn(phrase, self.footer)
+        for phrase in ("LEARN", "SUPPORT", "Have a question before booking?", "Also in"):
+            self.assertNotIn(phrase, self.footer)
+
+    def test_in_page_navigation_points_to_sections_that_exist(self):
+        header_anchors = [
+            link["attrs"]["href"]
+            for link in self.page.links
+            if link["region"] == "header" and link["attrs"]["href"].startswith("#")
+        ]
+        self.assertEqual(TURKISH_NAV_ANCHORS, header_anchors)
+        for link in self.page.links:
+            href = link["attrs"]["href"]
+            if href.startswith("#"):
+                self.assertIn(href[1:], self.page.ids, href)
+
+    def test_links_to_english_only_pages_are_marked_as_english(self):
+        english_links = [
+            link for link in self.page.links
+            if link["attrs"]["href"] in ENGLISH_ONLY_DESTINATIONS
+        ]
+        self.assertEqual(
+            ENGLISH_ONLY_DESTINATIONS,
+            {link["attrs"]["href"] for link in english_links},
+        )
+        for link in english_links:
+            self.assertEqual("en", link["attrs"].get("hreflang"), link["attrs"]["href"])
+
+    def test_footer_offers_every_language_version(self):
+        footer_hrefs = {
+            link["attrs"]["href"] for link in self.page.links if link["region"] == "footer"
+        }
+        self.assertLessEqual({"/", "/fa/", "/tr/"}, footer_hrefs)
+
+    def test_booking_calls_to_action_use_the_formal_register(self):
+        labels = [
+            link_text(link) for link in self.page.links
+            if link["attrs"]["href"] == "/book-trial/"
+        ]
+        self.assertGreaterEqual(len(labels), 5)
+        for label in labels:
+            # "al" / "başla" address the reader as "sen"; parents are addressed as "siz".
+            self.assertNotRegex(label, r"(?:\bal|\bbaşla|\bdene)$", label)
 
 
 class NewParentGuideTests(unittest.TestCase):
