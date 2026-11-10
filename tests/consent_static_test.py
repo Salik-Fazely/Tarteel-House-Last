@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20261110-1"></script>'
+CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20261110-2"></script>'
 GA_PATTERNS = (
     "googletagmanager.com",
     "google-analytics.com",

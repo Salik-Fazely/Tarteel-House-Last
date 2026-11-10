@@ -87,6 +87,11 @@
 - To add a language version, add it to `LANGUAGES` and set `language=` on its page in `PAGE_CONFIGS`.
 - Still English on language pages: the booking form and success page, the measurement consent banner, and the menu button’s screen-reader label. These come from the booking flow and the shared versioned scripts, so translating them is a separate release.
 
+## Parent guide decisions
+- Every guide shows one line under its introduction: “Published by Tarteel House”, the publication date and, when different, the last update date. The same dates appear in the guide's structured data; `tests/guide_bylines_test.py` keeps the two in step.
+- A guide's publication date is the day its file first entered this repository's history. Change “Updated” only when the guide's content changes.
+- Guides name Tarteel House as publisher only. Do not add an author or a “reviewed by” line until a real, named person has agreed to stand behind the guides.
+
 ## Open decisions
 - The existing `assets/images/tarteel-house-social-card.png` is the current shared social preview asset; verify its published delivery after deployment.
 - The owner-run live booking, notification and advertising-delivery test remains unverified. Local verification is not proof of production behaviour.

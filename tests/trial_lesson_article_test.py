@@ -432,7 +432,7 @@ class TrialLessonArticleTests(unittest.TestCase):
             if tag == "script" and attrs.get("src")
         ]
         self.assertEqual(
-            ["/assets/js/consent.js?v=20261110-1", "/assets/js/analytics-events.js?v=20261110-1", "/assets/js/main.js?v=20261014-1"],
+            ["/assets/js/consent.js?v=20261110-2", "/assets/js/analytics-events.js?v=20261110-2", "/assets/js/main.js?v=20261014-1"],
             scripts,
         )
 

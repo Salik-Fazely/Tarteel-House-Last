@@ -325,7 +325,7 @@ class ChoosingQuranClassesArticleTests(unittest.TestCase):
             if tag == "script" and attrs.get("src")
         ]
         self.assertEqual(
-            ["/assets/js/consent.js?v=20261110-1", "/assets/js/analytics-events.js?v=20261110-1", "/assets/js/main.js?v=20261014-1"],
+            ["/assets/js/consent.js?v=20261110-2", "/assets/js/analytics-events.js?v=20261110-2", "/assets/js/main.js?v=20261014-1"],
             scripts,
         )
 
@@ -353,7 +353,8 @@ class ChoosingQuranClassesArticleTests(unittest.TestCase):
         posting = postings[0]
         self.assertEqual("Online Quran Classes for Kids: What Parents Should Look For", posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
-        self.assertNotIn("datePublished", posting)
+        # First commit of this guide in the repository history.
+        self.assertEqual("2026-07-09", posting["datePublished"])
         self.assertEqual("2026-07-14", posting["dateModified"])
         self.assertNotIn("reviewedBy", posting)
         self.assertNotIn("author", posting)

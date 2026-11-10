@@ -4636,6 +4636,24 @@ body.is-leaving {
   margin-top: var(--space-4);
 }
 
+/* Byline and dates under a guide's introduction */
+.blog-post-hero__meta {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--subtle);
+  max-width: 580px;
+  margin-inline: auto;
+  margin-top: var(--space-5);
+}
+
+.blog-post-hero__meta a {
+  color: var(--forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
 .blog-hero__ornament {
   display: flex;
   align-items: center;

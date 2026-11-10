@@ -189,7 +189,8 @@ class MemorizeShortSurahsArticleTest(unittest.TestCase):
         self.assertEqual("How to Help Children Memorize Short Surahs", posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
         self.assertEqual("2026-07-14", posting["dateModified"])
-        self.assertNotIn("datePublished", posting)
+        # First commit of this guide in the repository history.
+        self.assertEqual("2026-07-09", posting["datePublished"])
         self.assertEqual(IMAGE, posting["image"]["url"])
         self.assertEqual(CANONICAL, posting["mainEntityOfPage"]["@id"])
         self.assertNotIn("reviewedBy", posting)
@@ -199,8 +200,8 @@ class MemorizeShortSurahsArticleTest(unittest.TestCase):
     def test_global_shell_and_scripts_remain_present(self):
         self.assertIn('<header class="site-header" id="top">', self.source)
         self.assertIn('<footer class="site-footer">', self.source)
-        self.assertIn('<script src="/assets/js/consent.js?v=20261110-1"></script>', self.source)
-        self.assertIn('<script src="/assets/js/analytics-events.js?v=20261110-1"></script>', self.source)
+        self.assertIn('<script src="/assets/js/consent.js?v=20261110-2"></script>', self.source)
+        self.assertIn('<script src="/assets/js/analytics-events.js?v=20261110-2"></script>', self.source)
         self.assertIn('<script src="/assets/js/main.js?v=20261014-1"></script>', self.source)
 
 
