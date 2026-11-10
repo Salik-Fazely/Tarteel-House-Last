@@ -13,7 +13,7 @@ BLOG_INDEX = ROOT / "blog/index.html"
 STYLES = ROOT / "assets/css/styles.css"
 SITEMAP = ROOT / "sitemap.xml"
 CANONICAL = "https://www.tarteelhouse.com/blog/how-children-learn-to-read-quran/"
-TITLE = "How Children Learn to Read the Quran: 8 Stages for Parents | Tarteel House"
+TITLE = "How Children Learn to Read the Quran: 8 Stages | Tarteel House"
 HEADLINE = "From Arabic Letters to Reading the Quran: A Parent’s Guide to the Learning Stages"
 DESCRIPTION = (
     "See the 8 stages children typically move through from recognising Arabic letters to "

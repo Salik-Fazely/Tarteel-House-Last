@@ -19,7 +19,7 @@ BLOG_INDEX = ROOT / "blog/index.html"
 STYLES = ROOT / "assets/css/styles.css"
 SITEMAP = ROOT / "sitemap.xml"
 CANONICAL = "https://www.tarteelhouse.com/blog/child-refuses-quran-practice/"
-TITLE = "Child Refuses Quran Practice? How to Restart Without Pressure | Tarteel House"
+TITLE = "Child Refuses Quran Practice? How to Restart Gently | Tarteel House"
 HEADLINE = "My Child Refuses Quran Practice: How to Restart Gently"
 DESCRIPTION = (
     "Learn what may be behind your child’s resistance to Quran practice and use a gentle "
