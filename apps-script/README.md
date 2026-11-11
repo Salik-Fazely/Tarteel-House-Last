@@ -239,7 +239,10 @@ is not left without any written acknowledgment while they wait to be contacted.
 The founder notification also gains a `Reply on WhatsApp` link. It opens the
 family's chat with a first message drafted in the lesson language, using the
 saved parent and child names. It is a draft: nothing is sent until the founder
-presses send in WhatsApp.
+presses send in WhatsApp. Parents sometimes keep their national 0 after the
+country code (`+32 0488 ...`), which WhatsApp cannot open; for a short list of
+country codes where that 0 is never valid (`WHATSAPP_TRUNK_ZERO_CODES`), the
+link drops it. The number saved in the Sheet is left exactly as submitted.
 
 Local tests cannot prove inbox delivery, spam placement or how a mail client
 renders the HTML. After deploying, submit one authorized test booking with an
