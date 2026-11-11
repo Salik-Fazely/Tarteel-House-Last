@@ -6,7 +6,7 @@
 - The launch booking backend is Google Apps Script, not PHP/MySQL.
 - Booking submissions are stored in Google Sheets.
 - Booking notifications are emailed to `hello@tarteelhouse.com`.
-- `apps-script/*.gs` are the canonical Apps Script sources. Copy all three files into the bound project and redeploy; notification recovery additionally requires an explicitly owner-installed trigger. See the [operating procedure](../apps-script/README.md).
+- `apps-script/*.gs` are the canonical Apps Script sources. Copy all four files into the bound project and redeploy; notification recovery additionally requires an explicitly owner-installed trigger. See the [operating procedure](../apps-script/README.md).
 - The owner confirms Cloudflare Pages as the production host, serving static files from the repository root at `www.tarteelhouse.com`. The legacy `CNAME` file does not establish the hosting configuration.
 - Local commits are not assumed to be published to the live site.
 - See [README](../README.md) for local verification and release boundaries.
@@ -31,6 +31,9 @@
 - No separate teacher-preference field exists; parents can mention a preferred teacher in notes.
 - Families are normally contacted within two days to arrange the next steps; this is not a guaranteed service-level deadline.
 - Success redirect should land on the site's `/success`; verify this near final publish/staging.
+- A newly saved booking sends the parent one confirmation email, in English, Persian or Turkish according to the lesson language (Arabic requests receive English). Its wording is fixed in `apps-script/ParentConfirmation.gs`, repeats only [commercial facts](commercial-facts.md), and contains nothing the visitor typed. It is best effort and never retried; `parent_confirmation_status` records the outcome.
+- The founder's notification email includes a WhatsApp link that opens the family's chat with a first message drafted in the lesson language. The "normally within two days" wording is unchanged.
+- The backend accepts an optional `heard_about` answer (AI assistant, search engine, friend or family, mosque or community, social media, other) and `Australia` as a country. Both are accepted before the form offers them, so the backend can be released first.
 - Launch lesson platform copy should say Zoom or Google Meet.
 
 ## Product and operations decisions

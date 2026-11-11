@@ -28,7 +28,10 @@ function validParameters(overrides = {}) {
 }
 
 
-function appFixture({ appendError, mailError, openError, digestError, propertyError, quota = 1000,
+// parentConfirmation is off by default so the existing booking and recovery
+// tests keep asserting exact founder-notification mail, quota and write counts.
+// tests/parent_confirmation_test.js runs with the production default (on).
+function appFixture({ appendError, mailError, openError, digestError, propertyError, quota = 1000, parentConfirmation = false,
   writeError, flushError, now = Date.parse('2026-10-14T09:00:00Z'), activeUnavailable = 'missing', initialHeaders, initialRows = [] } = {}) {
   const appendedRows = initialRows.map(row => row.slice());
   const sentMail = [];
@@ -159,6 +162,7 @@ function appFixture({ appendError, mailError, openError, digestError, propertyEr
     },
   };
   vm.runInNewContext(source, context);
+  if (!parentConfirmation) vm.runInNewContext('PARENT_CONFIRMATION.enabled = false;', context);
   return { appendedRows, context, sentMail, openedIds, headers, properties, triggers, writeOperations,
     get now() { return now; }, advanceTime(milliseconds) { now += milliseconds; },
     setQuota(value) { quota = value; }, setWriteError(callback) { writeError = callback; },

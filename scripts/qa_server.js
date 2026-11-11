@@ -21,7 +21,9 @@ const properties = new Map();
 let qaNow = Date.parse('2026-10-14T09:00:00Z');
 let locked = false;
 let headers = ['timestamp','source','parent_name','child_name','child_age','quran_level','session_language','country','email','whatsapp','preferred_days','preferred_time','city_region','notes','consent','status','assigned_teacher','follow_up_date','internal_notes'];
+// mails counts founder notifications; confirmations counts parent confirmation emails.
 let mails = 0;
+let confirmations = 0;
 let requests = 0;
 const baseline = process.argv.includes('--baseline');
 const escape = value => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -111,7 +113,7 @@ function runtime(mode = 'success') {
     },
     MailApp: {
       getRemainingDailyQuota(){return mode==='quota-zero'?0:1000;},
-      sendEmail(){if(mode==='mail-failure')throw Error('Local QA mail failure'); mails++;},
+      sendEmail(message){if(mode==='mail-failure')throw Error('Local QA mail failure'); if(message&&message.to==='hello@tarteelhouse.com') mails++; else confirmations++;},
     },
     LockService: {getScriptLock:()=>({
       waitLock(){if(locked)throw Error('Local QA script lock is held');locked=true;},
@@ -174,7 +176,7 @@ function backend(parameters, mode, body) {
 }
 function stats(context = runtime()) {
   const column=name=>rows.map(row=>row[headers.indexOf(name)]??'');
-  return {requests,rows:rows.length,mails,baseline,now:new Date(qaNow).toISOString(),
+  return {requests,rows:rows.length,mails,confirmations,baseline,now:new Date(qaNow).toISOString(),
     notifications:column('notification_status'),notificationAttempts:column('notification_attempts'),
     notificationNextAttemptAt:column('notification_next_attempt_at'),
     notificationErrorCodes:column('notification_error_code'),

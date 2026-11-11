@@ -53,7 +53,11 @@ const HEADERS = [
   'notification_attempts',
   'notification_last_attempt_at',
   'notification_next_attempt_at',
-  'notification_error_code'
+  'notification_error_code',
+  // Optional answer to "How did you hear about us?".
+  'heard_about',
+  // Pending, Sending, Sent, Failed or Not sent. See ParentConfirmation.gs.
+  'parent_confirmation_status'
 ];
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -65,6 +69,10 @@ const BOOKING_DETAIL_FIELDS = [
   'session_language', 'country', 'email', 'whatsapp', 'preferred_days',
   'preferred_time', 'city_region', 'notes', 'consent'
 ];
+// Optional answers stored with a new booking. They are validated but are not
+// part of the fingerprint, so a retry that only changes one is still the same
+// booking and the first saved answer is kept.
+const OPTIONAL_DETAIL_FIELDS = ['heard_about'];
 
 // Limits apply before trimming. Notes count logical line breaks and also cap
 // raw wire text at twice their limit because form POSTs serialize LF as CRLF.
@@ -83,6 +91,7 @@ const FIELD_LIMITS = {
   preferred_time: 16,
   preferred_days: 64,
   consent: 3,
+  heard_about: 24,
   submission_id: 36,
   response_token: 36,
   success_redirect: 256
@@ -119,6 +128,7 @@ const ALLOWED_VALUES = {
     'Italy',
     'Canada',
     'United States',
+    'Australia',
     'Other'
   ],
   child_age: [
@@ -133,7 +143,15 @@ const ALLOWED_VALUES = {
   ],
   session_language: ['english', 'arabic', 'turkish', 'persian'],
   preferred_days: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
-  preferred_time: ['morning', 'afternoon', 'evening']
+  preferred_time: ['morning', 'afternoon', 'evening'],
+  heard_about: [
+    'ai-assistant',
+    'search-engine',
+    'friend-or-family',
+    'mosque-or-community',
+    'social-media',
+    'other'
+  ]
 };
 
 // ---------------------------------------------------------------------------
@@ -206,6 +224,13 @@ function doPost(e) {
     } catch (notificationError) {
       console.error('Saved booking notification needs review; check the Bookings sheet and Apps Script executions.');
     }
+    // Best effort and at most once per booking. The parent already has the
+    // success page, so a failure here must never change the acknowledgment.
+    try {
+      attemptParentConfirmation_(sheet, headers, rowNumber);
+    } catch (confirmationError) {
+      console.error('Parent confirmation email needs review; check the Bookings sheet and Apps Script executions.');
+    }
 
     return htmlRedirect_(params);
   } catch (err) {
@@ -226,7 +251,7 @@ function doPost(e) {
 function requestParams_(e) {
   const source = (e && e.parameter) || {};
   const params = {};
-  BOOKING_DETAIL_FIELDS.concat(['submission_id', 'response_token', 'success_redirect', 'website_field']).forEach(function (name) {
+  BOOKING_DETAIL_FIELDS.concat(OPTIONAL_DETAIL_FIELDS, ['submission_id', 'response_token', 'success_redirect', 'website_field']).forEach(function (name) {
     if (Object.prototype.hasOwnProperty.call(source, name)) params[name] = source[name];
   });
 
@@ -291,7 +316,9 @@ function appendRow_(sheet, params, fingerprint) {
     if (h === 'notification_status') return 'Pending';
     if (h === 'notification_attempts') return 0;
     if (h === 'submission_fingerprint') return fingerprint;
-    if (h === 'submission_id' || BOOKING_DETAIL_FIELDS.indexOf(h) !== -1) {
+    if (h === 'parent_confirmation_status') return PARENT_CONFIRMATION.enabled ? 'Pending' : '';
+    if (h === 'submission_id' || BOOKING_DETAIL_FIELDS.indexOf(h) !== -1 ||
+        OPTIONAL_DETAIL_FIELDS.indexOf(h) !== -1) {
       return literalSheetValue_(params[h] != null ? params[h] : '');
     }
     return '';
@@ -366,6 +393,7 @@ function validateBooking_(params) {
   validateAllowedSingle_(params, 'quran_level', 'current Qur\'an level', errors);
   validateAllowedSingle_(params, 'session_language', 'preferred session language', errors);
   validateAllowedSingle_(params, 'preferred_time', 'preferred time of day', errors);
+  validateAllowedSingle_(params, 'heard_about', 'answer to how you heard about us', errors);
   validateAllowedList_(params, 'preferred_days', 'preferred days', errors);
 
   return {
@@ -460,6 +488,10 @@ function sendNotification_(p) {
     'WhatsApp:  ' + (p.whatsapp ? String(p.whatsapp).replace(/^'(?=\+)/, '') : '—'),
     'Country:   ' + (p.country || '—'),
     'City / Region: ' + (p.city_region || '—'),
+    'Heard about us: ' + (p.heard_about || '—'),
+    '',
+    '— Reply on WhatsApp —',
+    whatsappReplyLink_(p) || '(no valid WhatsApp number saved)',
     '',
     '— Child —',
     'Name:      ' + (p.child_name || '—'),
