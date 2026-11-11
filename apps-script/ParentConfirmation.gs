@@ -200,11 +200,32 @@ function parentConfirmationMessage_(email, sessionLanguage) {
   };
 }
 
+// Country codes whose national numbers are written with a leading 0 at home
+// and never with one internationally: Germany, France, Netherlands, Belgium,
+// Sweden, Switzerland, Austria, United Kingdom, Ireland, Australia, Türkiye.
+// Parents often keep that 0 after the country code (+32 0488 ...), which
+// WhatsApp cannot open. Italy (39) is deliberately absent: its 0 is real.
+const WHATSAPP_TRUNK_ZERO_CODES = ['353', '49', '33', '31', '32', '46', '41', '43', '44', '61', '90'];
+
+// The number WhatsApp can open. The saved value is left exactly as submitted;
+// only the link drops a stray 0 after one of the country codes above.
+function whatsappLinkDigits_(value) {
+  let digits = String(value == null ? '' : value).replace(/[^0-9]/g, '');
+  for (let index = 0; index < WHATSAPP_TRUNK_ZERO_CODES.length; index++) {
+    const code = WHATSAPP_TRUNK_ZERO_CODES[index];
+    if (digits.indexOf(code + '0') === 0) {
+      digits = code + digits.slice(code.length + 1);
+      break;
+    }
+  }
+  return /^[1-9][0-9]{6,14}$/.test(digits) ? digits : '';
+}
+
 // A wa.me link that opens the family's chat with a first message drafted in
 // their lesson language. Used only inside the founder's notification email.
 function whatsappReplyLink_(saved) {
-  const digits = String(saved && saved.whatsapp == null ? '' : saved.whatsapp).replace(/[^0-9]/g, '');
-  if (!/^[1-9][0-9]{6,14}$/.test(digits)) return '';
+  const digits = whatsappLinkDigits_(saved && saved.whatsapp);
+  if (!digits) return '';
   const key = String(saved.session_language == null ? '' : saved.session_language).trim().toLowerCase();
   const template = Object.prototype.hasOwnProperty.call(WHATSAPP_REPLY_COPY, key) ?
     WHATSAPP_REPLY_COPY[key] : WHATSAPP_REPLY_COPY.english;

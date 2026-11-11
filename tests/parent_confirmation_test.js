@@ -284,3 +284,33 @@ test('the reply link is omitted for an unusable number and collapses whitespace 
   assert.match(decodeURIComponent(drafted.split('?text=')[1]), /^Hello Zahra Example, this is Tarteel House\. .* for Hania\./);
   assert.doesNotMatch(drafted, /[\s"<>]/);
 });
+
+test('the reply link drops a stray 0 after known country codes and leaves the saved number untouched', () => {
+  const { context } = liveFixture();
+  const digits = value => vm.runInNewContext(`whatsappLinkDigits_(${JSON.stringify(value)})`, context);
+  const fixed = {
+    '+32 0488 00 00 00': '32488000000',
+    '+33 06 00 00 00 00': '33600000000',
+    '+49 0157 0000 0000': '4915700000000',
+    '0044 07700 900000': '447700900000',
+    '+353 083 000 0000': '353830000000',
+    '+61 0400 000 000': '61400000000',
+    '+90 0500 000 00 00': '905000000000',
+  };
+  for (const [typed, expected] of Object.entries(fixed)) assert.equal(digits(typed), expected, typed);
+  // Already correct, no trunk prefix, or a country whose leading 0 is real.
+  for (const [typed, expected] of Object.entries({
+    '+32 488 00 00 00': '32488000000',
+    '+34 600 000 000': '34600000000',
+    '+1 510 000 0000': '15100000000',
+    '+39 06 0000 0000': '390600000000',
+    '+225 07 00 00 00 00': '2250700000000',
+  })) assert.equal(digits(typed), expected, typed);
+  assert.equal(digits('+32 0'), '');
+
+  const view = liveFixture();
+  view.context.doPost({ parameter: validParameters({ whatsapp: '+32 0488 00 00 00', country: 'Belgium' }) });
+  assert.equal(cell(view, 'whatsapp'), "'+320488000000", 'the stored number stays as submitted');
+  assert.match(founderMail(view)[0].body, /^https:\/\/wa\.me\/32488000000\?text=/m);
+  assert.match(founderMail(view)[0].body, /WhatsApp:  \+320488000000/);
+});
