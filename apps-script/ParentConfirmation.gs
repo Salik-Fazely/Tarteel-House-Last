@@ -210,7 +210,8 @@ const WHATSAPP_TRUNK_ZERO_CODES = ['353', '49', '33', '31', '32', '46', '41', '4
 // The number WhatsApp can open. The saved value is left exactly as submitted;
 // only the link drops a stray 0 after one of the country codes above.
 function whatsappLinkDigits_(value) {
-  let digits = String(value == null ? '' : value).replace(/[^0-9]/g, '');
+  // Older rows may hold the 00 international prefix instead of a plus sign.
+  let digits = String(value == null ? '' : value).replace(/[^0-9]/g, '').replace(/^00/, '');
   for (let index = 0; index < WHATSAPP_TRUNK_ZERO_CODES.length; index++) {
     const code = WHATSAPP_TRUNK_ZERO_CODES[index];
     if (digits.indexOf(code + '0') === 0) {
