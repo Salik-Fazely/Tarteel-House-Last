@@ -107,7 +107,7 @@ class LanguageSwitchTests(unittest.TestCase):
             self.assertTrue((ROOT / path.strip("/") / "index.html").is_file(), path)
 
     def test_every_page_has_one_button_and_one_mobile_row(self):
-        self.assertEqual(23, len(self.pages))
+        self.assertEqual(25, len(self.pages))
         for relative, (_, page) in self.pages.items():
             with self.subTest(page=relative):
                 self.assertEqual({"button": 1, "row": 1}, page.counts)

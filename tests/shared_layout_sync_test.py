@@ -34,6 +34,8 @@ EXPECTED_COMPLETE_PAGES = (
     "how-it-works/index.html",
     "pricing/index.html",
     "privacy-policy/index.html",
+    "quran-classes-in-farsi-and-dari/index.html",
+    "quran-classes-in-turkish/index.html",
     "success/index.html",
     "teachers/index.html",
     "terms/index.html",
