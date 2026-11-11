@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE_VERSION = "20261110-1"
+RELEASE_VERSION = "20261110-2"
 VERSIONED_ASSETS = {
     "/assets/css/styles.css",
     "/assets/js/consent.js",
@@ -32,7 +32,7 @@ class AssetVersioningTests(unittest.TestCase):
     def test_every_public_page_uses_the_current_version_for_each_shared_asset(self):
         pages = [path for path in ROOT.rglob("*.html")
                  if "<!-- SHARED FOOTER:START -->" in path.read_text(encoding="utf-8")]
-        self.assertEqual(23, len(pages))
+        self.assertEqual(25, len(pages))
         for page in pages:
             with self.subTest(page=str(page.relative_to(ROOT))):
                 parser = AssetParser()

@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20261110-1"></script>'
+CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20261110-2"></script>'
 GA_PATTERNS = (
     "googletagmanager.com",
     "google-analytics.com",
@@ -42,7 +42,7 @@ class LinkParser(HTMLParser):
 class ConsentStaticTests(unittest.TestCase):
     def test_all_public_pages_use_the_shared_consent_module(self):
         pages = public_pages()
-        self.assertEqual(23, len(pages))
+        self.assertEqual(25, len(pages))
 
         for page in pages:
             source = page.read_text(encoding="utf-8")

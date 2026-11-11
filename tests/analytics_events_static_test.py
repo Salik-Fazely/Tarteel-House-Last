@@ -3,8 +3,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20261110-1"></script>'
-EVENT_SCRIPT = '<script src="/assets/js/analytics-events.js?v=20261110-1"></script>'
+CONSENT_SCRIPT = '<script src="/assets/js/consent.js?v=20261110-2"></script>'
+EVENT_SCRIPT = '<script src="/assets/js/analytics-events.js?v=20261110-2"></script>'
 MAIN_SCRIPT = '<script src="/assets/js/main.js?v=20261014-1"></script>'
 APPROVED_EVENTS = (
     "trial_cta_click",
@@ -25,7 +25,7 @@ def public_pages():
 class AnalyticsEventsStaticTests(unittest.TestCase):
     def test_all_public_pages_load_the_shared_module_once_after_consent(self):
         pages = public_pages()
-        self.assertEqual(23, len(pages))
+        self.assertEqual(25, len(pages))
 
         for page in pages:
             source = page.read_text(encoding="utf-8")

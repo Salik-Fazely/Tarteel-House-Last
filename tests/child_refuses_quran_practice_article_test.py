@@ -19,7 +19,7 @@ BLOG_INDEX = ROOT / "blog/index.html"
 STYLES = ROOT / "assets/css/styles.css"
 SITEMAP = ROOT / "sitemap.xml"
 CANONICAL = "https://www.tarteelhouse.com/blog/child-refuses-quran-practice/"
-TITLE = "Child Refuses Quran Practice? How to Restart Without Pressure | Tarteel House"
+TITLE = "Child Refuses Quran Practice? How to Restart Gently | Tarteel House"
 HEADLINE = "My Child Refuses Quran Practice: How to Restart Gently"
 DESCRIPTION = (
     "Learn what may be behind your child’s resistance to Quran practice and use a gentle "
@@ -191,7 +191,7 @@ class ChildRefusesQuranPracticeArticleTests(unittest.TestCase):
 
     def test_reviewer_links_and_free_trial_cta_match_the_brief(self):
         paragraphs = [text for _, text in self.parser.paragraphs]
-        self.assertEqual(1, paragraphs.count("Reviewed by Forouhar Rahmani, Quran Teacher"))
+        self.assertEqual(1, paragraphs.count("Reviewed by Foruhar Rahmani, Quran Teacher"))
         self.assertEqual(1, paragraphs.count("Reviewed: September 2026"))
         self.assertNotIn("Written by", self.source)
         links_by_text = {text: attrs.get("href") for text, attrs in self.parser.anchors}
@@ -251,7 +251,8 @@ class ChildRefusesQuranPracticeArticleTests(unittest.TestCase):
         posting = postings[0]
         self.assertEqual(HEADLINE, posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
-        self.assertNotIn("datePublished", posting)
+        # First commit of this guide in the repository history.
+        self.assertEqual("2026-09-01", posting["datePublished"])
         self.assertEqual("2026-09-01", posting["dateModified"])
         self.assertNotIn("author", posting)
         self.assertNotIn("reviewedBy", posting)

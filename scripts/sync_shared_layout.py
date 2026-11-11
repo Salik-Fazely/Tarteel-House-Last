@@ -137,6 +137,8 @@ PAGE_CONFIGS = (
     PageConfig("how-it-works/index.html", "how_it_works"),
     PageConfig("pricing/index.html", "pricing"),
     PageConfig("privacy-policy/index.html", None),
+    PageConfig("quran-classes-in-farsi-and-dari/index.html", None),
+    PageConfig("quran-classes-in-turkish/index.html", None),
     PageConfig(
         "success/index.html",
         None,

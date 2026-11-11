@@ -30,6 +30,8 @@ PAGES = {
     "/fa/": "fa/index.html",
     "/how-it-works/": "how-it-works/index.html",
     "/pricing/": "pricing/index.html",
+    "/quran-classes-in-farsi-and-dari/": "quran-classes-in-farsi-and-dari/index.html",
+    "/quran-classes-in-turkish/": "quran-classes-in-turkish/index.html",
     "/privacy-policy/": "privacy-policy/index.html",
     "/success/": "success/index.html",
     "/teachers/": "teachers/index.html",
@@ -48,7 +50,15 @@ ARTICLES = {
     "/blog/ramadan-quran-plan-for-kids/": "/assets/blog/ramadan-quran-plan-for-kids.png",
     "/blog/what-age-should-a-child-start-learning-quran/": "/assets/blog/what-age-to-start-learning-quran.png",
 }
+# Evidence for each date: the day the guide's file first entered this
+# repository's history (`git log --diff-filter=A --follow`).
 ARTICLE_PUBLISHED_DATES = {
+    "/blog/child-refuses-quran-practice/": "2026-09-01",
+    "/blog/how-children-learn-to-read-quran/": "2026-09-01",
+    "/blog/help-children-memorize-short-surahs/": "2026-07-09",
+    "/blog/how-parents-can-track-their-childs-quran-progress/": "2026-07-09",
+    "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "2026-07-09",
+    "/blog/online-quran-classes-for-kids-parents-look-for/": "2026-07-09",
     "/blog/free-online-quran-trial-lesson-parent-checklist/": "2026-07-14",
     "/blog/juz-amma-memorization-order-for-kids/": "2026-10-20",
     "/blog/ramadan-quran-plan-for-kids/": "2026-10-20",
@@ -196,6 +206,8 @@ class TechnicalSeoTests(unittest.TestCase):
             "/teachers/": default_image,
             "/fa/": default_image,
             "/tr/": default_image,
+            "/quran-classes-in-farsi-and-dari/": default_image,
+            "/quran-classes-in-turkish/": default_image,
             **ARTICLES,
         }
         for path, relative in PAGES.items():
@@ -240,10 +252,8 @@ class TechnicalSeoTests(unittest.TestCase):
             self.assertEqual(BASE_URL + image_path, posting["image"]["url"], path)
             self.assertEqual(BASE_URL + path, posting["mainEntityOfPage"]["@id"], path)
             self.assertEqual("Tarteel House", posting["publisher"]["name"], path)
-            if path in ARTICLE_PUBLISHED_DATES:
-                self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
-            else:
-                self.assertNotIn("datePublished", posting, path)
+            self.assertIn(path, ARTICLE_PUBLISHED_DATES, path)
+            self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
             self.assertEqual(
                 ARTICLE_MODIFIED_DATES.get(path, "2026-07-14"),
                 posting["dateModified"],
