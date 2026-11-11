@@ -204,6 +204,7 @@
                 <option value="Italy">Italy</option>
                 <option value="Canada">Canada</option>
                 <option value="United States">United States</option>
+                <option value="Australia">Australia</option>
                 <option value="Other">Other</option>
               </select>
             </div>
@@ -281,6 +282,27 @@
                 placeholder="e.g. my child is shy at first, has tried Qur’an classes before, or prefers a particular teacher"
               ></textarea>
             </div>
+
+            <fieldset class="form-field choice-fieldset">
+              <legend class="form-label">
+                How did you hear about us?
+                <span class="form-label-note">(optional)</span>
+              </legend>
+              <div class="chip-group">
+                <input type="radio" class="chip-control" id="heard-about-ai" name="heard_about" value="ai-assistant" />
+                <label class="chip" for="heard-about-ai">ChatGPT or another AI assistant</label>
+                <input type="radio" class="chip-control" id="heard-about-search" name="heard_about" value="search-engine" />
+                <label class="chip" for="heard-about-search">Google or another search engine</label>
+                <input type="radio" class="chip-control" id="heard-about-friend" name="heard_about" value="friend-or-family" />
+                <label class="chip" for="heard-about-friend">Friend or family</label>
+                <input type="radio" class="chip-control" id="heard-about-community" name="heard_about" value="mosque-or-community" />
+                <label class="chip" for="heard-about-community">Mosque or community</label>
+                <input type="radio" class="chip-control" id="heard-about-social" name="heard_about" value="social-media" />
+                <label class="chip" for="heard-about-social">Social media</label>
+                <input type="radio" class="chip-control" id="heard-about-other" name="heard_about" value="other" />
+                <label class="chip" for="heard-about-other">Other</label>
+              </div>
+            </fieldset>
           </div>
 
           <div class="form-consent">

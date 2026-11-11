@@ -24,11 +24,13 @@
 - Free trial before any payment.
 - WhatsApp number is required in the booking form.
 - Country is a required dropdown shortlist:
-  Germany, France, Netherlands, Belgium, Sweden, Norway, Denmark, Switzerland, Austria, United Kingdom, Ireland, Spain, Italy, Canada, United States, Other.
+  Germany, France, Netherlands, Belgium, Sweden, Norway, Denmark, Switzerland, Austria, United Kingdom, Ireland, Spain, Italy, Canada, United States, Australia, Other.
+  Australia was added because a family there had only Austria and Other to choose from. Add a country only after the backend accepts it.
 - City / Region is a required free-text field.
 - City / Region replaced the older technical timezone field.
 - Preferred days, preferred time, current Qur'an level, and session language are required chip fields.
 - No separate teacher-preference field exists; parents can mention a preferred teacher in notes.
+- The form ends with one optional question, “How did you hear about us?”. It is the only record of where a family came from that does not depend on measurement consent or on storing anything in the browser, and it also covers word of mouth. It is never required, and the privacy policy lists it.
 - Families are normally contacted within two days to arrange the next steps; this is not a guaranteed service-level deadline.
 - Success redirect should land on the site's `/success`; verify this near final publish/staging.
 - A newly saved booking sends the parent one confirmation email, in English, Persian or Turkish according to the lesson language (Arabic requests receive English). Its wording is fixed in `apps-script/ParentConfirmation.gs`, repeats only [commercial facts](commercial-facts.md), and contains nothing the visitor typed. It is best effort and never retried; `parent_confirmation_status` records the outcome.
