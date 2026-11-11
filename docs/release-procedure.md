@@ -103,8 +103,9 @@ verify the existing backend is compatible before publishing the frontend.
    `retryFailedNotifications` trigger before editing the live project. Record
    its previous state. Do not run the worker or `initializeSheet` as a read-only
    check; they can send mail or change the Sheet.
-2. Copy all three current `.gs` files into the same bound project:
-   `Code.gs`, `AbuseProtection.gs`, `NotificationRecovery.gs`. Verify the
+2. Copy all four current `.gs` files into the same bound project:
+   `Code.gs`, `AbuseProtection.gs`, `NotificationRecovery.gs`,
+   `ParentConfirmation.gs`. Verify the
    intended spreadsheet, sheet name, notification destination and exact allowed
    HTTPS redirect hosts against the private release record.
 3. Authorize the intended owner account. Check **Deploy → Manage deployments**

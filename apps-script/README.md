@@ -10,14 +10,16 @@ This file documents the repository implementation, not current production health
 - `Code.gs` — booking validation, persistence and response handling.
 - `AbuseProtection.gs` — bounded new-request budgets and body-size guard.
 - `NotificationRecovery.gs` — notification queue, worker and owner helpers.
+- `ParentConfirmation.gs` — the parent's confirmation email and the founder's
+  WhatsApp reply link.
 
-All three files are required in the same Apps Script project. This directory is
+All four files are required in the same Apps Script project. This directory is
 the source of truth; copying only `Code.gs` will leave required helpers missing.
 
 ## Setup reference (live deployment status must be confirmed)
 1. Open the booking Google Sheet.
 2. Extensions → Apps Script.
-3. Copy all three `.gs` files into matching files in the editor.
+3. Copy all four `.gs` files into matching files in the editor.
 4. Save. Deploy → New deployment → **Web app**:
    - Execute as: **Me**
    - Who has access: **Anyone**
@@ -26,7 +28,9 @@ the source of truth; copying only `Code.gs` will leave required helpers missing.
 
 ## Updating the script
 1. Edit the appropriate `apps-script/*.gs` files in this repo.
-2. Copy all three current files into the bound Apps Script editor.
+2. Copy all four current files into the bound Apps Script editor. A file that
+   does not exist there yet is added with **+ → Script** and named exactly as
+   in this directory, without the `.gs` ending.
 3. Save. Deploy → **Manage deployments** → pencil icon on the existing
    deployment → Version: **New version** → Deploy.
    The form URL does not change.
@@ -193,7 +197,7 @@ notification status/email, top-level success navigation, consent respected,
 and no duplicate on retry or refresh. Local mock tests do not verify Google's
 deployment, Sheets permissions, MailApp quota, inbox delivery, or live SDKs.
 
-Deploy all three source files. The recovery worker runs only after the owner
+Deploy all four source files. The recovery worker runs only after the owner
 explicitly installs its trigger; repository changes do not activate it. See
 the activation and queue-review procedure below.
 
@@ -205,6 +209,44 @@ files or the recovery trigger; handle those explicitly before restarting mail.
 Google's documented [HtmlService sandbox restrictions](https://developers.google.com/apps-script/guides/html/restrictions)
 explain why an automatic iframe redirect cannot serve as a reliable return to
 the first-party website.
+
+## Parent confirmation email
+
+After a new booking is saved and the founder notification has been attempted,
+the script sends the parent one confirmation email. It exists so that a family
+is not left without any written acknowledgment while they wait to be contacted.
+
+- **Language.** `session_language` selects English, Persian or Turkish.
+  Arabic requests receive the English email.
+- **Fixed wording.** Every word is defined in `ParentConfirmation.gs` and
+  follows `docs/commercial-facts.md`: a free 40-minute trial, contact normally
+  within two days, no payment. No name, note or other submitted value is placed
+  in the email, so the public form cannot deliver someone else's text to an
+  arbitrary address. Change the copy there, in all three languages together.
+- **At most once.** A new row starts as `Pending`. The script writes `Sending`
+  and flushes before calling MailApp, then records `Sent` or `Failed`. Only a
+  `Pending` row is ever emailed, so retries of the same request, older rows and
+  an interrupted `Sending` are not emailed again. There is no retry queue.
+- **Quota.** If fewer than `PARENT_CONFIRMATION.minRemainingQuota` (20) sends
+  remain for the day, the confirmation is recorded as `Not sent` and the quota
+  is left for founder notifications. New-request budgets (below) bound how many
+  confirmations a burst of submissions can cause.
+- **Never blocks a booking.** Any failure here is caught after the row is
+  saved; the parent still receives the normal success response.
+- **Switch.** Set `PARENT_CONFIRMATION.enabled` to `false` and redeploy to stop
+  sending. New rows then leave `parent_confirmation_status` empty.
+
+The founder notification also gains a `Reply on WhatsApp` link. It opens the
+family's chat with a first message drafted in the lesson language, using the
+saved parent and child names. It is a draft: nothing is sent until the founder
+presses send in WhatsApp. Parents sometimes keep their national 0 after the
+country code (`+32 0488 ...`), which WhatsApp cannot open; for a short list of
+country codes where that 0 is never valid (`WHATSAPP_TRUNK_ZERO_CODES`), the
+link drops it. The number saved in the Sheet is left exactly as submitted.
+
+Local tests cannot prove inbox delivery, spam placement or how a mail client
+renders the HTML. After deploying, submit one authorized test booking with an
+address you control and read the email on a phone.
 
 ## Abuse protection
 
@@ -289,7 +331,7 @@ provider error strings or additional parent/child data.
 
 ### Activate after an approved release
 
-1. In the bound Apps Script project, copy all three files and authorize the
+1. In the bound Apps Script project, copy all four files and authorize the
    intended owner account for Sheets, MailApp and trigger management.
 2. Run `initializeSheet` if operational columns must be added before the next
    request. It appends missing headers without rewriting existing records.
@@ -347,6 +389,9 @@ The frontend and backend both require:
 
 Optional fields:
 - `notes` (also where parents can mention a preferred teacher)
+- `heard_about` (one of `ai-assistant`, `search-engine`, `friend-or-family`,
+  `mosque-or-community`, `social-media`, `other`; stored with a new booking,
+  not part of the fingerprint)
 - `submission_id` (browser-generated UUID for retries; empty in the native fallback)
 - `response_token` (new browser-generated UUID per attempt; never stored in Sheets)
 
@@ -381,6 +426,8 @@ Columns, left to right:
 | 24| `notification_last_attempt_at` | Script | Last claimed send time |
 | 25| `notification_next_attempt_at` | Script | Earliest automatic retry time |
 | 26| `notification_error_code` | Script | Fixed operational code; no provider details |
+| 27| `heard_about`       | Form       | Optional answer to "How did you hear about us?" |
+| 28| `parent_confirmation_status` | Script | `Pending`, `Sending`, `Sent`, `Failed`, `Not sent`; empty on older rows |
 
 If the existing sheet is missing any of the required columns, the
 script adds them automatically on the next submission. To add them now

@@ -116,6 +116,7 @@ test('rate-limit mode rejects a new request while an identical saved retry remai
   assert.equal(stats.requests, 3);
   assert.equal(stats.rows, 1);
   assert.equal(stats.mails, 1);
+  assert.equal(stats.confirmations, 1, 'one parent confirmation for the one saved booking');
   assert.deepEqual(stats.notifications, ['Sent']);
 });
 

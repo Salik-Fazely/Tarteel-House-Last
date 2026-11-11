@@ -34,7 +34,8 @@ test('the live legacy header order is preserved while missing columns append and
     submission_id: 'd5f44c60-bc21-48f6-8d66-6e0b1e0dc693' });
   const expectedHeaders = [...legacyHeaders, 'city_region', 'status', 'assigned_teacher',
     'follow_up_date', 'internal_notes', 'submission_id', 'notification_status', 'submission_fingerprint',
-    'notification_attempts', 'notification_last_attempt_at', 'notification_next_attempt_at', 'notification_error_code'];
+    'notification_attempts', 'notification_last_attempt_at', 'notification_next_attempt_at', 'notification_error_code',
+    'heard_about', 'parent_confirmation_status'];
 
   for (const initialRows of [[], [oldRow]]) {
     const view = appFixture({ initialHeaders: legacyHeaders, initialRows });

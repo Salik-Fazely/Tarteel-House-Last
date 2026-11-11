@@ -98,7 +98,7 @@ Production hosting is **Cloudflare Pages**, publishing the static site from the 
 
 Apps Script is deployed separately. A backend protocol change must be deployed and checked before its dependent frontend release. Pushes to production `main` can publish the website. Contributors should submit pull requests and leave deployment to the maintainer.
 
-The booking backend now requires all three files under `apps-script`. Failed
+The booking backend now requires all four files under `apps-script`. Failed
 notifications use bounded retries, quota deferral and manual-review states.
 Scheduled recovery needs explicit owner activation after release; see the
 [Apps Script operating procedure](apps-script/README.md#notification-recovery-and-ownership).
