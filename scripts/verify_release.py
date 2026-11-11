@@ -1,8 +1,10 @@
 """Compare selected public release fields with local source using GET only.
 
 This checks HTTP delivery, titles, canonical links, shared asset references and
-bytes, the booking form action, and the branded missing route. It does not prove
-complete content, rendering, JavaScript behavior, or booking delivery.
+bytes, the booking form action, the branded missing route and, when the source
+has a `_redirects` file, that every old address answers with its declared
+permanent redirect and keeps a test query string. It does not prove complete
+content, rendering, JavaScript behavior, or booking delivery.
 """
 
 import argparse
@@ -38,6 +40,9 @@ MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 MAX_REDIRECTS = 10
 REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 HTML_TYPES = {"text/html", "application/xhtml+xml"}
+# Harmless marker query sent to old addresses to prove redirects keep query strings.
+# No JavaScript runs, so it never reaches Analytics.
+REDIRECT_PROBE_QUERY = "utm_source=release-check&utm_medium=redirect&utm_campaign=keep-query"
 JAVASCRIPT_TYPES = {"text/javascript", "application/javascript", "application/x-javascript",
                     "text/ecmascript", "application/ecmascript"}
 
@@ -47,6 +52,7 @@ class VerificationResult:
     checked_pages: int = 0
     checked_assets: int = 0
     checked_not_found: bool = False
+    checked_redirects: int = 0
     errors: list[str] = field(default_factory=list)
 
 
@@ -160,6 +166,28 @@ def _parse_page(body, charset="utf-8"):
     return parser
 
 
+def _redirect_rules(root):
+    """Read the static `_redirects` rules; return [] when the file is absent."""
+    path = Path(root) / "_redirects"
+    if not path.is_file():
+        return []
+    rules = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        if len(parts) != 3 or not parts[2].isdigit() or int(parts[2]) not in REDIRECT_STATUSES:
+            raise CheckFailure("_redirects contains a rule without source, destination and redirect status")
+        source, destination, status = parts[0], parts[1], int(parts[2])
+        if not re.fullmatch(r"/[A-Za-z0-9_.-]+", source):
+            raise CheckFailure("_redirects source must be one static path segment")
+        if not re.fullmatch(r"/(?:[A-Za-z0-9_-]+/)*", destination):
+            raise CheckFailure("_redirects destination must be a root-relative folder with no query string")
+        rules.append((source, destination, status))
+    return rules
+
+
 def _source_inventory(root):
     """Read only sitemap routes and two explicit pages; never walk the repo."""
     sitemap = _local_file(root, "sitemap.xml")
@@ -219,7 +247,7 @@ class _NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def _fetch_in_process(opener, url, origin, timeout):
+def _fetch_in_process(opener, url, origin, timeout, follow=True):
     deadline = time.monotonic() + timeout
     try:
         for hops in range(MAX_REDIRECTS + 1):
@@ -235,6 +263,8 @@ def _fetch_in_process(opener, url, origin, timeout):
                 response = error
             with response:
                 status = response.getcode()
+                if status in REDIRECT_STATUSES and not follow:
+                    return status, response.headers, b""
                 if status in REDIRECT_STATUSES:
                     if hops == MAX_REDIRECTS:
                         raise CheckFailure("redirect limit exceeded (10 hops)")
@@ -274,7 +304,7 @@ def _fetch_in_process(opener, url, origin, timeout):
         raise CheckFailure("network request failed") from None
 
 
-def _fetch(opener, url, origin, timeout):
+def _fetch(opener, url, origin, timeout, follow=True):
     """Bound DNS, headers, redirects and body reads with a killable worker.
 
     A socket's inactivity timeout cannot bound trickled headers. The worker is
@@ -287,7 +317,8 @@ def _fetch(opener, url, origin, timeout):
         raise CheckFailure("cross-origin redirect refused")
     try:
         run = subprocess.run(
-            [sys.executable, str(Path(__file__).resolve()), "--_fetch-worker", url, str(timeout)],
+            [sys.executable, str(Path(__file__).resolve()), "--_fetch-worker", url, str(timeout)]
+            + ([] if follow else ["first-hop"]),
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, check=False,
         )
     except subprocess.TimeoutExpired:
@@ -305,6 +336,8 @@ def _fetch(opener, url, origin, timeout):
             raise CheckFailure("response exceeds 2 MiB limit")
         headers = Message()
         headers["Content-Type"] = payload["content_type"]
+        if payload.get("location"):
+            headers["Location"] = payload["location"]
         return payload["status"], headers, body
     except CheckFailure:
         raise
@@ -315,16 +348,19 @@ def _fetch(opener, url, origin, timeout):
 def _fetch_worker(argv):
     """Private pipe protocol; served content never reaches the normal CLI log."""
     try:
-        if len(argv) != 2:
+        if len(argv) not in (2, 3) or (len(argv) == 3 and argv[2] != "first-hop"):
             raise CheckFailure("network request failed")
-        url, raw_timeout = argv
+        url, raw_timeout = argv[:2]
+        follow = len(argv) == 2
         parsed = urlsplit(url)
         validate_base_url(urlunsplit((parsed.scheme, parsed.netloc, "", "", "")))
         timeout = _timeout(raw_timeout)
         opener = build_opener(ProxyHandler({}), _NoRedirect())
-        status, headers, body = _fetch_in_process(opener, url, _origin(url), timeout)
+        status, headers, body = _fetch_in_process(opener, url, _origin(url), timeout, follow=follow)
         payload = {"status": status, "content_type": headers.get("Content-Type", "text/plain"),
                    "body": base64.b64encode(body).decode("ascii")}
+        if not follow and status in REDIRECT_STATUSES:
+            payload["location"] = headers.get("Location", "")
     except CheckFailure as error:
         payload = {"error": str(error)}
     except Exception:
@@ -369,6 +405,7 @@ def verify_release(base_url, root=ROOT, timeout=10):
         return result
     try:
         pages, assets = _source_inventory(Path(root).resolve())
+        redirects = _redirect_rules(Path(root).resolve())
     except (OSError, ValueError, ET.ParseError) as error:
         detail = str(error) if isinstance(error, CheckFailure) else "local sources could not be read or parsed"
         result.errors.append(f"source inventory: {detail}")
@@ -400,6 +437,24 @@ def verify_release(base_url, root=ROOT, timeout=10):
                 result.errors.append(f"{label}: SHA-256 bytes differ from local source")
         except CheckFailure as error:
             result.errors.append(f"{label}: {error}")
+    for source, destination, expected_status in redirects:
+        result.checked_redirects += 1
+        label = f"redirect {source}"
+        try:
+            status, headers, _ = _fetch(opener, f"{base_url}{source}?{REDIRECT_PROBE_QUERY}", origin, timeout,
+                                        follow=False)
+            if status != expected_status:
+                result.errors.append(f"{label}: HTTP {status}; expected {expected_status} to {destination}")
+                continue
+            target = urlsplit(urljoin(base_url + source, headers.get("Location", "")))
+            if _origin(urlunsplit((target.scheme, target.netloc, "", "", ""))) != origin:
+                result.errors.append(f"{label}: redirect leaves the site origin")
+            elif target.path != destination:
+                result.errors.append(f"{label}: redirects to {target.path}; expected {destination}")
+            elif target.query != REDIRECT_PROBE_QUERY:
+                result.errors.append(f"{label}: query string is not kept")
+        except CheckFailure as error:
+            result.errors.append(f"{label}: {error}")
     result.checked_not_found = True
     try:
         response = _fetch(opener, base_url + NOT_FOUND_ROUTE, origin, timeout)
@@ -413,7 +468,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Read-only GET release checks against an explicit site origin.",
         epilog=("Checks sitemap pages plus /success/ and /404.html, HTTP status, HTML titles/canonical links, "
-                "four versioned shared references and asset SHA-256 bytes, booking form action, and a branded 404. "
+                "four versioned shared references and asset SHA-256 bytes, booking form action, a branded 404, "
+                "and one hop of each _redirects rule with a marker query string. "
                 "No JavaScript, cookies, form submissions, POST, or external form/SDK requests. "
                 "This is not complete content or rendering proof. Same-origin redirects: at most 10 hops; "
                 "responses: at most 2 MiB. A failed HTTP/network check is not a website outage diagnosis."),
@@ -426,7 +482,8 @@ def main(argv=None):
     result = verify_release(args.base_url, root=args.root, timeout=args.timeout)
     state = "FAIL" if result.errors else "PASS"
     print(f"{state}: {result.checked_pages} public pages, {result.checked_assets} shared assets, "
-          f"{int(result.checked_not_found)} missing route; {len(result.errors)} failed checks")
+          f"{int(result.checked_not_found)} missing route, {result.checked_redirects} redirects; "
+          f"{len(result.errors)} failed checks")
     for error in result.errors:
         print(f"FAIL {error}")
     return 1 if result.errors else 0

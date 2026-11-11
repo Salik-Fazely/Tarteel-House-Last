@@ -11,6 +11,8 @@
 - Local commits are not assumed to be published to the live site.
 - See [README](../README.md) for local verification and release boundaries.
 - PHP/MySQL may be revisited later, but it is not the launch backend.
+- Old addresses (`/pricing`, `/pricing.html`, `/privacy` and the rest of the ten root `.html` names) are permanent 301 redirects in `_redirects`. Cloudflare Pages would otherwise serve the flat `.html` stub for `/pricing`, and the stub's script dropped the query string, so UTM tags, `gclid` and OpenAI's `oppref` were lost and the visit looked direct. A `_redirects` destination never carries its own query string, because that would replace the visitor's. The stubs stay as a fallback for hosts that ignore `_redirects`, keep `location.search` and `location.hash`, and use a meta refresh only inside `<noscript>`.
+- `make verify-release` checks one hop of every `_redirects` rule against a deployed origin. Run it on the Cloudflare preview before merging any change to `_redirects`.
 
 ## Business identity decisions
 - Public contact email: `hello@tarteelhouse.com`.

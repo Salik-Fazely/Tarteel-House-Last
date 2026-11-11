@@ -377,6 +377,64 @@ class ReleaseVerificationTests(unittest.TestCase):
         self.assert_failed_check(result, "redirect limit")
         self.assertEqual(10, sum(path.startswith("/hop/") for _, path in requests))
 
+    PROBE = "?utm_source=release-check&utm_medium=redirect&utm_campaign=keep-query"
+
+    def with_redirect_rules(self):
+        (self.source / "_redirects").write_text(
+            "# comment\n\n/pricing.html /pricing/ 301\n/pricing /pricing/ 301\n", encoding="utf-8")
+        responses = dict(self.responses)
+        for source in ("/pricing.html", "/pricing"):
+            responses[source + self.PROBE] = (301, b"", "text/html", {"Location": "/pricing/" + self.PROBE})
+        return responses
+
+    def test_redirect_rules_are_checked_one_hop_with_the_query_string(self):
+        responses = self.with_redirect_rules()
+        result, requests = self.check(responses)
+        self.assertEqual([], result.errors)
+        self.assertEqual(2, result.checked_redirects)
+        self.assertIn(("GET", "/pricing" + self.PROBE), requests)
+        self.assertNotIn(("GET", "/pricing/" + self.PROBE), requests)
+
+    def test_absolute_same_origin_location_is_accepted(self):
+        responses = self.with_redirect_rules()
+        with serve(responses) as (base_url, _):
+            for source in ("/pricing.html", "/pricing"):
+                responses[source + self.PROBE] = (301, b"", "text/html",
+                                                  {"Location": base_url + "/pricing/" + self.PROBE})
+            result = self.checker().verify_release(base_url, root=self.source)
+        self.assertEqual([], result.errors)
+
+    def test_redirect_failures_are_reported(self):
+        cases = [
+            ((200, b"<title>Redirecting</title>", "text/html"), "HTTP 200; expected 301"),
+            ((308, b"", "text/html", {"Location": "/pricing/" + self.PROBE}), "HTTP 308; expected 301"),
+            ((301, b"", "text/html", {"Location": "/pricing/"}), "query string is not kept"),
+            ((301, b"", "text/html", {"Location": "/teachers/" + self.PROBE}), "redirects to /teachers/; expected /pricing/"),
+            ((301, b"", "text/html", {"Location": "https://elsewhere.invalid/pricing/" + self.PROBE}),
+             "redirect leaves the site origin"),
+        ]
+        for response, label in cases:
+            with self.subTest(label=label):
+                responses = self.with_redirect_rules()
+                responses["/pricing" + self.PROBE] = response
+                result, _ = self.check(responses)
+                self.assert_failed_check(result, "redirect /pricing: " + label)
+
+    def test_invalid_redirect_rules_stop_before_any_request(self):
+        for rule in ["/pricing /pricing/", "/pricing /pricing/?x=1 301", "/a/* /b/:splat 301",
+                     "/pricing /pricing/ 200"]:
+            with self.subTest(rule=rule):
+                (self.source / "_redirects").write_text(rule + "\n", encoding="utf-8")
+                result, requests = self.check()
+                self.assertTrue(any(error.startswith("source inventory: _redirects") for error in result.errors),
+                                result.errors)
+                self.assertEqual([], requests)
+
+    def test_without_a_redirects_file_no_redirect_requests_are_made(self):
+        result, requests = self.check()
+        self.assertEqual(0, result.checked_redirects)
+        self.assertFalse(any("utm_source" in path for _, path in requests))
+
     def test_cli_requires_explicit_base_url_and_explains_actual_scope(self):
         required = subprocess.run([sys.executable, str(SCRIPT)], capture_output=True, text=True)
         self.assertNotEqual(0, required.returncode)
@@ -399,6 +457,7 @@ class ReleaseVerificationTests(unittest.TestCase):
                 self.assertIn("4 public pages", run.stdout)
                 self.assertIn("4 shared assets", run.stdout)
                 self.assertIn("1 missing route", run.stdout)
+                self.assertIn("0 redirects", run.stdout)
                 if not valid:
                     self.assertIn("HTTP 403", run.stdout)
                     self.assertNotIn("private", run.stdout)

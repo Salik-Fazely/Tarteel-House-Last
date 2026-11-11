@@ -147,7 +147,10 @@ separate operational work and restore them explicitly during rollback.
 4. The checker compares sitemap routes plus success/404 pages with local titles,
    canonical links, shared asset URLs/versions, asset bytes and booking form
    target. It also verifies an unknown route returns the branded 404 with a
-   404 status. It does not compare every paragraph, run a booking or certify
+   404 status, and that every `_redirects` rule answers with its declared
+   status, the right destination and an unchanged marker query string
+   (`utm_source=release-check…`; no JavaScript runs, so it never reaches
+   Analytics). It does not compare every paragraph, run a booking or certify
    Google deployment/inbox/Ads behavior. Any mismatch is a failed release check.
    A 403, timeout or access challenge means verification did not complete;
    investigate the provider/access path without interpreting it as an outage.
