@@ -95,6 +95,11 @@
 - Guides name Tarteel House as publisher in the line under the introduction. Seven guides also carry a “Reviewed by” line in the article body, naming the teacher the owner recorded as reviewer (Sadiah Hamid, Fareshta Suroush or Foruhar Rahmani). Keep those lines; do not add new reviewer or author names, or put them in structured data, unless the owner confirms that teacher reviewed that guide.
 - Teacher names are spelled exactly as on the Teachers page.
 
+## Structured data decisions
+- Structured data repeats only what a page shows or what [commercial facts](commercial-facts.md) approve: package prices on Pricing, teacher names and languages on Teachers, breadcrumbs on core pages. `tests/structured_data_test.py` compares each with its source.
+- The organisation record links the Instagram profile through `sameAs`. Add other profiles there only once they exist and are in use.
+- Still excluded: postal address, ratings, reviews, awards and price ranges.
+
 ## Open decisions
 - The existing `assets/images/tarteel-house-social-card.png` is the current shared social preview asset; verify its published delivery after deployment.
 - The owner-run live booking, notification and advertising-delivery test remains unverified. Local verification is not proof of production behaviour.
