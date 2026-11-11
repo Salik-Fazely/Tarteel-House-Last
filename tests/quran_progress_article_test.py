@@ -148,7 +148,8 @@ class QuranProgressArticleTests(unittest.TestCase):
         self.assertEqual(1, len(postings))
         posting = postings[0]
         self.assertEqual(DESCRIPTION, posting["description"])
-        self.assertNotIn("datePublished", posting)
+        # First commit of this guide in the repository history.
+        self.assertEqual("2026-07-09", posting["datePublished"])
         self.assertEqual("2026-07-14", posting["dateModified"])
         reviewer = posting.get("reviewedBy")
         if reviewer is not None:

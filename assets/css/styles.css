@@ -1945,7 +1945,7 @@ a.lang-switch__option:focus-visible {
 /* 3-column grid — stretch (default) so all cards match the tallest */
 .pricing-preview__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.25rem;
   max-width: 960px;
   margin-inline: auto;
@@ -4634,6 +4634,24 @@ body.is-leaving {
   max-width: 580px;
   margin-inline: auto;
   margin-top: var(--space-4);
+}
+
+/* Byline and dates under a guide's introduction */
+.blog-post-hero__meta {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--subtle);
+  max-width: 580px;
+  margin-inline: auto;
+  margin-top: var(--space-5);
+}
+
+.blog-post-hero__meta a {
+  color: var(--forest);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
 .blog-hero__ornament {

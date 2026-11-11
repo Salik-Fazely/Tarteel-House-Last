@@ -312,7 +312,7 @@ class QuranReadingStagesArticleTests(unittest.TestCase):
 
     def test_reviewer_contextual_links_and_free_trial_cta_match_the_brief(self):
         paragraphs = [text for _, text in self.parser.paragraphs]
-        self.assertEqual(1, paragraphs.count("Reviewed by Forouhar Rahmani, Quran Teacher"))
+        self.assertEqual(1, paragraphs.count("Reviewed by Foruhar Rahmani, Quran Teacher"))
         self.assertEqual(1, paragraphs.count("Reviewed: September 2026"))
         self.assertNotIn("Written by", self.source)
         links_by_text = {text: attrs.get("href") for text, attrs in self.parser.anchors}
@@ -388,7 +388,8 @@ class QuranReadingStagesArticleTests(unittest.TestCase):
         posting = postings[0]
         self.assertEqual(HEADLINE, posting["headline"])
         self.assertEqual(DESCRIPTION, posting["description"])
-        self.assertNotIn("datePublished", posting)
+        # First commit of this guide in the repository history.
+        self.assertEqual("2026-09-01", posting["datePublished"])
         self.assertEqual("2026-09-01", posting["dateModified"])
         self.assertNotIn("author", posting)
         self.assertNotIn("reviewedBy", posting)
