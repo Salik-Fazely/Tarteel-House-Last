@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url("../node_modules/@fontsource/playfair-display/400.css");
+@import url("../node_modules/@fontsource/playfair-display/500.css");
+@import url("../node_modules/@fontsource/playfair-display/400-italic.css");
+@import url("../node_modules/@fontsource/playfair-display/500-italic.css");
+@import url("../node_modules/@fontsource/inter/400.css");
+@import url("../node_modules/@fontsource/inter/500.css");
+@import url("../node_modules/@fontsource/inter/600.css");
+:root { --ink:#1a1814; --ivory:#f5f1e8; --ivory-2:#efeadd; --forest:#1f3a2e; --bronze:#7a5a2e; --bronze-2:#9b7a48; --subtle:rgba(60,50,40,0.76); }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1080px; height:1920px; overflow:hidden; }
+body { background:var(--ivory); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; position:relative; }
+#stage { position:absolute; inset:0; }
+.wordmark { position:absolute; top:200px; left:104px; font-family:'Playfair Display',serif; font-style:italic; font-size:44px; }
+.wordmark span { font-family:'Inter',sans-serif; font-style:normal; font-size:22px; font-weight:500; letter-spacing:0.3em; margin-left:14px; }
+.eyebrow { position:absolute; top:318px; left:104px; font-size:28px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--bronze); }
+h1 { position:absolute; top:372px; left:104px; right:104px; font-family:'Playfair Display',serif; font-weight:500; font-size:104px; line-height:1.08; letter-spacing:-0.01em; }
+h1 em { font-style:italic; color:var(--forest); }
+.rule { position:absolute; top:548px; left:104px; width:872px; height:1px; background:rgba(26,24,20,0.16); transform-origin:left center; }
+/* The line the four steps hang from. It grows as each step arrives. */
+.spine { position:absolute; left:139px; top:660px; width:2px; height:800px; background:var(--bronze-2); transform-origin:center top; }
+.step { position:absolute; left:104px; right:90px; height:200px; }
+.node { position:absolute; left:19px; top:14px; width:34px; height:34px; border-radius:50%; background:var(--ivory); border:2px solid var(--bronze-2); }
+.node i { position:absolute; inset:7px; border-radius:50%; background:var(--bronze); }
+.num { position:absolute; left:100px; top:-6px; font-family:'Playfair Display',serif; font-style:italic; font-size:34px; color:var(--bronze-2); }
+.step h2 { position:absolute; left:100px; top:38px; right:0; font-family:'Playfair Display',serif; font-weight:500; font-size:62px; line-height:1.12; letter-spacing:-0.005em; white-space:nowrap; }
+.step p { position:absolute; left:100px; top:122px; right:0; font-size:40px; line-height:1.4; color:var(--subtle); white-space:nowrap; }
+.closing { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:300px 104px 460px; color:var(--ivory); opacity:0; }
+.closing .mark { position:absolute; top:200px; left:104px; font-family:'Playfair Display',serif; font-style:italic; font-size:44px; }
+.closing .mark span { font-family:'Inter',sans-serif; font-style:normal; font-size:22px; font-weight:500; letter-spacing:0.3em; margin-left:14px; }
+.closing h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:112px; line-height:1.1; text-wrap:balance; }
+.closing p { font-size:48px; line-height:1.45; color:rgba(245,241,232,0.8); margin-top:40px; max-width:820px; }
+.closing .link { margin-top:68px; padding-top:46px; border-top:1px solid rgba(245,241,232,0.24); font-size:56px; font-weight:500; letter-spacing:0.03em; display:inline-block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="wordmark" id="wordmark">Tarteel<span>HOUSE</span></div>
+  <div class="eyebrow" id="eyebrow">After the free trial</div>
+  <h1 id="title">How lessons <em>work</em></h1>
+  <div class="rule" id="rule"></div>
+  <div class="spine" id="spine"></div>
+  <div class="step" style="top:640px"><div class="node"><i></i></div><div class="num">one</div><h2>One dedicated teacher</h2><p>Chosen for your child’s age and level.</p></div>
+  <div class="step" style="top:876px"><div class="node"><i></i></div><div class="num">two</div><h2>40 minutes, one-to-one</h2><p>Normally on Zoom or Google Meet.</p></div>
+  <div class="step" style="top:1112px"><div class="node"><i></i></div><div class="num">three</div><h2>You stay informed</h2><p>A progress review every two months.</p></div>
+  <div class="step" style="top:1348px"><div class="node"><i></i></div><div class="num">four</div><h2>Room for real life</h2><p>Reschedule with 24 hours’ notice.</p></div>
+</div>
+<div class="closing" id="closing">
+  <div class="mark">Tarteel<span>HOUSE</span></div>
+  <h2>Begin with a free trial</h2>
+  <p>40 minutes, one-to-one. No payment, no commitment.</p>
+  <div><div class="link">tarteelhouse.com</div></div>
+</div>
+<script>
+// The whole film is one function of time. Segments only say where the encoded files are cut.
+const STEP_AT = [2.4, 5.7, 9.0, 12.3], ALL_AT = 15.6, DARK_AT = 17.0, END = 20.6;
+window.segments = [[0, 2.4], [2.4, 5.7], [5.7, 9.0], [9.0, 12.3], [12.3, 17.0], [17.0, END]];
+const $ = id => document.getElementById(id);
+const steps = [...document.querySelectorAll('.step')];
+const clamp = x => Math.min(Math.max(x, 0), 1);
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const mix = (a, b, k) => Math.round(a + (b - a) * k);
+const rise = (el, p, by = 28) => { el.style.opacity = String(p); el.style.transform = `translateY(${(1 - p) * by}px)`; };
+window.renderAt = T => {
+  rise($('wordmark'), ease((T - 0.1) / 0.6), 0);
+  rise($('eyebrow'), ease((T - 0.25) / 0.6));
+  rise($('title'), ease((T - 0.45) / 0.7));
+  $('rule').style.transform = `scaleX(${ease((T - 0.9) / 0.9)})`;
+  // The spine reaches each node just as its step arrives.
+  let reach = 0;
+  STEP_AT.forEach((at, i) => { reach = Math.max(reach, (i * 236 + 11) / 800 * ease((T - at + 0.25) / 0.7)); });
+  $('spine').style.transform = `scaleY(${T < STEP_AT[0] - 0.25 ? 0 : reach})`;
+  steps.forEach((step, i) => {
+    const t = T - STEP_AT[i];
+    const next = i < 3 ? STEP_AT[i + 1] : Infinity;
+    // A step dims to make room for the next one, and all four brighten together at the end.
+    const dim = 1 - 0.55 * ease((T - next) / 0.5) + 0.55 * ease((T - ALL_AT) / 0.6) * (T > next ? 1 : 0);
+    const node = step.querySelector('.node'), fill = step.querySelector('.node i');
+    node.style.opacity = String(ease(t / 0.3)); node.style.transform = `scale(${0.4 + 0.6 * ease(t / 0.45)})`;
+    fill.style.transform = `scale(${ease((t - 0.15) / 0.4)})`;
+    const parts = [step.querySelector('.num'), step.querySelector('h2'), step.querySelector('p')];
+    parts.forEach((el, n) => { const p = ease((t - 0.12 - n * 0.14) / 0.6); el.style.opacity = String(p * Math.min(dim, 1)); el.style.transform = `translateY(${(1 - p) * 26}px)`; });
+  });
+  const dark = ease((T - DARK_AT) / 0.55);
+  $('stage').style.opacity = String(1 - ease((T - DARK_AT) / 0.35));
+  document.body.style.background = `rgb(${mix(245, 26, dark)},${mix(241, 24, dark)},${mix(232, 20, dark)})`;
+  rise($('closing'), ease((T - DARK_AT - 0.5) / 0.7), 26);
+};
+</script>
+</body>
+</html>
