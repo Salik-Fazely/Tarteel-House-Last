@@ -1,0 +1,21 @@
+{
+  "voice": "af_heart",
+  "speed": 0.82,
+  "note": "Every line is from docs/commercial-facts.md or the homepage. [word](/phonemes/) fixes a pronunciation. 'gap' is the pause before the line: 'same' keeps the picture, 'scene' changes it, 'close' brings in the closing card.",
+  "lines": [
+    { "gap": "head",  "text": "A Qur'an lesson at Tarteel House looks like this.",
+      "say": "A [Qur'an](/kʊɹˈɑn/) lesson at [Tarteel](/tɑɹtˈil/) House looks like this." },
+    { "gap": "same",  "text": "Your child learns at home.",
+      "say": "Your child learns at home." },
+    { "gap": "scene", "text": "Their teacher joins live, on the other side of the screen.",
+      "say": "Their teacher joins live, on the other side of the screen." },
+    { "gap": "scene", "text": "For forty minutes, the lesson is one-to-one.",
+      "say": "For forty minutes, the lesson is one-to-one." },
+    { "gap": "scene", "text": "Each child has one dedicated teacher. We teach girls and boys aged five to sixteen.",
+      "say": "Each child has one dedicated teacher. We teach girls and boys aged five to sixteen." },
+    { "gap": "scene", "text": "They learn letter by letter, in English, Arabic, Turkish or Persian.",
+      "say": "They learn letter by letter, in English, Arabic, Turkish or Persian." },
+    { "gap": "close", "text": "The first lesson is free. You can book it at Tarteel House dot com.",
+      "say": "The first lesson is free. You can book it at [Tarteel](/tɑɹtˈil/) House dot com." }
+  ]
+}
