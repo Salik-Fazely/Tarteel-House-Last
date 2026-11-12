@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url("../node_modules/@fontsource/playfair-display/400.css");
+@import url("../node_modules/@fontsource/playfair-display/500.css");
+@import url("../node_modules/@fontsource/playfair-display/400-italic.css");
+@import url("../node_modules/@fontsource/playfair-display/500-italic.css");
+@import url("../node_modules/@fontsource/inter/400.css");
+@import url("../node_modules/@fontsource/inter/500.css");
+@import url("../node_modules/@fontsource/inter/600.css");
+:root { --ink:#1a1814; --ivory:#f5f1e8; --ivory-2:#efeadd; --forest:#1f3a2e; --bronze:#7a5a2e; --bronze-2:#9b7a48; --subtle:rgba(60,50,40,0.74); }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1080px; height:1920px; overflow:hidden; }
+body { background:var(--ivory); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; position:relative; }
+/* A quiet band of the darker ivory behind the phone, so the page inside it reads as an object on a desk. */
+.band { position:absolute; left:0; right:0; top:760px; height:1160px; background:var(--ivory-2); }
+.wordmark { position:absolute; top:196px; left:0; right:0; text-align:center; font-family:'Playfair Display',serif; font-style:italic; font-size:42px; }
+.wordmark span { font-family:'Inter',sans-serif; font-style:normal; font-size:21px; font-weight:500; letter-spacing:0.3em; margin-left:14px; }
+.caption { position:absolute; top:282px; left:90px; right:90px; text-align:center; }
+.eyebrow { font-size:26px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--bronze); margin-bottom:22px; }
+.title { font-family:'Playfair Display',serif; font-weight:500; font-size:66px; line-height:1.14; letter-spacing:-0.005em; text-wrap:balance; }
+.title em { font-style:italic; color:var(--forest); }
+/* The phone: a hairline frame and one very soft shadow. Screen is 682 x 1130, a 390 x 646 page at 1.749x. */
+.phone { position:absolute; left:185px; top:500px; width:710px; height:1158px; border-radius:58px; background:#fff; padding:14px;
+  border:1.5px solid rgba(26,24,20,0.22); box-shadow:0 40px 80px -30px rgba(26,24,20,0.28), 0 0 0 10px rgba(255,255,255,0.55); }
+.phone img { display:block; width:682px; height:1130px; border-radius:44px; background:var(--ivory); }
+.ripple { position:absolute; width:120px; height:120px; margin:-60px 0 0 -60px; border-radius:50%; background:rgba(155,122,72,0.34);
+  border:2px solid rgba(122,90,46,0.55); opacity:0; pointer-events:none; }
+.closing { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding:300px 104px 460px; color:var(--ivory); opacity:0; }
+.closing .mark { position:absolute; top:210px; left:104px; font-family:'Playfair Display',serif; font-style:italic; font-size:44px; }
+.closing .mark span { font-family:'Inter',sans-serif; font-style:normal; font-size:22px; font-weight:500; letter-spacing:0.3em; margin-left:14px; }
+.closing h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:116px; line-height:1.1; }
+.closing p { font-size:48px; line-height:1.45; color:rgba(245,241,232,0.8); margin-top:40px; max-width:820px; }
+.closing .link { margin-top:68px; padding-top:46px; border-top:1px solid rgba(245,241,232,0.24); font-size:56px; font-weight:500; letter-spacing:0.03em; display:inline-block; }
+</style>
+</head>
+<body>
+<div class="band" id="band"></div>
+<div class="wordmark" id="wordmark">Tarteel<span>HOUSE</span></div>
+<div class="caption" id="caption"><div class="eyebrow" id="eyebrow"></div><div class="title" id="title"></div></div>
+<div class="phone" id="phone"><img id="screen" alt=""></div>
+<div class="ripple" id="ripple"></div>
+<div class="closing" id="closing">
+  <div class="mark">Tarteel<span>HOUSE</span></div>
+  <h2>Book a free trial</h2>
+  <p>40 minutes, one-to-one. No payment, no commitment. For children aged 5 to 16.</p>
+  <div><div class="link">tarteelhouse.com</div></div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const mix = (a, b, k) => Math.round(a + (b - a) * k);
+window.setScreen = async dataUrl => { const img = $('screen'); img.src = dataUrl; await img.decode(); };
+window.setCaption = (eyebrow, titleHtml) => { $('eyebrow').textContent = eyebrow; $('title').innerHTML = titleHtml; };
+// Every visual value is passed in, so a frame depends only on the state it is given.
+window.setState = s => {
+  $('caption').style.opacity = String(s.caption);
+  $('caption').style.transform = `translateY(${(1 - s.caption) * 18}px)`;
+  $('phone').style.opacity = String(s.phone);
+  $('phone').style.transform = `translateY(${(1 - s.phoneIn) * 220}px)`;
+  $('band').style.opacity = String(s.phone);
+  $('wordmark').style.opacity = String(s.phone);
+  const r = $('ripple');
+  if (s.ripple) { r.style.left = s.ripple.x + 'px'; r.style.top = s.ripple.y + 'px';
+    r.style.opacity = String(Math.sin(Math.PI * s.ripple.p)); r.style.transform = `scale(${0.55 + 0.6 * s.ripple.p})`; }
+  else r.style.opacity = '0';
+  document.body.style.background = `rgb(${mix(245, 26, s.dark)},${mix(241, 24, s.dark)},${mix(232, 20, s.dark)})`;
+  $('closing').style.opacity = String(s.closing);
+  $('closing').style.transform = `translateY(${(1 - s.closing) * 26}px)`;
+};
+</script>
+</body>
+</html>
