@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url("../node_modules/@fontsource/playfair-display/400.css");
+@import url("../node_modules/@fontsource/playfair-display/500.css");
+@import url("../node_modules/@fontsource/playfair-display/400-italic.css");
+@import url("../node_modules/@fontsource/playfair-display/500-italic.css");
+@import url("../node_modules/@fontsource/playfair-display/700-italic.css");
+@import url("../node_modules/@fontsource/inter/400.css");
+@import url("../node_modules/@fontsource/inter/500.css");
+@import url("../node_modules/@fontsource/inter/600.css");
+@import url("../node_modules/@fontsource/amiri/400.css");
+:root { --ink:#1a1814; --ivory:#f5f1e8; --ivory-2:#efeadd; --forest:#1f3a2e; --bronze:#7a5a2e; --bronze-2:#9b7a48; --subtle:rgba(60,50,40,0.76); }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1080px; height:1920px; overflow:hidden; }
+body { background:var(--ink); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; position:relative; }
+.layer { position:absolute; inset:0; }
+/* Paper grain: one still texture over everything, so flat colour reads as a printed page. */
+#grain { position:absolute; inset:0; opacity:0.07; mix-blend-mode:soft-light; pointer-events:none; }
+
+/* A. The verse */
+#verseLayer { color:var(--ivory); text-align:center; }
+.ornament { position:absolute; left:390px; top:470px; width:300px; height:12px; }
+.ornament i { position:absolute; top:5px; height:1.5px; width:128px; background:var(--bronze-2); }
+.ornament i:first-child { left:0; transform-origin:right center; } .ornament i:last-child { right:0; transform-origin:left center; }
+.ornament b { position:absolute; left:144px; top:0; width:12px; height:12px; background:var(--bronze-2); transform:rotate(45deg); }
+#verse { position:absolute; left:0; right:0; top:500px; font-family:'Amiri',serif; font-size:170px; line-height:1.9; direction:rtl; white-space:nowrap; }
+#reference { position:absolute; left:0; right:0; top:842px; font-size:27px; font-weight:500; letter-spacing:0.26em; text-transform:uppercase; color:var(--bronze-2); }
+#translation { position:absolute; left:130px; right:130px; top:936px; font-family:'Playfair Display',serif; font-style:italic; font-size:60px; line-height:1.42; }
+#translation span { display:inline-block; white-space:pre; }
+#translation .key { font-weight:700; color:#c9a877; }
+#source { position:absolute; left:0; right:0; top:1262px; font-family:'Playfair Display',serif; font-style:italic; font-size:34px; color:rgba(245,241,232,0.62); }
+
+/* B. The name. One wordmark travels from the centre of the page to the corner and stays there. */
+#ivoryPage { background:var(--ivory); }
+#inkPage { background:var(--ink); overflow:hidden; }
+#wordmark, #wordmarkLight { position:absolute; left:0; top:0; transform-origin:0 0; white-space:nowrap; font-family:'Playfair Display',serif; font-style:italic; font-size:150px; line-height:1; }
+#wordmarkLight { color:var(--ivory); transform:translate(104px,196px) scale(0.293); }
+#wordmark span, #wordmarkLight span { font-family:'Inter',sans-serif; font-style:normal; font-size:75px; font-weight:500; letter-spacing:0.3em; margin-left:48px; }
+#nameRule { position:absolute; left:480px; top:1012px; width:120px; height:2px; background:var(--bronze-2); }
+#tagline { position:absolute; left:0; right:0; top:1052px; text-align:center; font-size:30px; font-weight:500; letter-spacing:0.24em; text-transform:uppercase; color:var(--bronze); }
+
+/* C. Three statements */
+#statements h2 { position:absolute; left:104px; right:90px; font-family:'Playfair Display',serif; font-weight:500; font-size:124px; line-height:1.08; letter-spacing:-0.012em; }
+#statements h2 em { font-style:italic; color:var(--forest); }
+#statements .dash { position:absolute; left:104px; width:84px; height:3px; background:var(--bronze-2); transform-origin:left center; }
+#statements p { position:absolute; left:104px; right:104px; top:1300px; font-size:42px; line-height:1.5; color:var(--subtle); }
+
+/* D. The site */
+#band { position:absolute; left:0; right:0; top:800px; height:1120px; background:var(--ivory-2); }
+#caption { position:absolute; top:292px; left:90px; right:90px; text-align:center; }
+#caption .eyebrow { font-size:26px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--bronze); margin-bottom:22px; }
+#caption .title { font-family:'Playfair Display',serif; font-weight:500; font-size:66px; line-height:1.14; }
+#caption .title em { font-style:italic; color:var(--forest); }
+#phone { position:absolute; left:185px; top:556px; width:710px; height:1158px; border-radius:58px; background:#fff; padding:14px;
+  border:1.5px solid rgba(26,24,20,0.22); box-shadow:0 40px 80px -30px rgba(26,24,20,0.3), 0 0 0 10px rgba(255,255,255,0.55); }
+#screen { position:relative; width:682px; height:1130px; border-radius:44px; overflow:hidden; background:var(--ivory); }
+#pageImg { position:absolute; left:0; top:0; width:682px; }
+#navImg { position:absolute; left:0; top:0; width:682px; }
+
+/* E. The invitation */
+#closing { color:var(--ivory); display:flex; flex-direction:column; justify-content:center; padding:300px 104px 460px; }
+#closing .dash { width:84px; height:3px; background:var(--bronze-2); margin-bottom:34px; transform-origin:left center; }
+#closing h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:124px; line-height:1.08; letter-spacing:-0.01em; }
+#closing h2 em { font-style:italic; color:#c9a877; }
+#closing p { font-size:48px; line-height:1.45; color:rgba(245,241,232,0.8); margin-top:44px; max-width:820px; }
+#closing .link { margin-top:72px; padding-top:48px; border-top:1px solid rgba(245,241,232,0.24); font-size:58px; font-weight:500; letter-spacing:0.03em; display:inline-block; }
+</style>
+</head>
+<body>
+<div class="layer" id="verseLayer">
+  <div class="ornament" id="ornament"><i></i><b></b><i></i></div>
+  <div id="verse" lang="ar">{{VERSE}}</div>
+  <div id="reference">Surah Al-Muzzammil · 73:4</div>
+  <div id="translation"></div>
+  <div id="source">The verse from which we take our name</div>
+</div>
+<div class="layer" id="ivoryPage"></div>
+<div class="layer" id="nameLayer"><div id="nameRule"></div><div id="tagline">One-to-one Qur’an lessons for children</div></div>
+<div class="layer" id="statements">
+  <div class="dash" style="top:470px"></div><h2 style="top:500px">One <em>child.</em></h2>
+  <div class="dash" style="top:700px"></div><h2 style="top:730px">One <em>teacher.</em></h2>
+  <div class="dash" style="top:930px"></div><h2 style="top:960px">Forty <em>unhurried</em> minutes.</h2>
+  <p>One-to-one Qur’an lessons online, for children aged 5 to 16.</p>
+</div>
+<div class="layer" id="siteLayer">
+  <div id="band"></div>
+  <div id="caption"><div class="eyebrow">English · Arabic · Turkish · Persian</div><div class="title">Taught in <em>your family’s language</em></div></div>
+  <div id="phone"><div id="screen"><img id="pageImg" src="out/site-page.jpg" alt=""><img id="navImg" src="out/site-nav.png" alt=""></div></div>
+</div>
+<div id="wordmark">Tarteel<span>HOUSE</span></div>
+<div class="layer" id="inkPage"><div class="layer" id="inkFixed"><div id="wordmarkLight">Tarteel<span>HOUSE</span></div></div></div>
+<div class="layer" id="closing">
+  <div class="dash" id="closeDash"></div>
+  <h2>The first lesson is <em>free.</em></h2>
+  <p>40 minutes, one-to-one. No payment, no commitment.</p>
+  <div><div class="link">tarteelhouse.com</div></div>
+</div>
+<svg id="grain" width="1080" height="1920"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="1080" height="1920" filter="url(#n)"/></svg>
+<script>
+// One function of time draws the whole film. Segments only say where the encoded files are cut.
+const END = 30.6;
+window.segments = [[0, 8.0], [8.0, 13.4], [13.4, 19.6], [19.6, 25.6], [25.6, END]];
+const $ = id => document.getElementById(id);
+const clamp = x => Math.min(Math.max(x, 0), 1);
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const inOut = x => { const c = clamp(x); return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2; };
+const mix = (a, b, k) => a + (b - a) * k;
+
+// The approved translation, revealed a word at a time. "tarteel" is the word the film turns on.
+const words = '“And recite the Qur’an with tarteel (in a distinct and measured tone).”'.split(' ');
+$('translation').innerHTML = words.map(word => `<span class="${word === 'tarteel' ? 'key' : ''}">${word} </span>`).join('');
+const wordEls = [...$('translation').children];
+const lines = [...document.querySelectorAll('#statements h2')], dashes = [...document.querySelectorAll('#statements .dash')];
+
+window.ready = (async () => {
+  await Promise.all(['400 176px Amiri', 'italic 400 60px "Playfair Display"', 'italic 700 60px "Playfair Display"', '500 124px "Playfair Display"',
+    'italic 500 124px "Playfair Display"', '400 42px Inter', '500 30px Inter', '600 26px Inter'].map(face => document.fonts.load(face, 'ابتث abc')));
+  await document.fonts.ready;
+  await Promise.all([$('pageImg').decode(), $('navImg').decode()]);
+  const v = $('verse'); let size = 170; const probe = document.createElement('span'); probe.textContent = v.textContent; v.textContent = ''; v.appendChild(probe);
+  while (probe.getBoundingClientRect().width > 900 && size > 90) { size -= 2; v.style.fontSize = size + 'px'; }
+  window.verseSize = size;
+})();
+
+window.renderAt = T => {
+  // Canvas: ink for the verse, ivory for the school, ink again for the invitation.
+  const toIvory = inOut((T - 7.9) / 1.0), toInk = inOut((T - 25.5) / 1.0);
+  const ivoryY = Math.round((1 - toIvory) * 1920), inkY = Math.round((1 - toInk) * 1920);
+  $('ivoryPage').style.transform = `translateY(${ivoryY}px)`;
+  $('inkPage').style.transform = `translateY(${inkY}px)`; $('inkFixed').style.transform = `translateY(${-inkY}px)`;
+
+  // A. The verse (0 to 8.9)
+  $('verseLayer').style.opacity = String(1 - 0.55 * toIvory);
+  $('verseLayer').style.transform = `translateY(${-toIvory * 150}px) scale(${1 + 0.035 * clamp(T / 8.9)})`;
+  const o = ease((T - 0.2) / 0.9);
+  $('ornament').children[0].style.transform = `scaleX(${o})`; $('ornament').children[2].style.transform = `scaleX(${o})`;
+  $('ornament').children[1].style.opacity = String(ease((T - 0.1) / 0.5));
+  // Written right to left, so it is revealed right to left, with a soft leading edge.
+  const wipe = mix(-16, 104, inOut((T - 0.7) / 2.5));
+  $('verse').style.webkitMaskImage = `linear-gradient(to left, #000 ${wipe}%, transparent ${wipe + 16}%)`;
+  $('reference').style.opacity = String(ease((T - 3.0) / 0.8));
+  wordEls.forEach((el, i) => { const p = ease((T - 3.9 - i * 0.13) / 0.6);
+    el.style.opacity = String(p); el.style.filter = p < 1 ? `blur(${(1 - p) * 9}px)` : 'none'; el.style.transform = `translateY(${(1 - p) * 14}px)`; });
+  $('source').style.opacity = String(ease((T - 6.3) / 0.9));
+
+  // B. The name (8.7 to 13.4), then the wordmark rests in the corner for the rest of the film.
+  const arrive = ease((T - 8.8) / 1.1), settle = inOut((T - 12.3) / 1.1);
+  const wm = $('wordmark');
+  wm.style.letterSpacing = `${mix(0.05, 0, arrive)}em`;
+  const big = { x: (1080 - wm.offsetWidth) / 2, y: 820, s: 1 }, small = { x: 104, y: 196, s: 0.293 };
+  wm.style.opacity = String(arrive);
+  wm.style.transform = `translate(${mix(big.x, small.x, settle)}px, ${mix(big.y + (1 - arrive) * 40, small.y, settle)}px) scale(${mix(big.s, small.s, settle)})`;
+  const nameOut = 1 - ease((T - 12.0) / 0.5);
+  $('tagline').style.opacity = String(ease((T - 10.1) / 0.8) * nameOut);
+  $('nameRule').style.transform = `scaleX(${ease((T - 9.7) / 0.7)})`; $('nameRule').style.opacity = String(nameOut);
+
+  // C. Three statements (13.4 to 19.9)
+  const cOut = 1 - ease((T - 19.2) / 0.6);
+  $('statements').style.opacity = String(cOut);
+  $('statements').style.transform = `translateY(${-(1 - cOut) * 40}px) scale(${1 + 0.02 * clamp((T - 13.4) / 6)})`;
+  lines.forEach((el, i) => { const p = ease((T - 13.5 - i * 1.45) / 0.8);
+    el.style.opacity = String(p); el.style.transform = `translateY(${(1 - p) * 46}px)`; el.style.filter = p < 1 ? `blur(${(1 - p) * 6}px)` : 'none';
+    dashes[i].style.transform = `scaleX(${ease((T - 13.4 - i * 1.45) / 0.6)})`; });
+  const sub = document.querySelector('#statements p'); const sp = ease((T - 17.6) / 0.8);
+  sub.style.opacity = String(sp); sub.style.transform = `translateY(${(1 - sp) * 24}px)`;
+
+  // D. The site (19.6 to 26.2): the real homepage, scrolled slowly.
+  const dIn = ease((T - 19.7) / 1.0);
+  $('siteLayer').style.opacity = String(Math.min(dIn * 1.4, 1));
+  $('siteLayer').style.transform = `translateY(${-toInk * 36}px)`;
+  $('phone').style.transform = `translateY(${(1 - dIn) * 240}px)`;
+  const cap = ease((T - 20.1) / 0.8);
+  $('caption').style.opacity = String(cap); $('caption').style.transform = `translateY(${(1 - cap) * 20}px)`;
+  const scroll = 366 * inOut((T - 20.9) / 4.2);
+  $('pageImg').style.transform = `translateY(${-scroll * (682 / 390)}px)`;
+
+  // E. The invitation (26.1 to the end)
+  const e = ease((T - 26.3) / 0.9);
+  $('closing').style.opacity = String(e); $('closing').style.transform = `translateY(${(1 - e) * 30}px)`;
+  $('closeDash').style.transform = `scaleX(${ease((T - 26.6) / 0.7)})`;
+};
+</script>
+</body>
+</html>

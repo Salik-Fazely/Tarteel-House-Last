@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url("../node_modules/@fontsource/playfair-display/400.css");
+@import url("../node_modules/@fontsource/playfair-display/500.css");
+@import url("../node_modules/@fontsource/playfair-display/400-italic.css");
+@import url("../node_modules/@fontsource/playfair-display/500-italic.css");
+@import url("../node_modules/@fontsource/inter/400.css");
+@import url("../node_modules/@fontsource/inter/500.css");
+@import url("../node_modules/@fontsource/inter/600.css");
+:root { --ink:#1a1814; --ivory:#f5f1e8; --page:#efe6d3; --forest:#1f3a2e; --bronze:#7a5a2e; --bronze-2:#9b7a48; --subtle:rgba(60,50,40,0.78); }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1080px; height:1920px; overflow:hidden; }
+body { background:var(--page); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; position:relative; }
+.layer { position:absolute; inset:0; }
+#grain { position:absolute; inset:0; opacity:0.06; mix-blend-mode:soft-light; pointer-events:none; }
+
+/* Each illustration is a plate printed on the page: it melts into the paper at the top,
+   so the words always sit on clean ivory and never over a face. */
+.plate { position:absolute; left:0; top:640px; width:1080px; height:1280px; overflow:hidden; opacity:0;
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.08) 50px, rgba(0,0,0,0.3) 110px, rgba(0,0,0,0.62) 170px, rgba(0,0,0,0.87) 230px, #000 300px); }
+.plate img { position:absolute; left:0; top:0; width:1122px; height:1402px; transform-origin:0 0; will-change:transform; }
+
+#eyebrow { position:absolute; left:104px; top:292px; font-size:25px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--bronze); opacity:0; }
+.step { position:absolute; left:104px; right:104px; top:350px; opacity:0; }
+.step .dash { width:84px; height:3px; background:var(--bronze-2); transform-origin:left center; margin-bottom:30px; }
+.step h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:86px; line-height:1.1; letter-spacing:-0.01em; }
+.step h2 em { font-style:italic; color:var(--forest); }
+.step p { font-size:37px; line-height:1.45; color:var(--subtle); margin-top:24px; }
+
+#wordmark, #wordmarkLight { position:absolute; left:0; top:0; transform-origin:0 0; transform:translate(104px,196px) scale(0.293); white-space:nowrap;
+  font-family:'Playfair Display',serif; font-style:italic; font-size:150px; line-height:1; }
+#wordmark span, #wordmarkLight span { font-family:'Inter',sans-serif; font-style:normal; font-size:75px; font-weight:500; letter-spacing:0.3em; margin-left:48px; }
+#wordmarkLight { color:var(--ivory); }
+
+#inkPage { background:var(--ink); overflow:hidden; }
+#closing { color:var(--ivory); display:flex; flex-direction:column; justify-content:center; padding:300px 104px 460px; opacity:0; }
+#closing .dash { width:84px; height:3px; background:var(--bronze-2); margin-bottom:34px; transform-origin:left center; }
+#closing h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:124px; line-height:1.08; letter-spacing:-0.01em; }
+#closing h2 em { font-style:italic; color:#c9a877; }
+#closing p { font-size:48px; line-height:1.45; color:rgba(245,241,232,0.8); margin-top:44px; max-width:820px; }
+#closing .link { margin-top:72px; padding-top:48px; border-top:1px solid rgba(245,241,232,0.24); font-size:58px; font-weight:500; letter-spacing:0.03em; display:inline-block; }
+</style>
+</head>
+<body>
+<div id="plates"></div>
+<div id="eyebrow">What a lesson looks like</div>
+<div class="step"><div class="dash"></div><h2>Your child,<br><em>at home.</em></h2></div>
+<div class="step"><div class="dash"></div><h2>Their teacher,<br><em>on the other side.</em></h2></div>
+<div class="step"><div class="dash"></div><h2>Forty minutes,<br><em>one-to-one.</em></h2><p>Live, normally on Zoom or Google Meet.</p></div>
+<div class="step"><div class="dash"></div><h2>One <em>dedicated</em><br>teacher.</h2><p>For girls and boys aged 5 to 16.</p></div>
+<div class="step"><div class="dash"></div><h2>Letter by <em>letter.</em></h2><p>Taught in English, Arabic, Turkish or Persian.</p></div>
+<div id="wordmark">Tarteel<span>HOUSE</span></div>
+<div class="layer" id="inkPage"><div class="layer" id="inkFixed"><div id="wordmarkLight">Tarteel<span>HOUSE</span></div></div></div>
+<div class="layer" id="closing">
+  <div class="dash" id="closeDash"></div>
+  <div class="step-close"><h2>The first lesson is <em>free.</em></h2>
+  <p>40 minutes, one-to-one. No payment, no commitment.</p></div>
+  <div><div class="link">tarteelhouse.com</div></div>
+</div>
+<svg id="grain" width="1080" height="1920"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="1080" height="1920" filter="url(#n)"/></svg>
+<script>
+// The whole film is one function of time. Segments only say where the encoded files are cut.
+const END = 29.6;
+window.segments = [[0, 6], [6, 12], [12, 18], [18, 24], [24, END]];
+const $ = id => document.getElementById(id);
+const clamp = x => Math.min(Math.max(x, 0), 1);
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const inOut = x => { const c = clamp(x); return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2; };
+const mix = (a, b, k) => a + (b - a) * k;
+
+// Five of the owner's character scenes. cam = [scale, x, y] at the start and end of the shot:
+// the point (x, y) of the illustration is brought towards the centre of the plate.
+const scenes = [
+// maxTop lets a pale wall start just inside the faded top of the plate, where it cannot be seen.
+  { img: 'adam-04-online-lesson',            from: 0.0,  to: 5.4,  maxTop: 110, cam: [[0.97, 600, 430], [1.07, 680, 470]] },
+  { img: 'teacher-amina-03-online-teaching', from: 4.8,  to: 10.2, maxTop: 110, cam: [[1.00, 560, 380], [1.08, 470, 400]] },
+  { img: 'teacher-amina-04-laptop-screen',   from: 9.6,  to: 15.0, maxTop: 110, cam: [[0.98, 561, 480], [1.13, 561, 470]] },
+  { img: 'maryam-04-online-lesson',          from: 14.4, to: 19.8, maxTop: 60,  cam: [[0.98, 420, 560], [1.07, 560, 560]] },
+  { img: 'maryam-05-writing-practice',       from: 19.2, to: 24.6, maxTop: 0,   cam: [[1.74, 430, 1000], [1.82, 520, 1010]] },
+];
+const PLATE_W = 1080, PLATE_H = 1280, IMG_W = 1122, IMG_H = 1402;
+// Where the shot sits, kept inside the illustration so the plate is always covered.
+const framing = ([s, x, y], maxTop) => ({ s,
+  left: Math.min(0, Math.max(PLATE_W - IMG_W * s, 540 - x * s)),
+  top: Math.min(maxTop, Math.max(PLATE_H - IMG_H * s, 510 - y * s)) });
+scenes.forEach(scene => {
+  scene.a = framing(scene.cam[0], scene.maxTop); scene.b = framing(scene.cam[1], scene.maxTop);
+  scene.plate = document.createElement('div'); scene.plate.className = 'plate';
+  scene.el = document.createElement('img'); scene.el.src = `chars/${scene.img}.jpg`; scene.el.alt = '';
+  scene.plate.appendChild(scene.el); $('plates').appendChild(scene.plate);
+});
+const steps = [...document.querySelectorAll('.step')];
+
+window.ready = (async () => {
+  await Promise.all(['500 86px "Playfair Display"', 'italic 500 86px "Playfair Display"', '500 124px "Playfair Display"', 'italic 500 124px "Playfair Display"',
+    'italic 400 150px "Playfair Display"', '400 37px Inter', '500 58px Inter', '600 25px Inter'].map(face => document.fonts.load(face, 'abc')));
+  await document.fonts.ready;
+  await Promise.all(scenes.map(scene => scene.el.decode()));
+})();
+
+window.renderAt = T => {
+  scenes.forEach((scene, i) => {
+    const visible = T >= scene.from && (i === scenes.length - 1 ? T < 25.2 : T < scenes[i + 1].from + 0.8);
+    scene.plate.style.display = visible ? 'block' : 'none';
+    if (!visible) return;
+    // A slow, steady camera across the whole time the plate is on screen, cross-fades included.
+    const p = clamp((T - scene.from) / (scene.to - scene.from));
+    const s = mix(scene.a.s, scene.b.s, p), left = mix(scene.a.left, scene.b.left, p), top = mix(scene.a.top, scene.b.top, p);
+    scene.el.style.transform = `translate(${left}px, ${top}px) scale(${s})`;
+    // Change of shot: the old picture sinks into the paper as the new one comes up, so two faces never overlap.
+    const next = scenes[i + 1];
+    const up = i === 0 ? 1 : ease((T - scene.from - 0.2) / 0.5), down = next ? 1 - ease((T - next.from) / 0.4) : 1;
+    scene.plate.style.opacity = String(up * down);
+
+    // The words for this shot arrive after the picture and leave before it.
+    const step = steps[i], capIn = scene.from + (i === 0 ? 0.45 : 0.35), capOut = scene.to - 0.8;
+    const enter = ease((T - capIn) / 0.8), leave = ease((T - capOut) / 0.4);
+    step.style.opacity = String(Math.min(1, enter * 1.6) * (1 - leave));
+    step.style.transform = `translateY(${-leave * 16}px)`;
+    step.querySelector('.dash').style.transform = `scaleX(${ease((T - capIn) / 0.6)})`;
+    const h2 = step.querySelector('h2'), sub = step.querySelector('p');
+    h2.style.transform = `translateY(${(1 - enter) * 34}px)`; h2.style.filter = enter < 1 ? `blur(${(1 - enter) * 6}px)` : 'none';
+    if (sub) { const k = ease((T - capIn - 0.35) / 0.8); sub.style.opacity = String(k); sub.style.transform = `translateY(${(1 - k) * 20}px)`; }
+  });
+  steps.forEach((step, i) => { if (!(T >= scenes[i].from && T < scenes[i].to)) step.style.opacity = '0'; });
+  const brow = ease((T - 0.25) / 0.7) * (1 - ease((T - scenes[0].to + 0.8) / 0.4));
+  $('eyebrow').style.opacity = String(brow);
+
+  // The invitation: a dark page rises over the last picture.
+  const toInk = inOut((T - 23.9) / 1.0), inkY = Math.round((1 - toInk) * 1920);
+  $('inkPage').style.transform = `translateY(${inkY}px)`; $('inkFixed').style.transform = `translateY(${-inkY}px)`;
+  const e = ease((T - 24.95) / 0.9);
+  $('closing').style.opacity = String(e); $('closing').style.transform = `translateY(${(1 - e) * 30}px)`;
+  $('closeDash').style.transform = `scaleX(${ease((T - 25.25) / 0.7)})`;
+};
+</script>
+</body>
+</html>

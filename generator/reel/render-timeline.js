@@ -20,6 +20,7 @@ const dir = __dirname, out = path.join(dir, 'out');
       '400 38px Inter', '500 56px Inter', '600 28px Inter'].map(face => document.fonts.load(face)));
     await document.fonts.ready;
   });
+  await page.evaluate(() => window.ready || null);
   const loaded = await page.evaluate(() => [...document.fonts].filter(f => f.status === 'loaded').map(f => f.family.replace(/["']/g, '')));
   if (!loaded.includes('Playfair Display') || !loaded.includes('Inter')) throw new Error('Brand fonts did not load');
   const segments = await page.evaluate(() => window.segments);
@@ -30,7 +31,7 @@ const dir = __dirname, out = path.join(dir, 'out');
       await page.screenshot({ path: path.join(out, `${name}-at-${t}.jpg`), type: 'jpeg', quality: 92 });
     }
     // Nothing may be clipped or leave the middle band Instagram keeps clear.
-    await page.evaluate(() => window.renderAt(16.6));
+    await page.evaluate(() => window.renderAt(window.segments[window.segments.length - 1][1] - 4));
     const problems = await page.evaluate(() => [...document.querySelectorAll('.step h2, .step p, h1')].filter(el => {
       const r = el.getBoundingClientRect(); return r.right > 1080 - 56 || el.scrollWidth > el.clientWidth + 1 || r.bottom > 1920 - 380;
     }).map(el => el.textContent.slice(0, 30)));
