@@ -1,0 +1,105 @@
+{
+  "verse": "وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا",
+  "posts": [
+    {
+      "id": "01-ready-age-en",
+      "day": "Mon 16 Nov",
+      "lang": "en",
+      "source": "blog/what-age-should-a-child-start-learning-quran",
+      "caption": "Parents ask us this before almost every first lesson. The honest answer: readiness matters more than a birthday, and it is never too late to begin.\n\nThe full guide is on our site. A free 40-minute trial lesson will tell you more than any checklist.\n\n#quranforkids #onlinequranclasses #muslimparents #tajweed #quranlearning",
+      "slides": [
+        { "kind": "cover", "eyebrow": "A question parents ask", "title": "Is my child old enough to start the Qur’an?" },
+        { "kind": "statement", "title": "There is no single right age.", "body": "Readiness usually matters more than a birthday." },
+        { "kind": "list", "title": "Signs your child may be ready", "items": [
+          "Can focus on a short activity",
+          "Can repeat a short phrase clearly",
+          "Follows simple instructions from an adult who is not their parent",
+          "Shows curiosity about what you recite"
+        ] },
+        { "kind": "statement", "eyebrow": "And if they are older?", "title": "It is never too late to begin.", "body": "Beginners aged 13 to 16 can often move through letters and early reading quickly." },
+        { "kind": "close", "title": "A free 40-minute trial lesson", "body": "One-to-one. No payment, no commitment.", "link": "tarteelhouse.com" }
+      ]
+    },
+    {
+      "id": "02-ready-age-fa",
+      "day": "Wed 18 Nov",
+      "lang": "fa",
+      "source": "blog/what-age-should-a-child-start-learning-quran",
+      "caption": "این پرسشی است که بیشتر پدر و مادرها پیش از نخستین جلسه از ما می‌پرسند. پاسخ روشن است: آمادگی کودک از سن او مهم‌تر است و هیچ‌وقت برای شروع دیر نیست.\n\nجلسهٔ آزمایشی رایگان ۴۰ دقیقه‌ای، یک‌به‌یک و به زبان فارسی.\n\n#آموزش_قرآن #قرآن_کودکان #کلاس_آنلاین_قرآن #روخوانی_قرآن #تجوید",
+      "slides": [
+        { "kind": "cover", "eyebrow": "پرسش پدر و مادرها", "title": "فرزندم برای شروع قرآن آماده است؟" },
+        { "kind": "statement", "title": "سن مشخصی وجود ندارد.", "body": "آمادگی کودک معمولاً از تاریخ تولدش مهم‌تر است." },
+        { "kind": "list", "title": "نشانه‌های آمادگی", "items": [
+          "می‌تواند روی یک فعالیت کوتاه تمرکز کند",
+          "عبارتی کوتاه را می‌شنود و روشن تکرار می‌کند",
+          "از بزرگ‌تری غیر از پدر و مادر راهنمایی می‌پذیرد",
+          "دربارهٔ آنچه می‌خوانید کنجکاوی نشان می‌دهد"
+        ] },
+        { "kind": "statement", "eyebrow": "اگر بزرگ‌تر است؟", "title": "هیچ‌وقت برای شروع دیر نیست.", "body": "نوآموزان ۱۳ تا ۱۶ ساله اغلب حروف و روخوانی آغازین را سریع‌تر پشت سر می‌گذارند." },
+        { "kind": "close", "title": "جلسهٔ آزمایشی رایگان ۴۰ دقیقه‌ای", "body": "یک‌به‌یک و به زبان فارسی. بدون پرداخت و بدون تعهد.", "link": "tarteelhouse.com/fa" }
+      ]
+    },
+    {
+      "id": "03-free-trial-en",
+      "day": "Fri 20 Nov",
+      "lang": "en",
+      "source": "docs/commercial-facts.md",
+      "caption": "The first lesson is free, and it is a real lesson: 40 minutes, one child, one teacher.\n\nWe normally contact families on WhatsApp within two days of a request to agree a time.\n\n#quranforkids #onlinequranclasses #muslimparents #quranteacher",
+      "slides": [
+        { "kind": "card", "eyebrow": "The first lesson", "title": "What the free trial is", "items": [
+          "40 minutes, one-to-one",
+          "A teacher who speaks your family’s language",
+          "No payment, no commitment"
+        ], "link": "tarteelhouse.com" }
+      ]
+    },
+    {
+      "id": "04-refuses-practice-en",
+      "day": "Mon 23 Nov",
+      "lang": "en",
+      "source": "blog/child-refuses-quran-practice",
+      "caption": "When practice turns into arguments, it is tempting to become stricter or to stop asking. There is usually room between the two.\n\nThe full guide, reviewed by one of our teachers, is on our site.\n\n#quranforkids #muslimparents #quranlearning #onlinequranclasses #hifz",
+      "slides": [
+        { "kind": "cover", "eyebrow": "Home practice", "title": "When your child says “I don’t want to practise”" },
+        { "kind": "statement", "title": "It rarely means they dislike the Qur’an.", "body": "They may be tired, frustrated, worried about mistakes, or resisting a routine that has become difficult." },
+        { "kind": "list", "title": "Ask what they are really refusing", "items": [
+          "Starting when they are tired",
+          "A page that feels too difficult",
+          "Being corrected too often",
+          "Homework that feels too long"
+        ] },
+        { "kind": "quote", "title": "Keep the expectation. Reduce the conflict." },
+        { "kind": "close", "title": "Gentle does not mean giving up.", "body": "It means finding a calmer, more manageable way back.", "note": "Guide reviewed by Foruhar Rahmani, Qur’an teacher", "link": "tarteelhouse.com/blog" }
+      ]
+    },
+    {
+      "id": "05-refuses-practice-tr",
+      "day": "Wed 25 Nov",
+      "lang": "tr",
+      "source": "blog/child-refuses-quran-practice",
+      "caption": "Tekrar saati tartışmaya dönüştüğünde ya daha katı olmak ya da tamamen bırakmak akla gelir. Çoğu zaman bu ikisinin arasında bir yol vardır.\n\nTürkçe, birebir ve 40 dakikalık ücretsiz deneme dersi için: tarteelhouse.com/tr\n\n#kuranöğreniyorum #çocuklariçinkuran #onlinekurandersi #kuranıkerim #tecvid",
+      "slides": [
+        { "kind": "cover", "eyebrow": "Evde tekrar", "title": "Çocuğunuz “Kur’an çalışmak istemiyorum” dediğinde" },
+        { "kind": "statement", "title": "Bu, çoğu zaman Kur’an’ı sevmediği anlamına gelmez.", "body": "Yorgun, bunalmış ya da hata yapmaktan çekiniyor olabilir; belki de zorlaşan bir düzene direniyordur." },
+        { "kind": "list", "title": "Asıl neye itiraz ediyor?", "items": [
+          "Yorgunken başlamaya",
+          "Fazla zor gelen bir sayfaya",
+          "Çok sık düzeltilmeye",
+          "Uzun gelen ödeve"
+        ] },
+        { "kind": "quote", "title": "Beklentiyi koruyun. Çatışmayı azaltın." },
+        { "kind": "close", "title": "Yumuşak davranmak vazgeçmek değildir.", "body": "Daha sakin ve sürdürülebilir bir dönüş yolu bulmaktır.", "link": "tarteelhouse.com/tr" }
+      ]
+    },
+    {
+      "id": "06-tarteel-en",
+      "day": "Fri 27 Nov",
+      "lang": "en",
+      "source": "brand-rules.md",
+      "caption": "Our name comes from this verse. Tarteel is recitation that is distinct and measured, and it is what we hope every child grows into.\n\n#tarteel #quranforkids #tajweed #quranrecitation",
+      "slides": [
+        { "kind": "verse", "eyebrow": "Where our name comes from", "translation": "“And recite the Qur’an with tarteel (in a distinct and measured tone).”", "reference": "Surah Al-Muzzammil 73:4" }
+      ]
+    }
+  ]
+}
