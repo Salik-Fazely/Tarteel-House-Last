@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url("../node_modules/@fontsource/playfair-display/400.css");
+@import url("../node_modules/@fontsource/playfair-display/500.css");
+@import url("../node_modules/@fontsource/playfair-display/400-italic.css");
+@import url("../node_modules/@fontsource/playfair-display/500-italic.css");
+@import url("../node_modules/@fontsource/inter/400.css");
+@import url("../node_modules/@fontsource/inter/500.css");
+@import url("../node_modules/@fontsource/inter/600.css");
+:root { --ink:#1a1814; --ivory:#f5f1e8; --ivory-2:#efeadd; --forest:#1f3a2e; --bronze:#7a5a2e; --bronze-2:#9b7a48; --subtle:rgba(60,50,40,0.78); }
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { width:1080px; height:1920px; overflow:hidden; }
+body { background:var(--ivory); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; position:relative; }
+.layer { position:absolute; inset:0; }
+#grain { position:absolute; inset:0; opacity:0.06; mix-blend-mode:soft-light; pointer-events:none; }
+
+/* The line above every headline: a label for the opening, then the number of the point and four dots. */
+#marker { position:absolute; left:104px; right:104px; top:282px; height:84px; display:flex; align-items:center; }
+#slot { position:relative; height:84px; flex:none; }
+#markLabel { position:absolute; left:0; top:0; line-height:84px; white-space:nowrap; font-size:25px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--bronze); }
+#markNum { position:absolute; left:0; top:0; height:84px; overflow:hidden; }
+#markNum span { position:absolute; left:0; top:0; line-height:84px; font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:96px; color:var(--bronze); white-space:nowrap; }
+#markRule { flex:1; height:1.5px; background:rgba(155,122,72,0.42); margin:0 28px; transform-origin:left center; }
+#dots { display:flex; gap:14px; flex:none; }
+#dots i { width:15px; height:15px; border-radius:50%; border:1.5px solid var(--bronze-2); display:block; }
+
+.step { position:absolute; left:104px; right:104px; top:392px; opacity:0; }
+.step h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:84px; line-height:1.1; letter-spacing:-0.01em; }
+.step h2 em { font-style:italic; color:var(--forest); }
+.step p { font-size:37px; line-height:1.45; color:var(--subtle); margin-top:22px; }
+
+/* The pictures live in one arched window. A new picture rises over the last one, like a page. */
+#archLine { position:absolute; left:86px; top:732px; width:908px; height:1300px; border:1.5px solid rgba(155,122,72,0.5); border-bottom:none; border-radius:454px 454px 0 0; }
+#arch { position:absolute; left:104px; top:750px; width:872px; height:1250px; border-radius:436px 436px 0 0; overflow:hidden; background:#eadbc9; }
+.shot { position:absolute; inset:0; overflow:hidden; display:none; }
+.shot img { position:absolute; left:0; top:0; width:1122px; height:1402px; transform-origin:0 0; will-change:transform; }
+.shot.soft img { -webkit-mask-image:linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.35) 50px, rgba(0,0,0,0.8) 110px, #000 170px); }
+
+#wordmark, #wordmarkLight { position:absolute; left:0; top:0; transform-origin:0 0; transform:translate(104px,196px) scale(0.293); white-space:nowrap;
+  font-family:'Playfair Display',serif; font-style:italic; font-size:150px; line-height:1; }
+#wordmark span, #wordmarkLight span { font-family:'Inter',sans-serif; font-style:normal; font-size:75px; font-weight:500; letter-spacing:0.3em; margin-left:48px; }
+#wordmarkLight { color:var(--ivory); }
+
+/* The real site, on its own page. */
+#sitePage { background:var(--ivory-2); }
+#siteCaption { position:absolute; left:104px; right:104px; top:300px; }
+#siteCaption .eyebrow { font-size:25px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--bronze); line-height:48px; }
+#siteCaption h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:84px; line-height:1.1; letter-spacing:-0.01em; margin-top:26px; }
+#siteCaption h2 em { font-style:italic; color:var(--forest); }
+#phone { position:absolute; left:185px; top:650px; width:710px; height:1158px; border-radius:58px; background:#fff; padding:14px;
+  border:1.5px solid rgba(26,24,20,0.22); box-shadow:0 40px 80px -30px rgba(26,24,20,0.3), 0 0 0 10px rgba(255,255,255,0.55); }
+#screen { position:relative; width:682px; height:1130px; border-radius:44px; overflow:hidden; background:var(--ivory); }
+#pageImg { position:absolute; left:0; top:0; width:682px; }
+#navImg { position:absolute; left:0; top:0; width:682px; }
+#ripple { position:absolute; width:150px; height:150px; margin:-75px 0 0 -75px; border-radius:50%; background:rgba(245,241,232,0.5); border:2px solid rgba(245,241,232,0.95); opacity:0; }
+
+#inkPage { background:var(--ink); overflow:hidden; }
+#closing { color:var(--ivory); display:flex; flex-direction:column; justify-content:center; padding:300px 104px 440px; }
+#closing .dash { width:84px; height:3px; background:var(--bronze-2); margin-bottom:34px; transform-origin:left center; }
+#closing h2 { font-family:'Playfair Display',serif; font-weight:500; font-size:124px; line-height:1.08; letter-spacing:-0.01em; }
+#closing h2 em { font-style:italic; color:#c9a877; }
+#closing p { font-size:48px; line-height:1.45; color:rgba(245,241,232,0.8); margin-top:44px; max-width:820px; }
+#closing .link { margin-top:68px; padding-top:46px; border-top:1px solid rgba(245,241,232,0.24); font-size:58px; font-weight:500; letter-spacing:0.03em; display:inline-block; }
+#closing .credit { margin-top:54px; font-size:29px; line-height:1.5; color:rgba(245,241,232,0.55); max-width:800px; }
+</style>
+</head>
+<body>
+<div id="marker"><div id="slot"><div id="markLabel">The free trial lesson</div><div id="markNum"></div></div><div id="markRule"></div><div id="dots"><i></i><i></i><i></i><i></i></div></div>
+
+<div class="step"><h2>Your child’s first lesson<br><em>is not a test.</em></h2></div>
+<div class="step"><h2>No need<br><em>to prepare.</em></h2><p>Mistakes show the teacher where to begin.</p></div>
+<div class="step"><h2>Four things<br><em>to notice.</em></h2><p>In your child’s trial lesson.</p></div>
+<div class="step"><h2>Does the teacher speak<br><em>to your child?</em></h2><p>Clearly, and with respect.</p></div>
+<div class="step"><h2>Does the teacher<br><em>listen first?</em></h2><p>Before deciding what to teach.</p></div>
+<div class="step"><h2>Does your child feel<br><em>safe to try again?</em></h2><p>Even after a mistake.</p></div>
+<div class="step"><h2>Is it clear<br><em>what comes next?</em></h2><p>What your child should work on.</p></div>
+
+<div id="archLine"></div>
+<div id="arch"></div>
+
+<div class="layer" id="sitePage">
+  <div id="siteCaption"><div class="eyebrow">tarteelhouse.com</div><h2>See all of this<br><em>for yourself.</em></h2></div>
+  <div id="phone"><div id="screen"><img id="pageImg" src="out/site-page.jpg" alt=""><img id="navImg" src="out/site-nav.png" alt=""><div id="ripple"></div></div></div>
+</div>
+<div id="wordmark">Tarteel<span>HOUSE</span></div>
+<div class="layer" id="inkPage"><div class="layer" id="inkFixed"><div id="wordmarkLight">Tarteel<span>HOUSE</span></div></div></div>
+<div class="layer" id="closing">
+  <div id="closeTop"><div class="dash" id="closeDash"></div><h2>The first lesson is <em>free.</em></h2></div>
+  <p id="closeFacts">40 minutes, one-to-one. No payment, no commitment.</p>
+  <div id="closeLink"><div class="link">tarteelhouse.com</div></div>
+  <div class="credit" id="closeCredit">From our parent guide, reviewed by Fareshta Suroush, Qur’an teacher at Tarteel House.</div>
+</div>
+<svg id="grain" width="1080" height="1920"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="1080" height="1920" filter="url(#n)"/></svg>
+<script src="voice/trial/narration-timing.js"></script>
+<script>
+// The narration is made first; this page then times every picture and word to it.
+// The whole film is one function of time. Segments only say where the encoded files are cut.
+const L = window.NARRATION.lines, END = window.NARRATION.total, FPS = 30;
+const parts = Math.ceil(END / 6.5);
+window.segments = Array.from({ length: parts }, (_, i) => [Math.round(i * END / parts * FPS) / FPS, Math.round((i + 1) * END / parts * FPS) / FPS]);
+const $ = id => document.getElementById(id);
+const clamp = x => Math.min(Math.max(x, 0), 1);
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const inOut = x => { const c = clamp(x); return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2; };
+const mix = (a, b, k) => a + (b - a) * k;
+
+const LEAD = 0.7;                       // a new picture begins to rise this long before its line is spoken
+const RISE = 0.75;                      // and takes this long to cover the last one
+const siteStart = L[7].start - 1.05;    // the page with the real site begins to rise
+const inkStart = L[8].start - 1.1;      // the dark closing page begins to rise
+
+// The owner's character scenes, in the order of the narration. cam = [scale, x, y] at the start and end of the shot:
+// the point (x, y) of the illustration is brought to (436, at) in the arch. soft: the picture's plain wall may start
+// inside the window, faded into `wall`, so a standing figure can sit lower in the arch.
+const shots = [
+  { img: 'maryam-02-standing-side',          from: 0,                 at: 610, soft: 170, wall: '#e8d5bd', cam: [[1.20, 585, 430], [1.29, 590, 425]] },
+  { img: 'adam-02-standing-side',            from: L[1].start - LEAD, at: 610, soft: 170, wall: '#f3e3d3', cam: [[1.20, 575, 420], [1.30, 570, 415]] },
+  { img: 'teacher-amina-04-laptop-screen',   from: L[3].start - LEAD, at: 640, soft: 120, wall: '#ead9c9', cam: [[1.00, 566, 640], [1.035, 570, 632]] },
+  { img: 'teacher-amina-03-online-teaching', from: L[4].start - LEAD, at: 450, soft: 0,   wall: '#f0e2d5', cam: [[1.04, 520, 420], [1.13, 500, 415]] },
+  { img: 'maryam-04-online-lesson',          from: L[5].start - LEAD, at: 580, soft: 0,   wall: '#ccb39b', cam: [[0.86, 545, 640], [0.92, 548, 640]] },
+  { img: 'adam-04-online-lesson',            from: L[6].start - LEAD, at: 600, soft: 120, wall: '#f0dfce', cam: [[0.95, 555, 520], [1.04, 560, 515]] },
+];
+const ARCH_W = 872, ARCH_H = 1170, IMG_W = 1122, IMG_H = 1402;
+// Where the shot sits, kept inside the illustration so the window is always covered.
+const framing = ([s, x, y], shot) => ({ s,
+  left: Math.min(0, Math.max(ARCH_W - IMG_W * s, 436 - x * s)),
+  top: Math.min(shot.soft, Math.max(ARCH_H - IMG_H * s, shot.at - y * s)) });
+shots.forEach((shot, i) => {
+  shot.to = i + 1 < shots.length ? shots[i + 1].from + RISE : siteStart + 1.05;
+  shot.a = framing(shot.cam[0], shot); shot.b = framing(shot.cam[1], shot);
+  shot.box = document.createElement('div'); shot.box.className = 'shot' + (shot.soft ? ' soft' : ''); shot.box.style.background = shot.wall;
+  shot.el = document.createElement('img'); shot.el.src = `chars/${shot.img}.jpg`; shot.el.alt = '';
+  shot.box.appendChild(shot.el); $('arch').appendChild(shot.box);
+});
+
+// The words on the page. Each arrives just before it is spoken and leaves once the voice has finished.
+// numbered cards wait for the number to be said first; subAt: the small line waits for its part of the sentence.
+const steps = [...document.querySelectorAll('.step')];
+const cards = [
+  { at: -0.3,                 until: shots[1].from + 0.15 },
+  { at: L[1].start,           until: L[2].start - 0.35,    subAt: L[1].resumes[0] },
+  { at: L[2].start,           until: shots[2].from + 0.15 },
+  { at: L[3].resumes[0],      until: shots[3].from + 0.15, subAt: L[3].resumes[1] },
+  { at: L[4].resumes[0],      until: shots[4].from + 0.15, subAt: L[4].resumes[1] },
+  { at: L[5].resumes[0],      until: shots[5].from + 0.15, subAt: L[5].end - 1.05 },
+  { at: L[6].resumes[0],      until: siteStart + 0.15,     subAt: L[6].resumes[0] + 0.85 },
+];
+const numbers = [3, 4, 5, 6].map((line, i) => { const el = document.createElement('span'); el.textContent = String(i + 1); $('markNum').appendChild(el); return { el, at: L[line].start }; });
+const dots = [...$('dots').children];
+let labelW = 0, numW = 0;
+
+window.ready = (async () => {
+  await Promise.all(['500 84px "Playfair Display"', 'italic 500 84px "Playfair Display"', '500 124px "Playfair Display"', 'italic 500 124px "Playfair Display"',
+    'italic 400 150px "Playfair Display"', 'italic 500 96px "Playfair Display"', '400 37px Inter', '500 58px Inter', '600 25px Inter'].map(face => document.fonts.load(face, 'abc 1234')));
+  await document.fonts.ready;
+  await Promise.all([...shots.map(shot => shot.el.decode()), $('pageImg').decode(), $('navImg').decode()]);
+  labelW = $('markLabel').getBoundingClientRect().width;
+  numW = Math.max(...numbers.map(n => n.el.getBoundingClientRect().width)) + 6;
+  $('markNum').style.width = numW + 'px';
+})();
+
+window.renderAt = T => {
+  // Pictures in the arch.
+  shots.forEach((shot, i) => {
+    const next = shots[i + 1];
+    const visible = T >= shot.from && T < shot.to;
+    shot.box.style.display = visible ? 'block' : 'none';
+    if (!visible) return;
+    const p = clamp((T - shot.from) / (shot.to - shot.from));
+    const s = mix(shot.a.s, shot.b.s, p), left = mix(shot.a.left, shot.b.left, p), top = mix(shot.a.top, shot.b.top, p);
+    shot.el.style.transform = `translate(${left}px, ${top}px) scale(${s})`;
+    const rise = i === 0 ? 1 : inOut((T - shot.from) / RISE), covered = next ? inOut((T - next.from) / RISE) : 0;
+    shot.box.style.transform = `translateY(${Math.round((1 - rise) * 1250 - covered * 46)}px)`;
+  });
+
+  // The marker line: label for the opening, then the number of the point.
+  const toNumbers = inOut((T - (shots[2].from - 0.1)) / 0.6);
+  $('slot').style.width = mix(labelW, numW, toNumbers) + 'px';
+  $('markLabel').style.opacity = String(ease((T + 0.4) / 0.6) * (1 - ease((T - (shots[2].from - 0.25)) / 0.35)));
+  numbers.forEach((n, i) => {
+    const next = numbers[i + 1];
+    const up = ease((T - (n.at - 0.15)) / 0.45), out = next ? ease((T - (next.at - 0.5)) / 0.3) : 0;
+    n.el.style.opacity = String(up * (1 - out));
+    n.el.style.transform = `translateY(${(1 - up) * 44 - out * 44}px)`;
+  });
+  $('markRule').style.transform = `scaleX(${ease((T + 0.3) / 0.9)})`;
+  dots.forEach((dot, i) => {
+    const show = ease((T - (L[2].resumes[0] + i * 0.16)) / 0.4), fill = ease((T - (numbers[i].at - 0.1)) / 0.35);
+    dot.style.opacity = String(show); dot.style.transform = `scale(${mix(0.4, 1, show)})`;
+    dot.style.background = `rgba(155,122,72,${fill})`;
+  });
+  $('marker').style.opacity = String(1 - ease((T - siteStart) / 0.3));
+
+  cards.forEach((card, i) => {
+    const step = steps[i], begin = card.at - 0.3;
+    const on = T >= begin && T < card.until;
+    step.style.opacity = '0';
+    if (!on) return;
+    const enter = ease((T - begin) / 0.8), leave = ease((T - (card.until - 0.4)) / 0.4);
+    step.style.opacity = String(Math.min(1, enter * 1.6) * (1 - leave));
+    step.style.transform = `translateY(${-leave * 16}px)`;
+    const h2 = step.querySelector('h2'), sub = step.querySelector('p');
+    h2.style.transform = `translateY(${(1 - enter) * 34}px)`; h2.style.filter = enter < 1 ? `blur(${(1 - enter) * 6}px)` : 'none';
+    if (sub) { const k = ease((T - (card.subAt ? card.subAt - 0.2 : begin + 0.35)) / 0.8); sub.style.opacity = String(k); sub.style.transform = `translateY(${(1 - k) * 20}px)`; }
+  });
+
+  // The real site: an ivory page rises with the phone on it, the homepage scrolls to the button, and it is tapped.
+  const toSite = inOut((T - siteStart) / 1.0), siteY = Math.round((1 - toSite) * 1920);
+  $('sitePage').style.transform = `translateY(${siteY}px)`;
+  const cap = ease((T - (L[7].start - 0.3)) / 0.8);
+  $('siteCaption').style.opacity = String(cap); $('siteCaption').style.transform = `translateY(${(1 - cap) * 24}px)`;
+  const scroll = 520 * inOut((T - (L[7].start + 0.15)) / 2.5), K = 682 / 390;
+  $('pageImg').style.transform = `translateY(${-scroll * K}px)`;
+  const tap = clamp((T - (L[7].start + 2.75)) / 0.6), r = $('ripple');
+  r.style.left = `${195 * K}px`; r.style.top = `${(942 - 520) * K}px`;
+  r.style.opacity = String(tap > 0 && tap < 1 ? Math.sin(Math.PI * Math.min(1, tap * 1.15)) * 0.9 : 0);
+  r.style.transform = `scale(${mix(0.35, 1.25, ease(tap))})`;
+
+  // The invitation: a dark page rises, and each line arrives when it is spoken.
+  const toInk = inOut((T - inkStart) / 1.0), inkY = Math.round((1 - toInk) * 1920);
+  $('inkPage').style.transform = `translateY(${inkY}px)`; $('inkFixed').style.transform = `translateY(${-inkY}px)`;
+  const e = ease((T - (inkStart + 0.85)) / 0.9);
+  $('closeTop').style.opacity = String(e); $('closeTop').style.transform = `translateY(${(1 - e) * 30}px)`;
+  $('closeDash').style.transform = `scaleX(${ease((T - (inkStart + 1.1)) / 0.7)})`;
+  const facts = ease((T - ((L[8].resumes[0] ?? L[8].start + 1.6) - 0.2)) / 0.8);
+  $('closeFacts').style.opacity = String(facts); $('closeFacts').style.transform = `translateY(${(1 - facts) * 22}px)`;
+  const link = ease((T - (L[8].end - 0.9)) / 0.8);
+  $('closeLink').style.opacity = String(link); $('closeLink').style.transform = `translateY(${(1 - link) * 22}px)`;
+  $('closeCredit').style.opacity = String(ease((T - (L[8].end - 0.2)) / 0.9));
+};
+</script>
+</body>
+</html>

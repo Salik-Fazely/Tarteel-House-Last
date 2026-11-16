@@ -1,0 +1,133 @@
+{
+ "voice": "af_heart",
+ "speed": 0.82,
+ "total": 44.5,
+ "lines": [
+  {
+   "line": 1,
+   "text": "Your child's first Qur'an lesson is not a test.",
+   "phonemes": "jˌʊɹ ʧˈIldz fˈɜɹst kʊɹˈɑn lˈɛsən ɪz nˌɑt ɐ tˈɛst.",
+   "start": 0.45,
+   "end": 3.434,
+   "resumes": [],
+   "seconds": 2.98,
+   "words_per_second": 3.02,
+   "rms_db": -22.6,
+   "peak_db": -6.6
+  },
+  {
+   "line": 2,
+   "text": "They don't need to prepare. Mistakes simply show the teacher where to begin.",
+   "phonemes": "ðˌA dˈOnt nˈid tə pɹipˈɛɹ. məstˈAks sˈɪmpli ʃˈO ðə tˈiʧəɹ wˌɛɹ tə bəɡˈɪn.",
+   "start": 4.384,
+   "end": 8.92,
+   "resumes": [
+    6.184
+   ],
+   "seconds": 4.54,
+   "words_per_second": 2.87,
+   "rms_db": -22.3,
+   "peak_db": -7.3
+  },
+  {
+   "line": 3,
+   "text": "In a trial lesson, here are four things to notice.",
+   "phonemes": "ˌɪn ɐ tɹˈIᵊl lˈɛsən, hˈɪɹ ɑɹ fˈɔɹ θˈɪŋz tə nˈOɾəs.",
+   "start": 9.72,
+   "end": 12.847,
+   "resumes": [
+    11.19
+   ],
+   "seconds": 3.13,
+   "words_per_second": 3.2,
+   "rms_db": -22.2,
+   "peak_db": -5.8
+  },
+  {
+   "line": 4,
+   "text": "One. Does the teacher speak to your child, clearly and with respect?",
+   "phonemes": "wˈʌn. dˈʌz ðə tˈiʧəɹ spˈik tə jʊɹ ʧˈIld, klˈɪɹli ænd wɪð ɹəspˈɛkt?",
+   "start": 13.797,
+   "end": 18.041,
+   "resumes": [
+    14.497,
+    16.497
+   ],
+   "seconds": 4.24,
+   "words_per_second": 2.83,
+   "rms_db": -22.1,
+   "peak_db": -4.7
+  },
+  {
+   "line": 5,
+   "text": "Two. Does the teacher listen first, before deciding what to teach?",
+   "phonemes": "tˈu. dˈʌz ðə tˈiʧəɹ lˈɪsᵊn fˈɜɹst, bəfˈɔɹ dəsˈIdɪŋ wˌʌt tə tˈiʧ?",
+   "start": 18.991,
+   "end": 23.218,
+   "resumes": [
+    19.701,
+    21.551
+   ],
+   "seconds": 4.23,
+   "words_per_second": 2.6,
+   "rms_db": -22.4,
+   "peak_db": -5.2
+  },
+  {
+   "line": 6,
+   "text": "Three. Does your child feel safe to try again after a mistake?",
+   "phonemes": "θɹˈi. dˈʌz jʊɹ ʧˈIld fˈil sˈAf tə tɹˈI əɡˈɛn ˈæftəɹ ɐ məstˈAk?",
+   "start": 24.168,
+   "end": 28.027,
+   "resumes": [
+    24.948
+   ],
+   "seconds": 3.86,
+   "words_per_second": 3.11,
+   "rms_db": -22.8,
+   "peak_db": -5.9
+  },
+  {
+   "line": 7,
+   "text": "Four. Is it clear what your child should work on next?",
+   "phonemes": "fˈɔɹ. ˌɪz ɪt klˈɪɹ wˌʌt jʊɹ ʧˈIld ʃˌʊd wˈɜɹk ˌɔn nˈɛkst?",
+   "start": 28.977,
+   "end": 31.991,
+   "resumes": [
+    29.727
+   ],
+   "seconds": 3.01,
+   "words_per_second": 3.65,
+   "rms_db": -22.2,
+   "peak_db": -6.0
+  },
+  {
+   "line": 8,
+   "text": "At Tarteel House, you can see all of this for yourself.",
+   "phonemes": "ˌæt tɑɹtˈil hˈWs, ju kæn sˈi ˈɔl ʌv ðɪs fɔɹ jəɹsˈɛlf.",
+   "start": 33.291,
+   "end": 36.717,
+   "resumes": [
+    34.741
+   ],
+   "seconds": 3.43,
+   "words_per_second": 3.21,
+   "rms_db": -22.2,
+   "peak_db": -4.0
+  },
+  {
+   "line": 9,
+   "text": "The first lesson is free. Forty minutes, one-to-one, with no payment.",
+   "phonemes": "ðə fˈɜɹst lˈɛsən ɪz fɹˈi. fˈɔɹɾi mˈɪnəts, wˌʌntəwˈʌn, wɪð nˈO pˈAmᵊnt.",
+   "start": 38.067,
+   "end": 42.521,
+   "resumes": [
+    40.017
+   ],
+   "seconds": 4.45,
+   "words_per_second": 2.47,
+   "rms_db": -22.3,
+   "peak_db": -3.9
+  }
+ ]
+}
