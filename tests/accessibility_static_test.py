@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FAQ_PAGES = {
+    Path("faq/index.html"): 12,
     Path("how-it-works/index.html"): 6,
     Path("pricing/index.html"): 9,
     Path("teachers/index.html"): 7,

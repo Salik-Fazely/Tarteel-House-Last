@@ -16,6 +16,9 @@ const PAGES = [
   '/tajweed-classes-for-kids/',
   '/quran-memorization-for-kids/',
   '/ramadan-quran-classes-for-kids/',
+  '/online-quran-classes-for-kids-in-europe/',
+  '/female-quran-teacher-for-kids/',
+  '/faq/',
 ];
 const WIDTHS = [320, 390, 940, 1280];
 

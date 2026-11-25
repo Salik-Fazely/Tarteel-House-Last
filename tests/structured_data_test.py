@@ -28,6 +28,9 @@ BREADCRUMB_PAGES = {
     "tajweed-classes-for-kids/index.html": "/tajweed-classes-for-kids/",
     "quran-memorization-for-kids/index.html": "/quran-memorization-for-kids/",
     "ramadan-quran-classes-for-kids/index.html": "/ramadan-quran-classes-for-kids/",
+    "online-quran-classes-for-kids-in-europe/index.html": "/online-quran-classes-for-kids-in-europe/",
+    "female-quran-teacher-for-kids/index.html": "/female-quran-teacher-for-kids/",
+    "faq/index.html": "/faq/",
 }
 
 
@@ -135,7 +138,13 @@ class StructuredDataTests(unittest.TestCase):
         self.assertTrue(has_type(organization, "EducationalOrganization"))
         self.assertIn("human teachers", organization["disambiguatingDescription"].lower())
         self.assertNotIn("tarteel ai", organization["disambiguatingDescription"].lower())
-        self.assertEqual(["https://www.instagram.com/tarteelhouse/"], organization["sameAs"])
+        self.assertEqual(
+            [
+                "https://www.instagram.com/tarteelhouse/",
+                "https://www.trustpilot.com/review/tarteelhouse.com",
+            ],
+            organization["sameAs"],
+        )
         self.assertEqual(["Europe", "United States"], organization["areaServed"])
         self.assertIn("across Europe and the US", read("about/index.html"))
         # Tarteel House teaches online only and publishes no postal address.
@@ -157,6 +166,7 @@ class StructuredDataTests(unittest.TestCase):
             "tajweed-classes-for-kids/index.html",
             "quran-memorization-for-kids/index.html",
             "ramadan-quran-classes-for-kids/index.html",
+            "online-quran-classes-for-kids-in-europe/index.html",
         )
         for relative in course_pages:
             with self.subTest(page=relative):

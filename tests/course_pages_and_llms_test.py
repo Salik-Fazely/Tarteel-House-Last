@@ -11,6 +11,9 @@ COURSE_SLUGS = (
     "tajweed-classes-for-kids",
     "quran-memorization-for-kids",
     "ramadan-quran-classes-for-kids",
+    "online-quran-classes-for-kids-in-europe",
+    "female-quran-teacher-for-kids",
+    "faq",
 )
 
 
@@ -39,7 +42,7 @@ class CoursePagesAndLlmsTests(unittest.TestCase):
                 self.assertIn('href="/book-trial/"', html)
                 self.assertIn("40-minute", lower)
                 self.assertIn("valid for one year", lower)
-                self.assertIn("normally contacted within two days", lower)
+                self.assertRegex(lower, r"normally.{0,30}within two days")
                 self.assertIn("if a parent is unavailable or does not want a meeting", lower)
                 self.assertNotIn("tarteel ai", lower)
                 self.assertNotIn("guarantee", lower)
@@ -69,6 +72,7 @@ class CoursePagesAndLlmsTests(unittest.TestCase):
             self.assertIn(required, lower, required)
         for slug in COURSE_SLUGS:
             self.assertIn(f"https://www.tarteelhouse.com/{slug}/", llms)
+        self.assertIn("https://www.trustpilot.com/review/tarteelhouse.com", llms)
         self.assertNotIn("tarteel ai", lower)
         self.assertIsNone(re.search(r"\b(?:best|#1|number one|guaranteed)\b", lower))
 

@@ -102,7 +102,7 @@
 
 ## Structured data decisions
 - Structured data repeats only what a page shows or what [commercial facts](commercial-facts.md) approve: package prices on Pricing, teacher names and languages on Teachers, breadcrumbs on core pages. `tests/structured_data_test.py` compares each with its source.
-- The organisation record links the Instagram profile through `sameAs`. Add other profiles there only once they exist and are in use.
+- The organisation record links the Instagram and Trustpilot profiles through `sameAs`. Add other profiles there only once they exist and are in use.
 - Still excluded: postal address, ratings, reviews, awards and price ranges.
 
 ## Open decisions
