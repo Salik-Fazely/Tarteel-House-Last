@@ -29,9 +29,13 @@ CANONICAL_PAGES = (
     "blog/what-age-should-a-child-start-learning-quran/index.html",
     "book-trial/index.html",
     "how-it-works/index.html",
+    "noorani-qaida-classes-for-kids/index.html",
     "pricing/index.html",
     "privacy-policy/index.html",
+    "quran-memorization-for-kids/index.html",
+    "ramadan-quran-classes-for-kids/index.html",
     "success/index.html",
+    "tajweed-classes-for-kids/index.html",
     "teachers/index.html",
     "terms/index.html",
 )

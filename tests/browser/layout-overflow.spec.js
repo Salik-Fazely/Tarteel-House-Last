@@ -5,7 +5,18 @@ const { test, expect } = require('@playwright/test');
 // Pages must never scroll sideways. 320px is the narrowest phone in use;
 // 940px sits between the tablet and desktop price-grid breakpoints, where
 // three price cards once added up to 980px.
-const PAGES = ['/', '/pricing/', '/tr/', '/fa/', '/teachers/', '/book-trial/'];
+const PAGES = [
+  '/',
+  '/pricing/',
+  '/tr/',
+  '/fa/',
+  '/teachers/',
+  '/book-trial/',
+  '/noorani-qaida-classes-for-kids/',
+  '/tajweed-classes-for-kids/',
+  '/quran-memorization-for-kids/',
+  '/ramadan-quran-classes-for-kids/',
+];
 const WIDTHS = [320, 390, 940, 1280];
 
 test.beforeEach(async ({ context }) => {
