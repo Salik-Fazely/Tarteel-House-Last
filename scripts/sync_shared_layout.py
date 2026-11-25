@@ -172,6 +172,11 @@ PAGE_CONFIGS = (
         whatsapp_message="Hello, I have a question about how Tarteel House Quran classes work (from the How It Works page).",
     ),
     PageConfig(
+        "noorani-qaida-classes-for-kids/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Noorani Qaida and beginner Quran classes for my child.",
+    ),
+    PageConfig(
         "pricing/index.html",
         "pricing",
         whatsapp_message="Hello, I have a question about Tarteel House lesson packages and pricing (from the Pricing page).",
@@ -192,9 +197,24 @@ PAGE_CONFIGS = (
         whatsapp_message="Hello, I have a question about Quran classes in Turkish for my child (from the Turkish lessons page).",
     ),
     PageConfig(
+        "quran-memorization-for-kids/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about online Quran memorization classes for my child.",
+    ),
+    PageConfig(
+        "ramadan-quran-classes-for-kids/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Ramadan 2027 online Quran classes for my child.",
+    ),
+    PageConfig(
         "success/index.html",
         None,
         footer_variant="no_prebooking_contact",
+    ),
+    PageConfig(
+        "tajweed-classes-for-kids/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about online Tajweed classes for my child.",
     ),
     PageConfig(
         "teachers/index.html",

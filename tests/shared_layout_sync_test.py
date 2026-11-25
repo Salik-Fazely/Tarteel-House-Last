@@ -32,11 +32,15 @@ EXPECTED_COMPLETE_PAGES = (
     "book-trial/index.html",
     "fa/index.html",
     "how-it-works/index.html",
+    "noorani-qaida-classes-for-kids/index.html",
     "pricing/index.html",
     "privacy-policy/index.html",
     "quran-classes-in-farsi-and-dari/index.html",
     "quran-classes-in-turkish/index.html",
+    "quran-memorization-for-kids/index.html",
+    "ramadan-quran-classes-for-kids/index.html",
     "success/index.html",
+    "tajweed-classes-for-kids/index.html",
     "teachers/index.html",
     "terms/index.html",
     "tr/index.html",
@@ -81,7 +85,7 @@ ARTICLE_IMAGES = {
 
 CORE_METADATA = {
     "index.html": (
-        "Online Quran Classes for Kids | Tarteel House",
+        "Online Quran Classes & Course for Kids | Tarteel House",
         "https://www.tarteelhouse.com/",
     ),
     "about/index.html": (
@@ -93,7 +97,7 @@ CORE_METADATA = {
         "https://www.tarteelhouse.com/book-trial/",
     ),
     "pricing/index.html": (
-        "Quran Classes Pricing for Kids | Tarteel House",
+        "Online Quran Classes Pricing (€16–€20) | Tarteel House",
         "https://www.tarteelhouse.com/pricing/",
     ),
     "teachers/index.html": (
