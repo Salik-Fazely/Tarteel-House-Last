@@ -19,32 +19,35 @@ DEFAULT_IMAGE_PAGES = (
     "index.html",
     "about/index.html",
     "blog/index.html",
+    "book-trial/index.html",
     "how-it-works/index.html",
     "pricing/index.html",
+    "privacy-policy/index.html",
     "teachers/index.html",
+    "terms/index.html",
 )
 
 ARTICLE_IMAGES = {
     "blog/child-refuses-quran-practice/index.html": (
-        BASE_URL + "/assets/blog/child-refuses-quran-practice.png"
+        BASE_URL + "/assets/blog/child-refuses-quran-practice-og.jpg"
     ),
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html": (
-        BASE_URL + "/assets/blog/free-online-quran-trial-lesson-cover.png"
+        BASE_URL + "/assets/blog/free-online-quran-trial-lesson-cover-og.jpg"
     ),
     "blog/help-children-memorize-short-surahs/index.html": (
-        BASE_URL + "/assets/blog/help-children-memorize-short-surahs.png"
+        BASE_URL + "/assets/blog/help-children-memorize-short-surahs-og.jpg"
     ),
     "blog/how-children-learn-to-read-quran/index.html": (
-        BASE_URL + "/assets/blog/how-children-learn-to-read-quran.png"
+        BASE_URL + "/assets/blog/how-children-learn-to-read-quran-og.jpg"
     ),
     "blog/how-parents-can-track-their-childs-quran-progress/index.html": (
-        BASE_URL + "/assets/blog/track-child-quran-progress.png"
+        BASE_URL + "/assets/blog/track-child-quran-progress-og.jpg"
     ),
     "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": (
-        BASE_URL + "/assets/blog/one-to-one-vs-group-quran-classes.png"
+        BASE_URL + "/assets/blog/one-to-one-vs-group-quran-classes-og.jpg"
     ),
     "blog/online-quran-classes-for-kids-parents-look-for/index.html": (
-        BASE_URL + "/assets/blog/online-quran-classes-for-kids-parents-look-for.png"
+        BASE_URL + "/assets/blog/online-quran-classes-for-kids-parents-look-for-og.jpg"
     ),
 }
 
@@ -193,7 +196,13 @@ class Branded404SocialTests(unittest.TestCase):
         links = {(link["href"], link.get("text", "")) for link in page.links}
         self.assertIn(("/", "Go to homepage"), links)
         self.assertIn(("/book-trial/", "Book a free trial"), links)
-        self.assertIn((OFFICIAL_WHATSAPP_URL, "WhatsApp us"), links)
+        self.assertTrue(
+            any(
+                href.startswith(OFFICIAL_WHATSAPP_URL + "?text=") and text == "WhatsApp us"
+                for href, text in links
+            ),
+            "404 page should include a prefilled official WhatsApp link",
+        )
 
     def test_404_uses_existing_font_favicon_styles_and_consent_pattern(self):
         page_path = ROOT / "404.html"
@@ -202,9 +211,9 @@ class Branded404SocialTests(unittest.TestCase):
         page = parse_page("404.html")
 
         self.assertEqual(1, page.stylesheets.count(FONT_STYLESHEET))
-        self.assertEqual(1, page.stylesheets.count("/assets/css/styles.css?v=20261110-2"))
+        self.assertEqual(1, page.stylesheets.count("/assets/css/styles.css?v=20261125-1"))
         self.assertIn("/assets/logo/favicon.ico", page.icons)
-        self.assertEqual(1, source.count('<script src="/assets/js/consent.js?v=20261110-2"></script>'))
+        self.assertEqual(1, source.count('<script src="/assets/js/consent.js?v=20261125-1"></script>'))
         self.assertEqual(1, source.count('<script src="/assets/js/main.js?v=20261014-1"></script>'))
 
     def test_404_is_not_listed_in_sitemap(self):

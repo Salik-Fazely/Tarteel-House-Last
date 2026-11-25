@@ -39,16 +39,16 @@ PAGES = {
     "/tr/": "tr/index.html",
 }
 ARTICLES = {
-    "/blog/child-refuses-quran-practice/": "/assets/blog/child-refuses-quran-practice.png",
-    "/blog/help-children-memorize-short-surahs/": "/assets/blog/help-children-memorize-short-surahs.png",
-    "/blog/online-quran-classes-for-kids-parents-look-for/": "/assets/blog/online-quran-classes-for-kids-parents-look-for.png",
-    "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "/assets/blog/one-to-one-vs-group-quran-classes.png",
-    "/blog/how-parents-can-track-their-childs-quran-progress/": "/assets/blog/track-child-quran-progress.png",
-    "/blog/free-online-quran-trial-lesson-parent-checklist/": "/assets/blog/free-online-quran-trial-lesson-cover.png",
-    "/blog/how-children-learn-to-read-quran/": "/assets/blog/how-children-learn-to-read-quran.png",
-    "/blog/juz-amma-memorization-order-for-kids/": "/assets/blog/juz-amma-memorization-order.png",
-    "/blog/ramadan-quran-plan-for-kids/": "/assets/blog/ramadan-quran-plan-for-kids.png",
-    "/blog/what-age-should-a-child-start-learning-quran/": "/assets/blog/what-age-to-start-learning-quran.png",
+    "/blog/child-refuses-quran-practice/": "/assets/blog/child-refuses-quran-practice-og.jpg",
+    "/blog/help-children-memorize-short-surahs/": "/assets/blog/help-children-memorize-short-surahs-og.jpg",
+    "/blog/online-quran-classes-for-kids-parents-look-for/": "/assets/blog/online-quran-classes-for-kids-parents-look-for-og.jpg",
+    "/blog/one-to-one-quran-classes-vs-group-classes-for-children/": "/assets/blog/one-to-one-vs-group-quran-classes-og.jpg",
+    "/blog/how-parents-can-track-their-childs-quran-progress/": "/assets/blog/track-child-quran-progress-og.jpg",
+    "/blog/free-online-quran-trial-lesson-parent-checklist/": "/assets/blog/free-online-quran-trial-lesson-cover-og.jpg",
+    "/blog/how-children-learn-to-read-quran/": "/assets/blog/how-children-learn-to-read-quran-og.jpg",
+    "/blog/juz-amma-memorization-order-for-kids/": "/assets/blog/juz-amma-memorization-order-og.jpg",
+    "/blog/ramadan-quran-plan-for-kids/": "/assets/blog/ramadan-quran-plan-for-kids-og.jpg",
+    "/blog/what-age-should-a-child-start-learning-quran/": "/assets/blog/what-age-to-start-learning-quran-og.jpg",
 }
 # Evidence for each date: the day the guide's file first entered this
 # repository's history (`git log --diff-filter=A --follow`).
@@ -162,7 +162,11 @@ def json_nodes(documents):
 
 
 def node_of_type(documents, schema_type):
-    return next(node for node in json_nodes(documents) if node.get("@type") == schema_type)
+    def matches(node):
+        kind = node.get("@type")
+        return schema_type in kind if isinstance(kind, list) else kind == schema_type
+
+    return next(node for node in json_nodes(documents) if matches(node))
 
 
 def sitemap_urls():
@@ -201,9 +205,12 @@ class TechnicalSeoTests(unittest.TestCase):
             "/": default_image,
             "/about/": default_image,
             "/blog/": default_image,
+            "/book-trial/": default_image,
             "/how-it-works/": default_image,
             "/pricing/": default_image,
+            "/privacy-policy/": default_image,
             "/teachers/": default_image,
+            "/terms/": default_image,
             "/fa/": default_image,
             "/tr/": default_image,
             "/quran-classes-in-farsi-and-dari/": default_image,
@@ -216,6 +223,8 @@ class TechnicalSeoTests(unittest.TestCase):
             page = parse(relative)
             expected_type = "article" if path in ARTICLES else "website"
             self.assertEqual([expected_type], page.properties["og:type"], path)
+            if path not in {"/fa/", "/tr/"}:
+                self.assertEqual(["Tarteel House"], page.properties["og:site_name"], path)
             self.assertEqual(page.titles, page.properties["og:title"], path)
             self.assertEqual([BASE_URL + path], page.properties["og:url"], path)
             self.assertEqual(1, len(page.properties["og:description"]), path)
@@ -229,7 +238,10 @@ class TechnicalSeoTests(unittest.TestCase):
                 absolute = BASE_URL + expected_image
                 self.assertEqual([absolute], page.properties["og:image"], path)
                 self.assertEqual([absolute], page.meta["twitter:image"], path)
-                self.assertTrue((ROOT / expected_image.lstrip("/")).is_file(), path)
+                local_image = ROOT / expected_image.lstrip("/")
+                self.assertTrue(local_image.is_file(), path)
+                if path in ARTICLES:
+                    self.assertLess(local_image.stat().st_size, 250_000, path)
             else:
                 self.assertFalse(page.properties["og:image"], path)
                 self.assertFalse(page.meta["twitter:image"], path)
@@ -252,6 +264,9 @@ class TechnicalSeoTests(unittest.TestCase):
             self.assertEqual(BASE_URL + image_path, posting["image"]["url"], path)
             self.assertEqual(BASE_URL + path, posting["mainEntityOfPage"]["@id"], path)
             self.assertEqual("Tarteel House", posting["publisher"]["name"], path)
+            self.assertEqual("en", posting.get("inLanguage"), path)
+            if path == "/blog/ramadan-quran-plan-for-kids/":
+                self.assertLessEqual(len(page.titles[0]), 58, path)
             self.assertIn(path, ARTICLE_PUBLISHED_DATES, path)
             self.assertEqual(ARTICLE_PUBLISHED_DATES[path], posting["datePublished"], path)
             self.assertEqual(

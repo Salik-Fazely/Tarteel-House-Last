@@ -19,13 +19,13 @@ BLOG_INDEX = ROOT / "blog/index.html"
 STYLES = ROOT / "assets/css/styles.css"
 SITEMAP = ROOT / "sitemap.xml"
 CANONICAL = "https://www.tarteelhouse.com/blog/child-refuses-quran-practice/"
-TITLE = "Child Refuses Quran Practice? How to Restart Gently | Tarteel House"
+TITLE = "When a Child Refuses Quran Practice | Tarteel House"
 HEADLINE = "My Child Refuses Quran Practice: How to Restart Gently"
 DESCRIPTION = (
-    "Learn what may be behind your child’s resistance to Quran practice and use a gentle "
-    "5-step approach to restart with less conflict and more consistency."
+    "Learn why your child may resist Quran practice and use a gentle 5-step "
+    "approach to restart with less conflict and steady consistency."
 )
-IMAGE_URL = "https://www.tarteelhouse.com/assets/blog/child-refuses-quran-practice.png"
+IMAGE_URL = "https://www.tarteelhouse.com/assets/blog/child-refuses-quran-practice-og.jpg"
 IMAGE_ALT = "A child and parent rebuild a calm Quran practice routine at home"
 IMAGE_FILES = (
     ROOT / "assets/blog/child-refuses-quran-practice.png",

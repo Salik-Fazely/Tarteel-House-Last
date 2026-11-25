@@ -87,7 +87,8 @@ class LanguageLandingPageTests(unittest.TestCase):
         for slug, page in PAGES.items():
             with self.subTest(page=slug):
                 main = main_content(read(f"{slug}/index.html"))
-                self.assertGreaterEqual(main.count('href="/book-trial/"'), 2)
+                expected_booking = f'href="/book-trial/?lang={page["language"].lower()}"'
+                self.assertGreaterEqual(main.count(expected_booking), 2)
                 self.assertIn(f'href="{page["native_href"]}"', main)
                 self.assertEqual(main.count("<h1"), 1)
 

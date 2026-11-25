@@ -206,7 +206,7 @@ class TrustSafeguardingPatchTests(unittest.TestCase):
 
     def test_prebooking_whatsapp_links_are_consistent_and_safe(self):
         footer_link_pattern = re.compile(
-            rf'<a href="{re.escape(WHATSAPP_URL)}" class="footer__contact-link" '
+            rf'<a href="{re.escape(WHATSAPP_URL)}\?text=[^"]+" class="footer__contact-link" '
             r'target="_blank" rel="noopener noreferrer" aria-label="[^"]+">WhatsApp us</a>'
         )
         for path in FOOTER_CONTACT_PAGES:
@@ -220,7 +220,7 @@ class TrustSafeguardingPatchTests(unittest.TestCase):
             page = source(path)
             self.assertRegex(
                 page,
-                rf'<a href="{re.escape(WHATSAPP_URL)}" class="final-cta__secondary-link" '
+                rf'<a href="{re.escape(WHATSAPP_URL)}\?text=[^"]+" class="final-cta__secondary-link" '
                 r'target="_blank" rel="noopener noreferrer" aria-label="[^"]+">Ask a question</a>',
             )
 

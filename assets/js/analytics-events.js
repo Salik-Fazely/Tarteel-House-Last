@@ -90,6 +90,27 @@
     }
   }
 
+  function whatsappLink(win, target) {
+    if (!target || typeof target.closest !== 'function') return null;
+
+    const element = target.closest('a[href]');
+    if (!element) return null;
+
+    try {
+      const destination = new URL(element.getAttribute('href'), win.location.href);
+      if (destination.protocol !== 'https:') return null;
+      if (destination.hostname !== 'wa.me' && destination.hostname !== 'api.whatsapp.com') return null;
+      return element;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function pageLanguage(doc) {
+    const lang = String(doc?.documentElement?.lang || '').trim().toLowerCase();
+    return lang || 'en';
+  }
+
   function normalizedCtaText(element) {
     const text = typeof element.innerText === 'string' ? element.innerText : element.textContent;
     return String(text || '').replace(/\s+/g, ' ').trim().slice(0, 100);
@@ -271,6 +292,15 @@
     win[INIT_FLAG] = true;
 
     doc.addEventListener('click', event => {
+      const waLink = whatsappLink(win, event.target);
+      if (waLink) {
+        sendEvent(win, consentApi, 'whatsapp_click', {
+          source_path: win.location.pathname,
+          page_language: pageLanguage(doc),
+        });
+        return;
+      }
+
       const cta = bookingCta(win, event.target);
       if (!cta) return;
 

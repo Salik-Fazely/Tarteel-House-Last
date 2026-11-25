@@ -12,13 +12,13 @@ BLOG_INDEX = ROOT / "blog/index.html"
 RELATED_ARTICLE = ROOT / "blog/online-quran-classes-for-kids-parents-look-for/index.html"
 SITEMAP = ROOT / "sitemap.xml"
 CANONICAL = "https://www.tarteelhouse.com/blog/free-online-quran-trial-lesson-parent-checklist/"
-TITLE = "What Happens in a Free Online Quran Trial Lesson? | Tarteel House"
+TITLE = "Free Online Quran Trial Lesson Checklist | Tarteel House"
 HEADLINE = "What Happens in a Free Online Quran Trial Lesson? A Parent Checklist"
 DESCRIPTION = (
     "Learn what happens before, during and after a free online Quran trial lesson, "
     "with a simple checklist to help parents assess the experience."
 )
-IMAGE_URL = "https://www.tarteelhouse.com/assets/blog/free-online-quran-trial-lesson-cover.png"
+IMAGE_URL = "https://www.tarteelhouse.com/assets/blog/free-online-quran-trial-lesson-cover-og.jpg"
 IMAGE_ALT = "A child attending a one-to-one online Quran trial lesson with a female teacher"
 IMAGE_FILES = (
     ROOT / "assets/blog/free-online-quran-trial-lesson-cover.png",
@@ -432,7 +432,7 @@ class TrialLessonArticleTests(unittest.TestCase):
             if tag == "script" and attrs.get("src")
         ]
         self.assertEqual(
-            ["/assets/js/consent.js?v=20261110-2", "/assets/js/analytics-events.js?v=20261110-2", "/assets/js/main.js?v=20261014-1"],
+            ["/assets/js/consent.js?v=20261125-1", "/assets/js/analytics-events.js?v=20261125-1", "/assets/js/main.js?v=20261014-1"],
             scripts,
         )
 
