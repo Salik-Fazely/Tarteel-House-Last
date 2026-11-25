@@ -147,6 +147,37 @@ class StructuredDataTests(unittest.TestCase):
                     self.assertNotIn("aggregateRating", text)
                     self.assertNotIn('"review"', text)
 
+    def test_07_language_pages_publish_verified_service_and_offers(self):
+        facts = read("docs/commercial-facts.md")
+        for relative, expected_language in (
+            ("fa/index.html", "Persian"),
+            ("tr/index.html", "Turkish"),
+        ):
+            with self.subTest(page=relative):
+                service = node(relative, "Service")
+                self.assertEqual(ORGANIZATION_ID, service["provider"]["@id"])
+                self.assertEqual(["Europe", "United States"], service["areaServed"])
+                self.assertEqual(
+                    (5, 16),
+                    (service["audience"]["suggestedMinAge"], service["audience"]["suggestedMaxAge"]),
+                )
+                self.assertEqual(
+                    [expected_language],
+                    service["availableChannel"]["availableLanguage"],
+                )
+                offers = {offer["name"]: offer for offer in service["offers"]}
+                self.assertEqual(4, len(offers))
+                for name, price, fact in (
+                    ("Free trial lesson", "0", "Free trial lesson"),
+                    ("Starter: 6 lessons", "120", "6 lessons: €120"),
+                    ("Steady: 12 lessons", "220", "12 lessons: €220"),
+                    ("Committed: 25 lessons", "400", "25 lessons: €400"),
+                ):
+                    if price != "0":
+                        self.assertIn(fact, facts)
+                    self.assertEqual(price, offers[name]["price"])
+                    self.assertEqual("EUR", offers[name]["priceCurrency"])
+
 
 if __name__ == "__main__":
     unittest.main()
