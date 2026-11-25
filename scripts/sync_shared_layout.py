@@ -7,6 +7,7 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import quote
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -48,6 +49,8 @@ LANGUAGES = (
 LANGUAGE_CODES = tuple(code for code, _, _, _ in LANGUAGES)
 LANGUAGE_SWITCH_PLACEHOLDER = "{{LANGUAGE_SWITCH}}"
 LANGUAGE_ROW_PLACEHOLDER = "{{LANGUAGE_ROW}}"
+WHATSAPP_BASE_URL = "https://wa.me/34614494311"
+WHATSAPP_FOOTER_HREF_PLACEHOLDER = "{{WHATSAPP_FOOTER_HREF}}"
 GLOBE_ICON = (
     '<svg class="lang-switch__globe" viewBox="0 0 20 20" width="18" height="18" '
     'fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" '
@@ -75,13 +78,30 @@ class PageConfig:
     footer_variant: str = "standard"
     sync_header: bool = True
     sync_footer: bool = True
+    whatsapp_message: str | None = None
 
 
 PAGE_CONFIGS = (
-    PageConfig("404.html", None),
-    PageConfig("index.html", None),
-    PageConfig("about/index.html", "about"),
-    PageConfig("blog/index.html", None),
+    PageConfig(
+        "404.html",
+        None,
+        whatsapp_message="Hello, I need help finding a page on Tarteel House (from the 404 page).",
+    ),
+    PageConfig(
+        "index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Tarteel House Quran classes for my child (from the homepage).",
+    ),
+    PageConfig(
+        "about/index.html",
+        "about",
+        whatsapp_message="Hello, I have a question about Tarteel House (from the About page).",
+    ),
+    PageConfig(
+        "blog/index.html",
+        None,
+        whatsapp_message="Hello, I have a question after reading the Tarteel House parent guides (from the Blog page).",
+    ),
     PageConfig(
         "blog/child-refuses-quran-practice/index.html",
         None,
@@ -132,20 +152,57 @@ PAGE_CONFIGS = (
         None,
         footer_variant="no_prebooking_contact",
     ),
-    PageConfig("book-trial/index.html", None),
-    PageConfig("fa/index.html", None, language="fa"),
-    PageConfig("how-it-works/index.html", "how_it_works"),
-    PageConfig("pricing/index.html", "pricing"),
-    PageConfig("privacy-policy/index.html", None),
-    PageConfig("quran-classes-in-farsi-and-dari/index.html", None),
-    PageConfig("quran-classes-in-turkish/index.html", None),
+    PageConfig(
+        "book-trial/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about booking a free Quran trial lesson (from the Book Trial page).",
+    ),
+    PageConfig(
+        "fa/index.html",
+        None,
+        language="fa",
+        whatsapp_message="سلام، درباره جلسه آزمایشی رایگان قرآن برای فرزندم سؤال دارم.",
+    ),
+    PageConfig(
+        "how-it-works/index.html",
+        "how_it_works",
+        whatsapp_message="Hello, I have a question about how Tarteel House Quran classes work (from the How It Works page).",
+    ),
+    PageConfig(
+        "pricing/index.html",
+        "pricing",
+        whatsapp_message="Hello, I have a question about Tarteel House lesson packages and pricing (from the Pricing page).",
+    ),
+    PageConfig(
+        "privacy-policy/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Tarteel House (from the Privacy Policy page).",
+    ),
+    PageConfig(
+        "quran-classes-in-farsi-and-dari/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Quran classes in Farsi and Dari for my child (from the Persian lessons page).",
+    ),
+    PageConfig(
+        "quran-classes-in-turkish/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Quran classes in Turkish for my child (from the Turkish lessons page).",
+    ),
     PageConfig(
         "success/index.html",
         None,
         footer_variant="no_prebooking_contact",
     ),
-    PageConfig("teachers/index.html", "teachers"),
-    PageConfig("terms/index.html", None),
+    PageConfig(
+        "teachers/index.html",
+        "teachers",
+        whatsapp_message="Hello, I have a question about Tarteel House Quran teachers (from the Teachers page).",
+    ),
+    PageConfig(
+        "terms/index.html",
+        None,
+        whatsapp_message="Hello, I have a question about Tarteel House (from the Terms page).",
+    ),
     PageConfig(
         "tr/index.html",
         None,
@@ -315,6 +372,13 @@ def render_header(root: Path, config: PageConfig) -> str:
 def render_footer(root: Path, config: PageConfig) -> str:
     relative_path = FOOTER_FRAGMENTS[config.footer_variant]
     rendered = normalized_fragment(root, relative_path)
+    if WHATSAPP_FOOTER_HREF_PLACEHOLDER in rendered:
+        if not config.whatsapp_message:
+            raise SyncError(
+                f"missing whatsapp_message for {config.path} using {relative_path}"
+            )
+        href = f"{WHATSAPP_BASE_URL}?text={quote(config.whatsapp_message, safe='')}"
+        rendered = rendered.replace(WHATSAPP_FOOTER_HREF_PLACEHOLDER, href)
     ensure_resolved(rendered, relative_path)
     return rendered
 

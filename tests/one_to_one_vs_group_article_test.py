@@ -7,13 +7,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ARTICLE = ROOT / "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html"
 CANONICAL = "https://www.tarteelhouse.com/blog/one-to-one-quran-classes-vs-group-classes-for-children/"
-TITLE = "One-to-One Quran Classes vs Group Classes for Children | Tarteel House"
+TITLE = "One-to-One vs Group Quran Classes for Kids | Tarteel House"
 HEADLINE = "One-to-One Quran Classes vs Group Classes for Children"
 DESCRIPTION = (
     "Compare one-to-one and group Quran classes for children, including teacher "
     "attention, pace, corrections, participation and learning needs."
 )
-IMAGE_URL = "https://www.tarteelhouse.com/assets/blog/one-to-one-vs-group-quran-classes.png"
+IMAGE_URL = "https://www.tarteelhouse.com/assets/blog/one-to-one-vs-group-quran-classes-og.jpg"
 IMAGE_ALT = (
     "Adam receives focused one-to-one Qur'an guidance from Teacher Amina during an "
     "online lesson."
@@ -315,7 +315,7 @@ class OneToOneVsGroupArticleTests(unittest.TestCase):
         )
         scripts = [attrs.get("src") for tag, attrs in attributes if tag == "script" and attrs.get("src")]
         self.assertEqual(
-            ["/assets/js/consent.js?v=20261110-2", "/assets/js/analytics-events.js?v=20261110-2", "/assets/js/main.js?v=20261014-1"],
+            ["/assets/js/consent.js?v=20261125-1", "/assets/js/analytics-events.js?v=20261125-1", "/assets/js/main.js?v=20261014-1"],
             scripts,
         )
 

@@ -944,22 +944,46 @@ a.lang-switch__option:focus-visible {
 
 @media (max-width: 760px) {
   .consent-banner {
-    inset: auto var(--space-3) var(--space-3);
+    inset: auto var(--space-2) var(--space-2);
   }
 
   .consent-banner__inner {
     grid-template-columns: 1fr;
-    gap: var(--space-5);
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
   }
-}
 
-@media (max-width: 420px) {
+  .consent-banner__title {
+    margin-bottom: var(--space-1);
+    font-size: var(--text-base);
+  }
+
+  .consent-banner__body {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  .consent-banner__privacy {
+    margin-top: var(--space-2);
+    font-size: 0.8125rem;
+  }
+
   .consent-banner__actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
   }
 
   .consent-banner__button {
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.8125rem;
+    line-height: 1.25;
     white-space: normal;
+  }
+}
+
+@media (max-width: 280px) {
+  .consent-banner__actions {
+    grid-template-columns: 1fr;
   }
 }
 

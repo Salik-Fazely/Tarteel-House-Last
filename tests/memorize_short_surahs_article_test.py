@@ -13,7 +13,7 @@ DESCRIPTION = (
     "Learn a simple way to help children memorise short surahs through listening, "
     "small sections, regular revision and a manageable 10-minute routine."
 )
-IMAGE = "https://www.tarteelhouse.com/assets/blog/help-children-memorize-short-surahs.png"
+IMAGE = "https://www.tarteelhouse.com/assets/blog/help-children-memorize-short-surahs-og.jpg"
 
 
 class ArticleParser(HTMLParser):
@@ -200,8 +200,8 @@ class MemorizeShortSurahsArticleTest(unittest.TestCase):
     def test_global_shell_and_scripts_remain_present(self):
         self.assertIn('<header class="site-header" id="top">', self.source)
         self.assertIn('<footer class="site-footer">', self.source)
-        self.assertIn('<script src="/assets/js/consent.js?v=20261110-2"></script>', self.source)
-        self.assertIn('<script src="/assets/js/analytics-events.js?v=20261110-2"></script>', self.source)
+        self.assertIn('<script src="/assets/js/consent.js?v=20261125-1"></script>', self.source)
+        self.assertIn('<script src="/assets/js/analytics-events.js?v=20261125-1"></script>', self.source)
         self.assertIn('<script src="/assets/js/main.js?v=20261014-1"></script>', self.source)
 
 

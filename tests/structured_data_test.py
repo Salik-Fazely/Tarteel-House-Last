@@ -41,8 +41,15 @@ def nodes(relative):
     return found
 
 
+def has_type(item, node_type):
+    kind = item.get("@type")
+    if isinstance(kind, list):
+        return node_type in kind
+    return kind == node_type
+
+
 def node(relative, node_type):
-    return next(item for item in nodes(relative) if item.get("@type") == node_type)
+    return next(item for item in nodes(relative) if has_type(item, node_type))
 
 
 class StructuredDataTests(unittest.TestCase):
@@ -121,6 +128,9 @@ class StructuredDataTests(unittest.TestCase):
 
     def test_05_organisation_record_names_its_profile_and_area_served(self):
         organization = node("index.html", "Organization")
+        self.assertTrue(has_type(organization, "EducationalOrganization"))
+        self.assertIn("human teachers", organization["disambiguatingDescription"].lower())
+        self.assertNotIn("tarteel ai", organization["disambiguatingDescription"].lower())
         self.assertEqual(["https://www.instagram.com/tarteelhouse/"], organization["sameAs"])
         self.assertEqual(["Europe", "United States"], organization["areaServed"])
         self.assertIn("across Europe and the US", read("about/index.html"))

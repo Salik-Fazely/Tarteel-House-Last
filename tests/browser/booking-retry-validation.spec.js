@@ -224,7 +224,7 @@ test('editing a saved booking after timeout reports an unsaved conflict without 
   await expectUnlocked(page);
   const help = page.locator('#trial-form-help a');
   await expect(help).toBeVisible();
-  await expect(help).toHaveAttribute('href', 'https://wa.me/34614494311');
+  await expect(help).toHaveAttribute('href', /^https:\/\/wa\.me\/34614494311\?text=/);
   await help.focus();
   await expect(help).toBeFocused();
   await expectDelta(page, before, { requests: 2, rows: 1, mails: 1 });

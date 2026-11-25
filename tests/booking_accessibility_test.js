@@ -27,7 +27,7 @@ function listenerTarget() {
 }
 
 
-function bookingFixture({ valid = true, enhanced = false } = {}) {
+function bookingFixture({ valid = true, enhanced = false, search = '' } = {}) {
   const formEvents = listenerTarget();
   const selectedDays = [
     {
@@ -56,7 +56,13 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
   let reportValidityCalls = 0;
   let fetchCalls = 0;
   let formDataCalls = 0;
-  const location = { href: 'https://www.tarteelhouse.com/book-trial/', origin: 'https://www.tarteelhouse.com', assign(url) { this.href = url; } };
+  const location = { href: `https://www.tarteelhouse.com/book-trial/${search}`, origin: 'https://www.tarteelhouse.com', assign(url) { this.href = url; } };
+  const languageRadios = {
+    'session-language-english': { type: 'radio', name: 'session_language', value: 'english', checked: false },
+    'session-language-arabic': { type: 'radio', name: 'session_language', value: 'arabic', checked: false },
+    'session-language-turkish': { type: 'radio', name: 'session_language', value: 'turkish', checked: false },
+    'session-language-persian': { type: 'radio', name: 'session_language', value: 'persian', checked: false },
+  };
   const fields = {
     'submission-id': { value: '' },
     'response-token': { value: '' },
@@ -97,6 +103,7 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
         'trial-form-status': status,
         'trial-booking-response': enhanced ? responseFrame : null,
         'whatsapp': whatsapp,
+        ...languageRadios,
         ...fields,
       }[id] || null;
     },
@@ -148,6 +155,7 @@ function bookingFixture({ valid = true, enhanced = false } = {}) {
     fields,
     fieldGroups,
     form,
+    languageRadios,
     get fetchCalls() { return fetchCalls; },
     get formDataCalls() { return formDataCalls; },
     get reportValidityCalls() { return reportValidityCalls; },
@@ -320,4 +328,27 @@ test('an invalid booking submit reports native validity and never creates a succ
   assert.equal(view.location.href, 'https://www.tarteelhouse.com/book-trial/');
   assert.equal(view.submitButton.disabled, false);
   assert.equal(view.status.hidden, true);
+});
+
+test('?lang= pre-selects the matching session_language radio without altering form submission', () => {
+  const cases = [
+    ['?lang=english', 'session-language-english'],
+    ['?lang=en', 'session-language-english'],
+    ['?lang=arabic', 'session-language-arabic'],
+    ['?lang=ar', 'session-language-arabic'],
+    ['?lang=turkish', 'session-language-turkish'],
+    ['?lang=tr', 'session-language-turkish'],
+    ['?lang=persian', 'session-language-persian'],
+    ['?lang=fa', 'session-language-persian'],
+    ['?lang=farsi', 'session-language-persian'],
+    ['?lang=dari', 'session-language-persian'],
+  ];
+  for (const [search, expectedId] of cases) {
+    const view = bookingFixture({ search });
+    for (const [id, radio] of Object.entries(view.languageRadios)) {
+      assert.equal(radio.checked, id === expectedId, `${search} -> ${id}`);
+    }
+  }
+  const invalid = bookingFixture({ search: '?lang=klingon' });
+  assert.ok(Object.values(invalid.languageRadios).every(radio => !radio.checked));
 });

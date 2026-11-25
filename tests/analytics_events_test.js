@@ -48,6 +48,7 @@ function createEnvironment({
   oaiq,
   pathname = '/pricing/',
   href,
+  lang = 'en',
   sessionStorage = createStorage(),
 } = {}) {
   const calls = [];
@@ -118,6 +119,7 @@ function createEnvironment({
   });
 
   const document = createEventTarget({
+    documentElement: { lang },
     getElementById(id) {
       return withForm && id === 'trial-form' ? form : null;
     },
@@ -576,4 +578,43 @@ test('an unavailable Pixel does not interrupt receipt cleanup or defer a duplica
   assert.equal(success.historyCalls.length, 1);
   assert.deepEqual(submitted.sessionStorage.entries(), []);
   assert.deepEqual(createEnvironment({ ...options, withOaiq: true }).calls, []);
+});
+
+test('sends consent-gated whatsapp_click with page path and language without blocking navigation or sending PII', () => {
+  const waLink = createCta({
+    href: 'https://wa.me/34614494311?text=Hello%2C%20private%20question',
+    text: 'WhatsApp us',
+  });
+
+  for (const preference of ['missing', 'denied', 'expired']) {
+    const { calls, document } = createEnvironment({ preference, pathname: '/fa/', lang: 'fa' });
+    document.dispatch('click', { target: waLink.target });
+    assert.deepEqual(calls, [], preference);
+  }
+
+  const { calls, document } = createEnvironment({ preference: 'granted', pathname: '/tr/', lang: 'tr' });
+  const event = document.dispatch('click', { target: waLink.target });
+  assert.equal(event.defaultPrevented, false);
+  assert.deepEqual(calls, [[
+    'event',
+    'whatsapp_click',
+    {
+      source_path: '/tr/',
+      page_language: 'tr',
+    },
+  ]]);
+  assert.doesNotMatch(JSON.stringify(calls), /34614494311|private/);
+});
+
+test('does not fire whatsapp_click for non-WhatsApp links or without initialized GA4', () => {
+  const external = createCta({ href: 'https://example.com/chat', text: 'External' });
+  const waLink = createCta({ href: 'https://wa.me/34614494311?text=Hello', text: 'WhatsApp' });
+
+  const granted = createEnvironment({ preference: 'granted' });
+  granted.document.dispatch('click', { target: external.target });
+  assert.deepEqual(granted.calls, []);
+
+  const withoutGtag = createEnvironment({ preference: 'granted', withGtag: false });
+  withoutGtag.document.dispatch('click', { target: waLink.target });
+  assert.equal(withoutGtag.window.gtag, undefined);
 });

@@ -325,7 +325,7 @@ class ChoosingQuranClassesArticleTests(unittest.TestCase):
             if tag == "script" and attrs.get("src")
         ]
         self.assertEqual(
-            ["/assets/js/consent.js?v=20261110-2", "/assets/js/analytics-events.js?v=20261110-2", "/assets/js/main.js?v=20261014-1"],
+            ["/assets/js/consent.js?v=20261125-1", "/assets/js/analytics-events.js?v=20261125-1", "/assets/js/main.js?v=20261014-1"],
             scripts,
         )
 
@@ -360,7 +360,7 @@ class ChoosingQuranClassesArticleTests(unittest.TestCase):
         self.assertNotIn("author", posting)
         self.assertEqual(CANONICAL, posting["mainEntityOfPage"]["@id"])
         self.assertEqual(
-            "https://www.tarteelhouse.com/assets/blog/online-quran-classes-for-kids-parents-look-for.png",
+            "https://www.tarteelhouse.com/assets/blog/online-quran-classes-for-kids-parents-look-for-og.jpg",
             posting["image"]["url"],
         )
         self.assertEqual("Tarteel House", posting["publisher"]["name"])

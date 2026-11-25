@@ -57,25 +57,25 @@ REDIRECT_STUBS = (
 
 ARTICLE_IMAGES = {
     "blog/child-refuses-quran-practice/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/child-refuses-quran-practice.png"
+        "https://www.tarteelhouse.com/assets/blog/child-refuses-quran-practice-og.jpg"
     ),
     "blog/free-online-quran-trial-lesson-parent-checklist/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/free-online-quran-trial-lesson-cover.png"
+        "https://www.tarteelhouse.com/assets/blog/free-online-quran-trial-lesson-cover-og.jpg"
     ),
     "blog/help-children-memorize-short-surahs/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/help-children-memorize-short-surahs.png"
+        "https://www.tarteelhouse.com/assets/blog/help-children-memorize-short-surahs-og.jpg"
     ),
     "blog/how-children-learn-to-read-quran/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/how-children-learn-to-read-quran.png"
+        "https://www.tarteelhouse.com/assets/blog/how-children-learn-to-read-quran-og.jpg"
     ),
     "blog/how-parents-can-track-their-childs-quran-progress/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/track-child-quran-progress.png"
+        "https://www.tarteelhouse.com/assets/blog/track-child-quran-progress-og.jpg"
     ),
     "blog/one-to-one-quran-classes-vs-group-classes-for-children/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/one-to-one-vs-group-quran-classes.png"
+        "https://www.tarteelhouse.com/assets/blog/one-to-one-vs-group-quran-classes-og.jpg"
     ),
     "blog/online-quran-classes-for-kids-parents-look-for/index.html": (
-        "https://www.tarteelhouse.com/assets/blog/online-quran-classes-for-kids-parents-look-for.png"
+        "https://www.tarteelhouse.com/assets/blog/online-quran-classes-for-kids-parents-look-for-og.jpg"
     ),
 }
 
@@ -324,8 +324,13 @@ class SharedLayoutSyncTests(unittest.TestCase):
             )
 
     def test_10_standard_footer_keeps_the_official_whatsapp_url(self):
+        sync = load_sync_module()
         footer = FOOTER_PARTIAL.read_text(encoding="utf-8")
-        self.assertIn('href="https://wa.me/34614494311"', footer)
+        self.assertIn('href="{{WHATSAPP_FOOTER_HREF}}"', footer)
+        for config in sync.PAGE_CONFIGS:
+            if config.footer_variant == "standard":
+                source = (ROOT / config.path).read_text(encoding="utf-8")
+                self.assertIn('href="https://wa.me/34614494311?text=', source, config.path)
 
     def test_11_generated_shared_sections_have_no_trailing_whitespace(self):
         sync = load_sync_module()
