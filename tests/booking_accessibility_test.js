@@ -27,7 +27,7 @@ function listenerTarget() {
 }
 
 
-function bookingFixture({ valid = true, enhanced = false, search = '' } = {}) {
+function bookingFixture({ valid = true, enhanced = false, search = '', referrer = '' } = {}) {
   const formEvents = listenerTarget();
   const selectedDays = [
     {
@@ -97,6 +97,7 @@ function bookingFixture({ valid = true, enhanced = false, search = '' } = {}) {
   FormDataMock.prototype.append = function() {};
 
   const document = {
+    referrer,
     getElementById(id) {
       return {
         'trial-form': form,
@@ -351,4 +352,20 @@ test('?lang= pre-selects the matching session_language radio without altering fo
   }
   const invalid = bookingFixture({ search: '?lang=klingon' });
   assert.ok(Object.values(invalid.languageRadios).every(radio => !radio.checked));
+});
+
+test('same-origin /fa/ and /tr/ referrers pre-select Persian or Turkish when ?lang= is absent', () => {
+  const fromFa = bookingFixture({ referrer: 'https://www.tarteelhouse.com/fa/' });
+  assert.equal(fromFa.languageRadios['session-language-persian'].checked, true);
+  assert.equal(fromFa.languageRadios['session-language-english'].checked, false);
+
+  const fromTr = bookingFixture({ referrer: 'https://www.tarteelhouse.com/tr/' });
+  assert.equal(fromTr.languageRadios['session-language-turkish'].checked, true);
+
+  const overridden = bookingFixture({ search: '?lang=arabic', referrer: 'https://www.tarteelhouse.com/fa/' });
+  assert.equal(overridden.languageRadios['session-language-arabic'].checked, true);
+  assert.equal(overridden.languageRadios['session-language-persian'].checked, false);
+
+  const crossOrigin = bookingFixture({ referrer: 'https://other.example/fa/' });
+  assert.ok(Object.values(crossOrigin.languageRadios).every(radio => !radio.checked));
 });
