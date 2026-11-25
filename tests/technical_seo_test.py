@@ -28,8 +28,11 @@ PAGES = {
     "/blog/what-age-should-a-child-start-learning-quran/": "blog/what-age-should-a-child-start-learning-quran/index.html",
     "/book-trial/": "book-trial/index.html",
     "/fa/": "fa/index.html",
+    "/faq/": "faq/index.html",
+    "/female-quran-teacher-for-kids/": "female-quran-teacher-for-kids/index.html",
     "/how-it-works/": "how-it-works/index.html",
     "/noorani-qaida-classes-for-kids/": "noorani-qaida-classes-for-kids/index.html",
+    "/online-quran-classes-for-kids-in-europe/": "online-quran-classes-for-kids-in-europe/index.html",
     "/pricing/": "pricing/index.html",
     "/quran-classes-in-farsi-and-dari/": "quran-classes-in-farsi-and-dari/index.html",
     "/quran-classes-in-turkish/": "quran-classes-in-turkish/index.html",
@@ -223,6 +226,9 @@ class TechnicalSeoTests(unittest.TestCase):
             "/tajweed-classes-for-kids/": default_image,
             "/quran-memorization-for-kids/": default_image,
             "/ramadan-quran-classes-for-kids/": default_image,
+            "/online-quran-classes-for-kids-in-europe/": default_image,
+            "/female-quran-teacher-for-kids/": default_image,
+            "/faq/": default_image,
             **ARTICLES,
         }
         for path, relative in PAGES.items():
