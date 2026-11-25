@@ -1,0 +1,57 @@
+# Tarteel House
+
+> Live one-to-one online Qur'an school for girls and boys aged 5 to 16 in Europe and North America, taught by human female teachers over Zoom or Google Meet in English, Arabic, Turkish, and Persian (Farsi and Dari) — not an automated app or pre-recorded course.
+
+## Core Facts
+
+- **Audience:** Children aged 5 to 16 (girls and boys). Tarteel House does not currently offer adult classes.
+- **Format:** Live one-to-one online lessons over Zoom or Google Meet (40 minutes each, both the free trial and every paid lesson). Lessons normally continue with the same dedicated teacher, subject to availability and unavoidable changes.
+- **Teaching languages:** English, Arabic, Turkish, and Persian (for Farsi- and Dari-speaking families).
+- **Teachers:** Small team of four female Qur'an teachers matched personally by language, level, learning needs, and scheduling availability (parents may express a preference but do not directly select or reserve a teacher).
+- **Free trial:** First 40-minute one-to-one lesson is free, with no payment and no commitment. Families are normally contacted via WhatsApp within two days to arrange next steps (this is a typical timeframe, not a fixed service-level deadline).
+- **Packages (EUR, one package per child, valid for one year from purchase date):**
+  - **Starter:** 6 lessons — €120 (€20 per lesson). No make-up allowance for late-notice or unnotified absences.
+  - **Steady (Most popular):** 12 lessons — €220 (approximately €18.33 per lesson). Up to four make-up lessons for late-notice or unnotified absences.
+  - **Committed:** 25 lessons — €400 (€16 per lesson). Up to four make-up lessons for late-notice or unnotified absences.
+- **Rescheduling:** With at least 24 hours' notice, lessons are rescheduled without using a make-up allowance. Teacher or Tarteel House cancellations are always rescheduled outside the allowance.
+- **Progress reviews:** Every two months, parents are invited to a 15-minute progress review. If a parent is unavailable or does not want a meeting, Tarteel House sends a visual progress report through WhatsApp instead.
+- **Certificates:** Issued only after completing at least 30 lessons, completing an identifiable learning stage, and receiving teacher confirmation of that stage.
+- **Safeguarding:** Scheduling and communication are handled through a parent or guardian; lessons are not recorded by Tarteel House by default; private child contact requires prior parent or guardian permission and involvement.
+- **Contact & Location:** Based in Barcelona, Spain (online school only; no public walk-in address). Email: `hello@tarteelhouse.com`. Preferred pre-booking contact: WhatsApp `+34 614 494 311`.
+
+## Main Pages
+
+- [Home](https://www.tarteelhouse.com/): Overview of one-to-one online Qur'an classes for kids, teachers, pricing, and free trial.
+- [How It Works](https://www.tarteelhouse.com/how-it-works/): Step-by-step process from free trial booking to regular 40-minute lessons and parent reviews.
+- [Teachers](https://www.tarteelhouse.com/teachers/): Meet the four female teachers, their languages, experience, and lesson samples.
+- [Pricing](https://www.tarteelhouse.com/pricing/): Transparent euro lesson packages (€120 / €220 / €400), make-up rules, and certificate criteria.
+- [Book a Free Trial](https://www.tarteelhouse.com/book-trial/): Request a free 40-minute one-to-one trial lesson.
+- [About Tarteel House](https://www.tarteelhouse.com/about/): Story, approach, and commitment to calm, structured teaching for children.
+
+## Course Pages
+
+- [Online Noorani Qaida & Reading Classes for Kids](https://www.tarteelhouse.com/noorani-qaida-classes-for-kids/): Arabic letters, vowel sounds, letter joining, and beginner Qur'an reading for ages 5 to 16.
+- [Online Tajweed Classes for Kids](https://www.tarteelhouse.com/tajweed-classes-for-kids/): Live pronunciation (*makharij*), *tarteel*, and guided recitation with gentle real-time correction.
+- [Online Qur'an Memorization Classes for Kids](https://www.tarteelhouse.com/quran-memorization-for-kids/): Revision-first Juz Amma and short-surah memorisation built around calm daily home practice.
+- [Ramadan 2027 Online Qur'an Classes for Kids](https://www.tarteelhouse.com/ramadan-quran-classes-for-kids/): Preparing children aged 5 to 16 for Ramadan 2027 (expected 7–8 February) with a free printable four-week tracker.
+
+## Language Pages
+
+- [Qur'an Classes in Farsi and Dari (English overview)](https://www.tarteelhouse.com/quran-classes-in-farsi-and-dari/): Details on Persian-medium classes for Farsi- and Dari-speaking families.
+- [Persian Home (فارسی)](https://www.tarteelhouse.com/fa/): Full Persian landing page for families in Europe and North America.
+- [Qur'an Classes in Turkish (English overview)](https://www.tarteelhouse.com/quran-classes-in-turkish/): Details on Turkish-medium classes for children in Europe and North America.
+- [Turkish Home (Türkçe)](https://www.tarteelhouse.com/tr/): Full Turkish landing page for families in Europe and North America.
+
+## Parent Guides
+
+- [All Parent Guides](https://www.tarteelhouse.com/blog/)
+- [How Children Learn to Read the Quran](https://www.tarteelhouse.com/blog/how-children-learn-to-read-quran/)
+- [When Should a Child Start Learning Quran?](https://www.tarteelhouse.com/blog/what-age-should-a-child-start-learning-quran/)
+- [Juz Amma Memorization Order for Kids](https://www.tarteelhouse.com/blog/juz-amma-memorization-order-for-kids/)
+- [How to Help Children Memorize Short Surahs](https://www.tarteelhouse.com/blog/help-children-memorize-short-surahs/)
+- [Ramadan Quran Plan for Kids by Age](https://www.tarteelhouse.com/blog/ramadan-quran-plan-for-kids/)
+- [Choosing Online Quran Classes for Kids](https://www.tarteelhouse.com/blog/online-quran-classes-for-kids-parents-look-for/)
+- [One-to-One vs Group Quran Classes for Kids](https://www.tarteelhouse.com/blog/one-to-one-quran-classes-vs-group-classes-for-children/)
+- [How Parents Can Track Their Child's Quran Progress](https://www.tarteelhouse.com/blog/how-parents-can-track-their-childs-quran-progress/)
+- [When a Child Refuses Quran Practice](https://www.tarteelhouse.com/blog/child-refuses-quran-practice/)
+- [Free Online Quran Trial Lesson Parent Checklist](https://www.tarteelhouse.com/blog/free-online-quran-trial-lesson-parent-checklist/)

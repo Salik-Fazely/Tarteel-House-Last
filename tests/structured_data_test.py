@@ -24,6 +24,10 @@ BREADCRUMB_PAGES = {
     "teachers/index.html": "/teachers/",
     "quran-classes-in-farsi-and-dari/index.html": "/quran-classes-in-farsi-and-dari/",
     "quran-classes-in-turkish/index.html": "/quran-classes-in-turkish/",
+    "noorani-qaida-classes-for-kids/index.html": "/noorani-qaida-classes-for-kids/",
+    "tajweed-classes-for-kids/index.html": "/tajweed-classes-for-kids/",
+    "quran-memorization-for-kids/index.html": "/quran-memorization-for-kids/",
+    "ramadan-quran-classes-for-kids/index.html": "/ramadan-quran-classes-for-kids/",
 }
 
 
@@ -147,7 +151,28 @@ class StructuredDataTests(unittest.TestCase):
                     self.assertNotIn("aggregateRating", text)
                     self.assertNotIn('"review"', text)
 
-    def test_07_language_pages_publish_verified_service_and_offers(self):
+    def test_07_course_pages_match_commercial_facts(self):
+        course_pages = (
+            "noorani-qaida-classes-for-kids/index.html",
+            "tajweed-classes-for-kids/index.html",
+            "quran-memorization-for-kids/index.html",
+            "ramadan-quran-classes-for-kids/index.html",
+        )
+        for relative in course_pages:
+            with self.subTest(page=relative):
+                course = node(relative, "Course")
+                self.assertEqual(ORGANIZATION_ID, course["provider"]["@id"])
+                self.assertEqual(["en", "ar", "tr", "fa"], course["inLanguage"])
+                audience = course["audience"]
+                self.assertEqual((5, 16), (audience["suggestedMinAge"], audience["suggestedMaxAge"]))
+                offers = {offer["name"]: offer for offer in course["offers"]}
+                self.assertEqual("0", offers["Free trial lesson"]["price"])
+                self.assertEqual("120", offers["Starter: 6 lessons"]["price"])
+                self.assertEqual("220", offers["Steady: 12 lessons"]["price"])
+                self.assertEqual("400", offers["Committed: 25 lessons"]["price"])
+                self.assertEqual(4, len(offers))
+
+    def test_08_language_pages_publish_verified_service_and_offers(self):
         facts = read("docs/commercial-facts.md")
         for relative, expected_language in (
             ("fa/index.html", "Persian"),
