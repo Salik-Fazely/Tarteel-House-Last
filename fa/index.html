@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- SEO -->
-  <title>کلاس آنلاین قرآن برای کودکان به زبان فارسی | Tarteel House</title>
+  <title>کلاس خصوصی آنلاین قرآن کودکان (فارسی و دری) | Tarteel House</title>
   <meta name="description" content="کلاس‌های خصوصی و آنلاین قرآن به زبان فارسی برای دختران و پسران ۵ تا ۱۶ ساله در اروپا و آمریکا؛ معلم ثابت، جلسه‌های ۴۰ دقیقه‌ای و یک جلسه آزمایشی رایگان." />
 
   <!-- Canonical and language versions -->
@@ -18,7 +18,7 @@
   <!-- Open Graph -->
   <meta property="og:site_name"   content="Tarteel House" />
   <meta property="og:type"        content="website" />
-  <meta property="og:title"       content="کلاس آنلاین قرآن برای کودکان به زبان فارسی | Tarteel House" />
+  <meta property="og:title"       content="کلاس خصوصی آنلاین قرآن کودکان (فارسی و دری) | Tarteel House" />
   <meta property="og:description" content="کلاس‌های یک‌به‌یک و آنلاین قرآن به زبان فارسی برای کودکان ۵ تا ۱۶ ساله، با معلم ثابت و یک جلسه آزمایشی رایگان." />
   <meta property="og:url"         content="https://www.tarteelhouse.com/fa/" />
   <meta property="og:locale"      content="fa_IR" />
@@ -27,7 +27,7 @@
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt"   content="Tarteel House — کلاس‌های یک‌به‌یک و آنلاین قرآن برای کودکان" />
   <meta name="twitter:card"        content="summary_large_image" />
-  <meta name="twitter:title"       content="کلاس آنلاین قرآن برای کودکان به زبان فارسی | Tarteel House" />
+  <meta name="twitter:title"       content="کلاس خصوصی آنلاین قرآن کودکان (فارسی و دری) | Tarteel House" />
   <meta name="twitter:description" content="کلاس‌های یک‌به‌یک و آنلاین قرآن به زبان فارسی برای کودکان ۵ تا ۱۶ ساله، با معلم ثابت و یک جلسه آزمایشی رایگان." />
   <meta name="twitter:image"       content="https://www.tarteelhouse.com/assets/images/tarteel-house-social-card.png" />
   <meta name="twitter:image:alt"   content="Tarteel House — کلاس‌های یک‌به‌یک و آنلاین قرآن برای کودکان" />
@@ -48,6 +48,62 @@
         "about": {
           "@id": "https://www.tarteelhouse.com/#organization"
         }
+      },
+      {
+        "@type": "Service",
+        "@id": "https://www.tarteelhouse.com/fa/#service",
+        "name": "کلاس‌های یک‌به‌یک و آنلاین قرآن برای کودکان به زبان فارسی",
+        "serviceType": "Online Quran lessons",
+        "description": "کلاس‌های خصوصی و آنلاین ۴۰ دقیقه‌ای قرآن به زبان فارسی برای دختران و پسران ۵ تا ۱۶ ساله، با یک جلسه آزمایشی رایگان.",
+        "provider": {
+          "@id": "https://www.tarteelhouse.com/#organization"
+        },
+        "areaServed": [
+          "Europe",
+          "United States"
+        ],
+        "audience": {
+          "@type": "PeopleAudience",
+          "suggestedMinAge": 5,
+          "suggestedMaxAge": 16
+        },
+        "availableChannel": {
+          "@type": "ServiceChannel",
+          "serviceUrl": "https://www.tarteelhouse.com/book-trial/",
+          "availableLanguage": [
+            "Persian"
+          ]
+        },
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Free trial lesson",
+            "price": "0",
+            "priceCurrency": "EUR",
+            "url": "https://www.tarteelhouse.com/book-trial/"
+          },
+          {
+            "@type": "Offer",
+            "name": "Starter: 6 lessons",
+            "price": "120",
+            "priceCurrency": "EUR",
+            "url": "https://www.tarteelhouse.com/fa/#hazineha"
+          },
+          {
+            "@type": "Offer",
+            "name": "Steady: 12 lessons",
+            "price": "220",
+            "priceCurrency": "EUR",
+            "url": "https://www.tarteelhouse.com/fa/#hazineha"
+          },
+          {
+            "@type": "Offer",
+            "name": "Committed: 25 lessons",
+            "price": "400",
+            "priceCurrency": "EUR",
+            "url": "https://www.tarteelhouse.com/fa/#hazineha"
+          }
+        ]
       }
     ]
   }
@@ -85,6 +141,7 @@
     .lang-page__teachers { display: grid; gap: var(--space-4); margin-top: var(--space-8); text-align: right; }
     .lang-page__faq { display: grid; gap: var(--space-6); margin-top: var(--space-8); }
     .lang-page__faq h3 { font-size: var(--text-md); margin-bottom: var(--space-2); }
+    .lang-page__ramadan { text-align: right; margin-top: var(--space-6); display: grid; gap: var(--space-4); }
     .final-cta__btn { max-width: 100%; white-space: normal; text-align: center; }
   </style>
 </head>
@@ -378,6 +435,19 @@
       </div>
     </section>
 
+    <!-- RAMADAN -->
+    <section class="hiw-preview" id="ramadan" aria-labelledby="ramadan-headline">
+      <div class="container container--text">
+        <p class="eyebrow">رمضان ۲۰۲۷</p>
+        <h2 class="hiw-preview__headline" id="ramadan-headline">آمادگی آرام برای ماه رمضان</h2>
+        <div class="lang-page__ramadan">
+          <p>در سال ۲۰۲۷، پیش‌بینی می‌شود ماه رمضان حدود ۷ یا ۸ فوریه (بسته به رؤیت هلال ماه و اعلام مسجد محل شما) آغاز شود. شروع کلاس‌های یک‌به‌یک پیش از رمضان به معلم فرصت می‌دهد سطح فرزند شما را بشناسد و با هم یک هدف آرام و دست‌یافتنی برای این ماه بچینید.</p>
+          <p>هر جلسه ۴۰ دقیقه است و با یک هدف کوتاه و روشن برای تمرین در خانه به پایان می‌رسد. شروع کار با یک جلسه آزمایشی رایگان است؛ بدون پرداخت و بدون تعهد.</p>
+          <p><a href="/blog/ramadan-quran-plan-for-kids/" class="text-link" hreflang="en">راهنمای برنامه‌ریزی قرآن برای کودکان در ماه رمضان (به انگلیسی) ←</a></p>
+        </div>
+      </div>
+    </section>
+
     <!-- QUESTIONS -->
     <section class="why-us" id="porseshha" aria-labelledby="faq-headline">
       <div class="container container--mid">
@@ -445,6 +515,7 @@
             <li><a href="#ravand" class="footer__link">روند کار</a></li>
             <li><a href="#moalleman" class="footer__link">معلمان</a></li>
             <li><a href="#hazineha" class="footer__link">هزینه‌ها</a></li>
+            <li><a href="#ramadan" class="footer__link">آمادگی برای رمضان</a></li>
             <li><a href="#porseshha" class="footer__link">پرسش‌های رایج</a></li>
             <li><a href="/book-trial/?lang=persian" class="footer__link">جلسه آزمایشی رایگان</a></li>
           </ul>
