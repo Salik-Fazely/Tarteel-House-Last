@@ -223,8 +223,10 @@ class TechnicalSeoTests(unittest.TestCase):
             page = parse(relative)
             expected_type = "article" if path in ARTICLES else "website"
             self.assertEqual([expected_type], page.properties["og:type"], path)
-            if path not in {"/fa/", "/tr/"}:
+            if path != "/tr/":
                 self.assertEqual(["Tarteel House"], page.properties["og:site_name"], path)
+            if path == "/fa/":
+                self.assertEqual(["fa_IR"], page.properties["og:locale"], path)
             self.assertEqual(page.titles, page.properties["og:title"], path)
             self.assertEqual([BASE_URL + path], page.properties["og:url"], path)
             self.assertEqual(1, len(page.properties["og:description"]), path)

@@ -13,6 +13,11 @@ DEFAULT_CTA = {
 # Language pages translate the visible CTA but keep the same destination,
 # markup and label pair so the shared mobile CSS applies unchanged.
 LOCALIZED_CTA = {
+    "fa/index.html": {
+        "aria-label": "رزرو جلسه آزمایشی رایگان",
+        "full": "جلسه رایگان",
+        "short": "آزمایشی",
+    },
     "tr/index.html": {
         "aria-label": "Ücretsiz deneme dersi alın",
         "full": "Ücretsiz Deneme",

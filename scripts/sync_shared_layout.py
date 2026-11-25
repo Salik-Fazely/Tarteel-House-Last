@@ -18,14 +18,16 @@ FOOTER_START = "<!-- SHARED FOOTER:START -->"
 FOOTER_END = "<!-- SHARED FOOTER:END -->"
 
 # Language variants keep a translated page's shared chrome in its own language.
-# The Turkish fragments link to in-page anchors because /tr/ is a single page.
+# The Persian and Turkish fragments link to in-page anchors because /fa/ and /tr/ are single pages.
 HEADER_FRAGMENTS = {
     "standard": "partials/header.html",
+    "fa": "partials/header-fa.html",
     "tr": "partials/header-tr.html",
 }
 FOOTER_FRAGMENTS = {
     "standard": "partials/footer.html",
     "no_prebooking_contact": "partials/footer-no-prebooking-contact.html",
+    "fa": "partials/footer-fa.html",
     "tr": "partials/footer-tr.html",
 }
 
@@ -161,7 +163,8 @@ PAGE_CONFIGS = (
         "fa/index.html",
         None,
         language="fa",
-        whatsapp_message="سلام، درباره جلسه آزمایشی رایگان قرآن برای فرزندم سؤال دارم.",
+        header_variant="fa",
+        footer_variant="fa",
     ),
     PageConfig(
         "how-it-works/index.html",

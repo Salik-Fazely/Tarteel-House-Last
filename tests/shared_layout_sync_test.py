@@ -357,13 +357,22 @@ class SharedLayoutSyncTests(unittest.TestCase):
             for config in sync.PAGE_CONFIGS
             if config.header_variant != "standard"
         }
-        self.assertEqual({"tr/index.html": ("tr", "tr")}, variants)
+        self.assertEqual(
+            {"fa/index.html": ("fa", "fa"), "tr/index.html": ("tr", "tr")},
+            variants,
+        )
 
-        for relative in (sync.HEADER_FRAGMENTS["tr"], sync.FOOTER_FRAGMENTS["tr"]):
-            self.assertTrue((ROOT / relative).is_file(), relative)
+        for code in ("fa", "tr"):
+            for relative in (sync.HEADER_FRAGMENTS[code], sync.FOOTER_FRAGMENTS[code]):
+                self.assertTrue((ROOT / relative).is_file(), relative)
+            footer = (ROOT / sync.FOOTER_FRAGMENTS[code]).read_text(encoding="utf-8")
+            self.assertIn('href="https://wa.me/34614494311?text=', footer, code)
 
-        footer = (ROOT / sync.FOOTER_FRAGMENTS["tr"]).read_text(encoding="utf-8")
-        self.assertIn('href="https://wa.me/34614494311?text=', footer)
+        fa_page = parse_page("fa/index.html")
+        self.assertEqual(
+            ["#ravand", "#moalleman", "#hazineha", "#porseshha"],
+            [link.get("href") for link in fa_page.nav_links],
+        )
 
         page = parse_page("tr/index.html")
         self.assertEqual(

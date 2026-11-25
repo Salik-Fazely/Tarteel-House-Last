@@ -15,6 +15,8 @@ EXPECTED_ALTERNATES = {
     "x-default": BASE_URL + "/",
 }
 OFFICIAL_WHATSAPP = "https://wa.me/34614494311"
+PERSIAN_PAGE = "fa/index.html"
+PERSIAN_NAV_ANCHORS = ["#ravand", "#moalleman", "#hazineha", "#porseshha"]
 TURKISH_PAGE = "tr/index.html"
 TURKISH_NAV_ANCHORS = ["#nasil-isliyor", "#ogretmenler", "#ucretler", "#sorular"]
 # Destinations that exist in English only; Turkish links to them must say so.
@@ -258,6 +260,55 @@ class TurkishPageTests(unittest.TestCase):
         for label in labels:
             # "al" / "başla" address the reader as "sen"; parents are addressed as "siz".
             self.assertNotRegex(label, r"(?:\bal|\bbaşla|\bdene)$", label)
+
+
+class PersianPageTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.page = parse_chrome(PERSIAN_PAGE)
+        cls.header = re.sub(r"\s+", " ", " ".join(cls.page.region_text["header"]))
+        cls.footer = re.sub(r"\s+", " ", " ".join(cls.page.region_text["footer"]))
+
+    def test_header_and_footer_are_in_persian(self):
+        for phrase in ("روند کار", "معلمان", "هزینه‌ها", "پرسش‌ها", "جلسه رایگان"):
+            self.assertIn(phrase, self.header)
+        for phrase in ("How It Works", "Teachers", "Pricing", "About", "Book a Free Trial"):
+            self.assertNotIn(phrase, self.header)
+
+        for phrase in ("بخش‌های صفحه", "صفحات انگلیسی", "زبان‌ها", "در واتس‌اپ بنویسید"):
+            self.assertIn(phrase, self.footer)
+        for phrase in ("LEARN", "SUPPORT", "Have a question before booking?", "Also in"):
+            self.assertNotIn(phrase, self.footer)
+
+    def test_in_page_navigation_points_to_sections_that_exist(self):
+        header_anchors = [
+            link["attrs"]["href"]
+            for link in self.page.links
+            if link["region"] == "header" and link["attrs"]["href"].startswith("#")
+        ]
+        self.assertEqual(PERSIAN_NAV_ANCHORS, header_anchors)
+        for link in self.page.links:
+            href = link["attrs"]["href"]
+            if href.startswith("#"):
+                self.assertIn(href[1:], self.page.ids, href)
+
+    def test_links_to_english_only_pages_are_marked_as_english(self):
+        english_links = [
+            link for link in self.page.links
+            if link["attrs"]["href"] in ENGLISH_ONLY_DESTINATIONS
+        ]
+        self.assertEqual(
+            ENGLISH_ONLY_DESTINATIONS,
+            {link["attrs"]["href"] for link in english_links},
+        )
+        for link in english_links:
+            self.assertEqual("en", link["attrs"].get("hreflang"), link["attrs"]["href"])
+
+    def test_footer_offers_every_language_version(self):
+        footer_hrefs = {
+            link["attrs"]["href"] for link in self.page.links if link["region"] == "footer"
+        }
+        self.assertLessEqual({"/", "/fa/", "/tr/"}, footer_hrefs)
 
 
 class NewParentGuideTests(unittest.TestCase):
