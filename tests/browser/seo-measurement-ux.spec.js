@@ -92,3 +92,24 @@ test('whatsapp_click stays disabled until measurement consent is granted', async
       .filter(entry => entry.sink === 'ga4' && entry.args[0] === 'event' && entry.args[1] === 'whatsapp_click')
       .map(entry => entry.args[2]))).toEqual([{ source_path: '/pricing/', page_language: 'en' }]);
 });
+
+test('Persian header stays in Persian and navigates to in-page Persian sections without switching to English', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/fa/?qa_reset=1&qa_pixel=stub');
+  await page.getByRole('button', { name: 'Reject measurement', exact: true }).click();
+
+  const headerText = await page.locator('header.site-header').innerText();
+  expect(headerText).toContain('روند کار');
+  expect(headerText).toContain('معلمان');
+  expect(headerText).toContain('هزینه‌ها');
+  expect(headerText).toContain('پرسش‌ها');
+  expect(headerText).toContain('جلسه رایگان');
+  expect(headerText).not.toContain('How It Works');
+  expect(headerText).not.toContain('BOOK A FREE TRIAL');
+
+  for (const hash of ['#ravand', '#moalleman', '#hazineha', '#porseshha']) {
+    await page.locator(`header.site-header a[href="${hash}"]`).click();
+    await expect(page).toHaveURL(new RegExp(`/fa/${hash}$`));
+    expect(await page.evaluate(() => document.documentElement.lang)).toBe('fa');
+  }
+});

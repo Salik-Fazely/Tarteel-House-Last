@@ -568,8 +568,14 @@
       };
       try {
         var raw = new URL(window.location.href).searchParams.get('lang');
-        if (!raw) return;
-        var canonical = langMap[raw.trim().toLowerCase()];
+        var canonical = raw ? langMap[raw.trim().toLowerCase()] : null;
+        if (!raw && typeof document.referrer === 'string' && document.referrer) {
+          var ref = new URL(document.referrer);
+          if (ref.origin === window.location.origin) {
+            if (ref.pathname === '/fa/' || ref.pathname === '/fa') canonical = 'persian';
+            else if (ref.pathname === '/tr/' || ref.pathname === '/tr') canonical = 'turkish';
+          }
+        }
         if (!canonical) return;
         var radio = document.getElementById('session-language-' + canonical);
         if (radio && radio.type === 'radio') radio.checked = true;
