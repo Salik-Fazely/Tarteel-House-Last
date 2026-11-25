@@ -63,7 +63,7 @@ class PrivacyPolicyAlignmentTests(unittest.TestCase):
 
     def test_date_and_optional_consent_behavior_are_disclosed(self):
         for wording in (
-            "Last updated: 4 September 2026",
+            "Last updated: 11 November 2026",
             "Analytics and advertising measurement choices",
             "Google Analytics 4",
             "OpenAI Ads Measurement Pixel",

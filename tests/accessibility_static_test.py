@@ -42,7 +42,21 @@ CHOICE_VALUES = {
         "preferred_time",
         ["morning", "afternoon", "evening"],
     ),
+    "How did you hear about us? (optional)": (
+        "radio",
+        "heard_about",
+        [
+            "ai-assistant",
+            "search-engine",
+            "friend-or-family",
+            "mosque-or-community",
+            "social-media",
+            "other",
+        ],
+    ),
 }
+# Groups a parent may leave unanswered. Every other choice group is required.
+OPTIONAL_CHOICE_LEGENDS = {"How did you hear about us? (optional)"}
 EXPECTED_FORM_NAMES = {
     "source",
     "success_redirect",
@@ -61,6 +75,7 @@ EXPECTED_FORM_NAMES = {
     "preferred_time",
     "city_region",
     "notes",
+    "heard_about",
     "consent",
 }
 
@@ -255,7 +270,10 @@ class BookingChoiceStaticTests(unittest.TestCase):
             self.assertEqual(ids, group["labels"], legend)
             control_ids.extend(ids)
 
-            if control_type == "radio":
+            if legend in OPTIONAL_CHOICE_LEGENDS:
+                self.assertFalse(any("required" in control for control in inputs), legend)
+                self.assertNotIn("data-required", group["attrs"], legend)
+            elif control_type == "radio":
                 self.assertTrue(all("required" in control for control in inputs), legend)
             else:
                 self.assertEqual("true", group["attrs"].get("data-required"), legend)
