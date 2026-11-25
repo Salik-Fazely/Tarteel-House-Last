@@ -22,13 +22,17 @@ FOOTER_END = "<!-- SHARED FOOTER:END -->"
 HEADER_FRAGMENTS = {
     "standard": "partials/header.html",
     "fa": "partials/header-fa.html",
+    "fa_sub": "partials/header-fa-sub.html",
     "tr": "partials/header-tr.html",
+    "tr_sub": "partials/header-tr-sub.html",
 }
 FOOTER_FRAGMENTS = {
     "standard": "partials/footer.html",
     "no_prebooking_contact": "partials/footer-no-prebooking-contact.html",
     "fa": "partials/footer-fa.html",
+    "fa_sub": "partials/footer-fa-sub.html",
     "tr": "partials/footer-tr.html",
+    "tr_sub": "partials/footer-tr-sub.html",
 }
 
 NAV_PLACEHOLDERS = {
@@ -167,6 +171,20 @@ PAGE_CONFIGS = (
         footer_variant="fa",
     ),
     PageConfig(
+        "fa/amoozesh-rokhani-quran-koodakan/index.html",
+        None,
+        language="fa",
+        header_variant="fa_sub",
+        footer_variant="fa_sub",
+    ),
+    PageConfig(
+        "fa/book-trial/index.html",
+        None,
+        language="fa",
+        header_variant="fa_sub",
+        footer_variant="fa_sub",
+    ),
+    PageConfig(
         "faq/index.html",
         None,
         whatsapp_message="Hello, I have a question after reading the Tarteel House FAQ page.",
@@ -247,6 +265,20 @@ PAGE_CONFIGS = (
         language="tr",
         header_variant="tr",
         footer_variant="tr",
+    ),
+    PageConfig(
+        "tr/book-trial/index.html",
+        None,
+        language="tr",
+        header_variant="tr_sub",
+        footer_variant="tr_sub",
+    ),
+    PageConfig(
+        "tr/cocuklar-icin-online-elifba/index.html",
+        None,
+        language="tr",
+        header_variant="tr_sub",
+        footer_variant="tr_sub",
     ),
 )
 

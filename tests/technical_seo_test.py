@@ -28,6 +28,8 @@ PAGES = {
     "/blog/what-age-should-a-child-start-learning-quran/": "blog/what-age-should-a-child-start-learning-quran/index.html",
     "/book-trial/": "book-trial/index.html",
     "/fa/": "fa/index.html",
+    "/fa/amoozesh-rokhani-quran-koodakan/": "fa/amoozesh-rokhani-quran-koodakan/index.html",
+    "/fa/book-trial/": "fa/book-trial/index.html",
     "/faq/": "faq/index.html",
     "/female-quran-teacher-for-kids/": "female-quran-teacher-for-kids/index.html",
     "/how-it-works/": "how-it-works/index.html",
@@ -44,6 +46,8 @@ PAGES = {
     "/teachers/": "teachers/index.html",
     "/terms/": "terms/index.html",
     "/tr/": "tr/index.html",
+    "/tr/book-trial/": "tr/book-trial/index.html",
+    "/tr/cocuklar-icin-online-elifba/": "tr/cocuklar-icin-online-elifba/index.html",
 }
 ARTICLES = {
     "/blog/child-refuses-quran-practice/": "/assets/blog/child-refuses-quran-practice-og.jpg",
@@ -219,7 +223,11 @@ class TechnicalSeoTests(unittest.TestCase):
             "/teachers/": default_image,
             "/terms/": default_image,
             "/fa/": default_image,
+            "/fa/amoozesh-rokhani-quran-koodakan/": default_image,
+            "/fa/book-trial/": default_image,
             "/tr/": default_image,
+            "/tr/book-trial/": default_image,
+            "/tr/cocuklar-icin-online-elifba/": default_image,
             "/quran-classes-in-farsi-and-dari/": default_image,
             "/quran-classes-in-turkish/": default_image,
             "/noorani-qaida-classes-for-kids/": default_image,
@@ -238,9 +246,9 @@ class TechnicalSeoTests(unittest.TestCase):
             expected_type = "article" if path in ARTICLES else "website"
             self.assertEqual([expected_type], page.properties["og:type"], path)
             self.assertEqual(["Tarteel House"], page.properties["og:site_name"], path)
-            if path == "/fa/":
+            if path.startswith("/fa/"):
                 self.assertEqual(["fa_IR"], page.properties["og:locale"], path)
-            elif path == "/tr/":
+            elif path.startswith("/tr/"):
                 self.assertEqual(["tr_TR"], page.properties["og:locale"], path)
             self.assertEqual(page.titles, page.properties["og:title"], path)
             self.assertEqual([BASE_URL + path], page.properties["og:url"], path)

@@ -240,6 +240,35 @@ test('tracks an internal button that leads to the canonical booking page', () =>
   assert.equal(calls[0][1], 'trial_cta_click');
 });
 
+test('tracks localized Persian and Turkish booking CTAs without query or hash PII', () => {
+  for (const { sourcePath, href, destinationPath, text } of [
+    {
+      sourcePath: '/fa/',
+      href: '/fa/book-trial/?email=parent%40example.com#trial-form',
+      destinationPath: '/fa/book-trial/',
+      text: 'رزرو جلسه آزمایشی رایگان',
+    },
+    {
+      sourcePath: '/tr/',
+      href: '/tr/book-trial/?email=veli%40example.com#trial-form',
+      destinationPath: '/tr/book-trial/',
+      text: 'Ücretsiz Deneme Dersi Alın',
+    },
+  ]) {
+    const { calls, document } = createEnvironment({ preference: 'granted', pathname: sourcePath });
+    document.dispatch('click', { target: createCta({ href, text }).target });
+    assert.deepEqual(calls, [[
+      'event',
+      'trial_cta_click',
+      {
+        source_path: sourcePath,
+        destination_path: destinationPath,
+        cta_text: text,
+      },
+    ]], destinationPath);
+  }
+});
+
 test('does not queue a pre-consent CTA click and checks later denial', () => {
   const { calls, document, localStorage } = createEnvironment();
   const cta = createCta();

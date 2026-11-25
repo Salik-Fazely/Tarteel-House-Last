@@ -43,8 +43,12 @@
 
 - [Qur'an Classes in Farsi and Dari (English overview)](https://www.tarteelhouse.com/quran-classes-in-farsi-and-dari/): Details on Persian-medium classes for Farsi- and Dari-speaking families.
 - [Persian Home (فارسی)](https://www.tarteelhouse.com/fa/): Full Persian landing page for families in Europe and North America.
+- [Persian Beginner Reading Course (آموزش روخوانی قرآن کودکان)](https://www.tarteelhouse.com/fa/amoozesh-rokhani-quran-koodakan/): Persian-language Noorani Qaida and beginner reading classes for kids aged 5 to 16.
+- [Persian Free Trial Booking (رزرو جلسه آزمایشی رایگان)](https://www.tarteelhouse.com/fa/book-trial/): Native Persian RTL trial booking form.
 - [Qur'an Classes in Turkish (English overview)](https://www.tarteelhouse.com/quran-classes-in-turkish/): Details on Turkish-medium classes for children in Europe and North America.
 - [Turkish Home (Türkçe)](https://www.tarteelhouse.com/tr/): Full Turkish landing page for families in Europe and North America.
+- [Turkish Beginner Elif-Ba Course (Online Elif-Ba Dersleri)](https://www.tarteelhouse.com/tr/cocuklar-icin-online-elifba/): Turkish-language one-to-one Elif-Ba and beginner reading classes for kids in Europe.
+- [Turkish Free Trial Booking (Ücretsiz Deneme Dersi Başvurusu)](https://www.tarteelhouse.com/tr/book-trial/): Native Turkish trial booking form.
 
 ## Parent Guides
 

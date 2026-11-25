@@ -227,13 +227,16 @@ class BookingChoiceStaticTests(unittest.TestCase):
         cls.parser = parse_page(cls.path)
 
     def test_booking_action_and_field_name_contract_are_unchanged(self):
-        self.assertEqual(BOOKING_ACTION, self.parser.form_action)
-        names = {
-            attributes["name"]
-            for _, attributes in self.parser.form_controls
-            if attributes.get("name")
-        }
-        self.assertEqual(EXPECTED_FORM_NAMES, names)
+        for relative in ("book-trial/index.html", "fa/book-trial/index.html", "tr/book-trial/index.html"):
+            with self.subTest(page=relative):
+                parser = parse_page(ROOT / relative)
+                self.assertEqual(BOOKING_ACTION, parser.form_action)
+                names = {
+                    attributes["name"]
+                    for _, attributes in parser.form_controls
+                    if attributes.get("name")
+                }
+                self.assertEqual(EXPECTED_FORM_NAMES, names)
 
     def test_choice_groups_use_fieldsets_legends_and_native_controls(self):
         groups = {

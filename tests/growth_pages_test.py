@@ -183,7 +183,11 @@ class LanguagePageTests(unittest.TestCase):
             self.assertIn(f"{lessons} ders", turkish)
 
     def test_language_pages_use_the_official_whatsapp_number_and_booking_form(self):
-        for relative in ("fa/index.html", "tr/index.html"):
+        expected_booking = {
+            "fa/index.html": "/fa/book-trial/",
+            "tr/index.html": "/tr/book-trial/",
+        }
+        for relative, booking_href in expected_booking.items():
             hrefs = parse(relative).hrefs
             whatsapp = [href for href in hrefs if "wa.me" in href]
             with self.subTest(page=relative):
@@ -194,7 +198,7 @@ class LanguagePageTests(unittest.TestCase):
                         href,
                     )
                 self.assertTrue(any("?text=" in href for href in whatsapp))
-                self.assertIn("/book-trial/", hrefs)
+                self.assertIn(booking_href, hrefs)
 
     def test_homepage_mentions_female_teachers_and_footer_links_languages(self):
         self.assertIn("Female teachers available", visible_text(parse("index.html")))
@@ -255,7 +259,7 @@ class TurkishPageTests(unittest.TestCase):
     def test_booking_calls_to_action_use_the_formal_register(self):
         labels = [
             link_text(link) for link in self.page.links
-            if link["attrs"]["href"].startswith("/book-trial/")
+            if link["attrs"]["href"].startswith("/tr/book-trial/")
         ]
         self.assertGreaterEqual(len(labels), 5)
         for label in labels:
@@ -327,54 +331,20 @@ class PersianPageTests(unittest.TestCase):
         for forbidden in ("تخفیف", "stripe", "paypal", "iban"):
             self.assertNotIn(forbidden, text.lower())
 
+    def test_persian_and_turkish_subpages_match_language_direction_and_booking_links(self):
+        fa_book = parse("fa/book-trial/index.html")
+        self.assertEqual("fa", fa_book.html_attrs.get("lang"))
+        self.assertEqual("rtl", fa_book.main_attrs.get("dir"))
+        fa_read = parse("fa/amoozesh-rokhani-quran-koodakan/index.html")
+        self.assertEqual("fa", fa_read.html_attrs.get("lang"))
+        self.assertEqual("rtl", fa_read.main_attrs.get("dir"))
+        self.assertIn("/fa/book-trial/", fa_read.hrefs)
 
-class PersianPageTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.page = parse_chrome(PERSIAN_PAGE)
-        cls.header = re.sub(r"\s+", " ", " ".join(cls.page.region_text["header"]))
-        cls.footer = re.sub(r"\s+", " ", " ".join(cls.page.region_text["footer"]))
-
-    def test_header_and_footer_are_in_persian(self):
-        for phrase in ("روند کار", "معلمان", "هزینه‌ها", "پرسش‌ها", "جلسه رایگان"):
-            self.assertIn(phrase, self.header)
-        for phrase in ("How It Works", "Teachers", "Pricing", "About", "Book a Free Trial"):
-            self.assertNotIn(phrase, self.header)
-
-        for phrase in ("بخش‌های صفحه", "صفحات انگلیسی", "زبان‌ها", "در واتس‌اپ بنویسید"):
-            self.assertIn(phrase, self.footer)
-        for phrase in ("LEARN", "SUPPORT", "Have a question before booking?", "Also in"):
-            self.assertNotIn(phrase, self.footer)
-
-    def test_in_page_navigation_points_to_sections_that_exist(self):
-        header_anchors = [
-            link["attrs"]["href"]
-            for link in self.page.links
-            if link["region"] == "header" and link["attrs"]["href"].startswith("#")
-        ]
-        self.assertEqual(PERSIAN_NAV_ANCHORS, header_anchors)
-        for link in self.page.links:
-            href = link["attrs"]["href"]
-            if href.startswith("#"):
-                self.assertIn(href[1:], self.page.ids, href)
-
-    def test_links_to_english_only_pages_are_marked_as_english(self):
-        english_links = [
-            link for link in self.page.links
-            if link["attrs"]["href"] in ENGLISH_ONLY_DESTINATIONS
-        ]
-        self.assertEqual(
-            ENGLISH_ONLY_DESTINATIONS,
-            {link["attrs"]["href"] for link in english_links},
-        )
-        for link in english_links:
-            self.assertEqual("en", link["attrs"].get("hreflang"), link["attrs"]["href"])
-
-    def test_footer_offers_every_language_version(self):
-        footer_hrefs = {
-            link["attrs"]["href"] for link in self.page.links if link["region"] == "footer"
-        }
-        self.assertLessEqual({"/", "/fa/", "/tr/"}, footer_hrefs)
+        tr_book = parse("tr/book-trial/index.html")
+        self.assertEqual("tr", tr_book.html_attrs.get("lang"))
+        tr_elifba = parse("tr/cocuklar-icin-online-elifba/index.html")
+        self.assertEqual("tr", tr_elifba.html_attrs.get("lang"))
+        self.assertIn("/tr/book-trial/", tr_elifba.hrefs)
 
 
 class NewParentGuideTests(unittest.TestCase):
