@@ -21,6 +21,7 @@
   'use strict';
 
   const BOOKING_PATH = '/book-trial/';
+  const BOOKING_PATHS = new Set(['/book-trial/', '/fa/book-trial/', '/tr/book-trial/']);
   const SUCCESS_PATH = '/success/';
   const FORM_ID = 'trial-form';
   const INIT_FLAG = '__tarteelHouseAnalyticsEventsInitialized';
@@ -84,7 +85,7 @@
     try {
       const destination = new URL(ctaDestination(element), win.location.href);
       if (destination.origin !== win.location.origin) return null;
-      return normalizedBookingPath(destination.pathname) === BOOKING_PATH ? element : null;
+      return BOOKING_PATHS.has(normalizedBookingPath(destination.pathname)) ? element : null;
     } catch (error) {
       return null;
     }
@@ -304,9 +305,16 @@
       const cta = bookingCta(win, event.target);
       if (!cta) return;
 
+      let destinationPath = BOOKING_PATH;
+      try {
+        destinationPath = normalizedBookingPath(new URL(ctaDestination(cta), win.location.href).pathname);
+      } catch (error) {
+        destinationPath = BOOKING_PATH;
+      }
+
       sendEvent(win, consentApi, 'trial_cta_click', {
         source_path: win.location.pathname,
-        destination_path: BOOKING_PATH,
+        destination_path: destinationPath,
         cta_text: normalizedCtaText(cta),
       });
     });

@@ -6,19 +6,46 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CTA = {
+    "href": "/book-trial/",
     "aria-label": "Book a free trial",
     "full": "Book a Free Trial",
     "short": "Free trial",
 }
-# Language pages translate the visible CTA but keep the same destination,
-# markup and label pair so the shared mobile CSS applies unchanged.
+# Language pages translate the visible CTA and route directly to their
+# localized booking page while preserving the shared mobile header contract.
 LOCALIZED_CTA = {
     "fa/index.html": {
+        "href": "/fa/book-trial/",
+        "aria-label": "رزرو جلسه آزمایشی رایگان",
+        "full": "جلسه رایگان",
+        "short": "آزمایشی",
+    },
+    "fa/amoozesh-rokhani-quran-koodakan/index.html": {
+        "href": "/fa/book-trial/",
+        "aria-label": "رزرو جلسه آزمایشی رایگان",
+        "full": "جلسه رایگان",
+        "short": "آزمایشی",
+    },
+    "fa/book-trial/index.html": {
+        "href": "/fa/book-trial/",
         "aria-label": "رزرو جلسه آزمایشی رایگان",
         "full": "جلسه رایگان",
         "short": "آزمایشی",
     },
     "tr/index.html": {
+        "href": "/tr/book-trial/",
+        "aria-label": "Ücretsiz deneme dersi alın",
+        "full": "Ücretsiz Deneme",
+        "short": "Deneme",
+    },
+    "tr/book-trial/index.html": {
+        "href": "/tr/book-trial/",
+        "aria-label": "Ücretsiz deneme dersi alın",
+        "full": "Ücretsiz Deneme",
+        "short": "Deneme",
+    },
+    "tr/cocuklar-icin-online-elifba/index.html": {
+        "href": "/tr/book-trial/",
         "aria-label": "Ücretsiz deneme dersi alın",
         "full": "Ücretsiz Deneme",
         "short": "Deneme",
@@ -105,7 +132,7 @@ def normalized_text(parts):
 class MobileHeaderStaticTests(unittest.TestCase):
     def test_canonical_headers_reuse_one_booking_cta_contract(self):
         pages = header_pages()
-        self.assertEqual(32, len(pages))
+        self.assertEqual(36, len(pages))
 
         for page in pages:
             relative = page.relative_to(ROOT)
@@ -114,7 +141,7 @@ class MobileHeaderStaticTests(unittest.TestCase):
 
             cta = parser.ctas[0]
             expected = LOCALIZED_CTA.get(relative.as_posix(), DEFAULT_CTA)
-            self.assertEqual("/book-trial/", cta["attrs"].get("href"), relative)
+            self.assertEqual(expected["href"], cta["attrs"].get("href"), relative)
             self.assertEqual(expected["aria-label"], cta["attrs"].get("aria-label"), relative)
             self.assertEqual(
                 expected["full"],

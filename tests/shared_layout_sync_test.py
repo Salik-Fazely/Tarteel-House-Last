@@ -31,6 +31,8 @@ EXPECTED_COMPLETE_PAGES = (
     "blog/what-age-should-a-child-start-learning-quran/index.html",
     "book-trial/index.html",
     "fa/index.html",
+    "fa/amoozesh-rokhani-quran-koodakan/index.html",
+    "fa/book-trial/index.html",
     "faq/index.html",
     "female-quran-teacher-for-kids/index.html",
     "how-it-works/index.html",
@@ -47,6 +49,8 @@ EXPECTED_COMPLETE_PAGES = (
     "teachers/index.html",
     "terms/index.html",
     "tr/index.html",
+    "tr/book-trial/index.html",
+    "tr/cocuklar-icin-online-elifba/index.html",
 )
 
 REDIRECT_STUBS = (
@@ -365,11 +369,18 @@ class SharedLayoutSyncTests(unittest.TestCase):
             if config.header_variant != "standard"
         }
         self.assertEqual(
-            {"fa/index.html": ("fa", "fa"), "tr/index.html": ("tr", "tr")},
+            {
+                "fa/index.html": ("fa", "fa"),
+                "fa/amoozesh-rokhani-quran-koodakan/index.html": ("fa_sub", "fa_sub"),
+                "fa/book-trial/index.html": ("fa_sub", "fa_sub"),
+                "tr/index.html": ("tr", "tr"),
+                "tr/book-trial/index.html": ("tr_sub", "tr_sub"),
+                "tr/cocuklar-icin-online-elifba/index.html": ("tr_sub", "tr_sub"),
+            },
             variants,
         )
 
-        for code in ("fa", "tr"):
+        for code in ("fa", "fa_sub", "tr", "tr_sub"):
             for relative in (sync.HEADER_FRAGMENTS[code], sync.FOOTER_FRAGMENTS[code]):
                 self.assertTrue((ROOT / relative).is_file(), relative)
             footer = (ROOT / sync.FOOTER_FRAGMENTS[code]).read_text(encoding="utf-8")

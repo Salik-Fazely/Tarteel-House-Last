@@ -19,6 +19,10 @@ const PAGES = [
   '/online-quran-classes-for-kids-in-europe/',
   '/female-quran-teacher-for-kids/',
   '/faq/',
+  '/fa/book-trial/',
+  '/fa/amoozesh-rokhani-quran-koodakan/',
+  '/tr/book-trial/',
+  '/tr/cocuklar-icin-online-elifba/',
 ];
 const WIDTHS = [320, 390, 940, 1280];
 

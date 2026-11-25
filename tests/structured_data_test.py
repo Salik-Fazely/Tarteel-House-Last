@@ -213,6 +213,43 @@ class StructuredDataTests(unittest.TestCase):
                     self.assertEqual(price, offers[name]["price"])
                     self.assertEqual("EUR", offers[name]["priceCurrency"])
 
+    def test_09_localized_subpages_publish_valid_breadcrumbs_and_courses(self):
+        localized_breadcrumbs = (
+            ("fa/book-trial/index.html", "/fa/", "/fa/book-trial/"),
+            ("fa/amoozesh-rokhani-quran-koodakan/index.html", "/fa/", "/fa/amoozesh-rokhani-quran-koodakan/"),
+            ("tr/book-trial/index.html", "/tr/", "/tr/book-trial/"),
+            ("tr/cocuklar-icin-online-elifba/index.html", "/tr/", "/tr/cocuklar-icin-online-elifba/"),
+        )
+        for relative, parent_path, url_path in localized_breadcrumbs:
+            with self.subTest(page=relative):
+                crumbs = node(relative, "BreadcrumbList")["itemListElement"]
+                self.assertEqual([1, 2], [crumb["position"] for crumb in crumbs])
+                self.assertEqual(BASE + parent_path, crumbs[0]["item"])
+                self.assertEqual(BASE + url_path, crumbs[-1]["item"])
+                self.assertIn(
+                    f'<link rel="canonical" href="{BASE + url_path}" />', read(relative)
+                )
+
+        for relative, expected_lang, trial_url in (
+            ("fa/amoozesh-rokhani-quran-koodakan/index.html", "fa", BASE + "/fa/book-trial/"),
+            ("tr/cocuklar-icin-online-elifba/index.html", "tr", BASE + "/tr/book-trial/"),
+        ):
+            with self.subTest(course=relative):
+                course = node(relative, "Course")
+                self.assertEqual(ORGANIZATION_ID, course["provider"]["@id"])
+                self.assertEqual([expected_lang], course["inLanguage"])
+                self.assertEqual(
+                    (5, 16),
+                    (course["audience"]["suggestedMinAge"], course["audience"]["suggestedMaxAge"]),
+                )
+                offers = {offer["name"]: offer for offer in course["offers"]}
+                self.assertEqual(4, len(offers))
+                self.assertEqual("0", offers["Free trial lesson"]["price"])
+                self.assertEqual(trial_url, offers["Free trial lesson"]["url"])
+                self.assertEqual("120", offers["Starter: 6 lessons"]["price"])
+                self.assertEqual("220", offers["Steady: 12 lessons"]["price"])
+                self.assertEqual("400", offers["Committed: 25 lessons"]["price"])
+
 
 if __name__ == "__main__":
     unittest.main()
